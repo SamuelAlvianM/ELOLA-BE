@@ -1,0 +1,86 @@
+generator client {
+    provider = "prisma-client-js"
+    binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
+}
+
+datasource db {
+    provider = "postgresql"
+    url = env("DATABASE_URL")
+}
+
+
+model User {
+
+    user_id     Int         @id @default(autoincrement()) 
+    user_name   String      @unique
+    email       String      @unique
+    pin         String      
+    password    String  
+    created_at  DateTime    @default(now())
+    updated_at  DateTime    @updatedAt
+    deleted_at  DateTime?   @deletedAt
+
+    store       Store[]
+    open-close  Open-Close[]
+
+}
+
+
+model Store {
+
+    store_id        Int         @id @default(autoincrement())
+    user_id         Int
+    store_name      String      @unique  
+    store_address   String      @unique
+    created_at      DateTime    @default(now())
+    updated_at      DateTime    @updatedAt
+    deleted_at      DateTime?   @deletedAt
+
+
+    user    User @relation(fields: [user_id], references: [user_id])
+
+}
+
+
+model Open-Close {
+    open_close_id       Int @id @default(autoincrement())
+    user_id             Int @unique 
+    is_cashier_open     Boolean @default(false)
+
+    open_date           DateTime @default(now())
+    open_by             User @relation(fields: [open_by], references: [user_id])
+
+    close_date          DateTime @default(now())
+    close_by            User @relation(fields: [close_by], references: [user_id])
+
+    bill_quantity       Int
+
+    created_at          DateTime @default(now())
+    updated_at          DateTime @updatedAt
+    deleted_at          DateTime? @deletedAt
+
+    @@unique            ([user_id])
+}
+
+
+enum Tax_type {
+
+    Service
+    fee
+}
+
+model Tax {
+    tax_id      int  @id @default(autoincrement())
+    tax_type    Tax_type
+    tax_name    String
+    tax_value   Int
+    tax_status  Boolean @default(false)
+    created_at  DateTime @default(now())
+    updated_at  DateTime @updatedAt
+    deleted_at  DateTime? @deletedAt
+}
+
+model Product {
+    product_id  int @id @default(autoincrement())
+    store_id    int
+}
