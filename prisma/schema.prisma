@@ -166,7 +166,7 @@ model Orders {
     user_id         String
     order_type      Order_type
     driver_partner  String
-    receipt_number  Int @id @default(autoincrement())
+    receipt_number  Int @default(autoincrement())
     sub_total       double precision
     service         double precision
     tax             double precision
