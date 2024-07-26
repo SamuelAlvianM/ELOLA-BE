@@ -8,7 +8,6 @@ datasource db {
     url = env("DATABASE_URL")
 }
 
-
 model User {
 
     user_id     Int         @id @default(autoincrement()) 
@@ -18,12 +17,11 @@ model User {
     password    String  
     created_at  DateTime    @default(now())
     updated_at  DateTime    @updatedAt
-    deleted_at  DateTime?   @deletedAt
+    deleted_at  DateTime?
 
     store       Store[]
-    open-close  Open-Close[]
+    openClose  OpenClose[]
     orders      Orders[]
-
 }
 
 
@@ -35,19 +33,17 @@ model Store {
     store_address   String      @unique
     created_at      DateTime    @default(now())
     updated_at      DateTime    @updatedAt
-    deleted_at      DateTime?   @deletedAt
+    deleted_at      DateTime?   
 
     payments        Payment[]
     transactions    Transaction[]
     orders          Orders[]
 
-
     user    User @relation(fields: [user_id], references: [user_id])
-
 }
 
 
-model Open-Close {
+model OpenClose {
     open_close_id       Int @id @default(autoincrement())
     user_id             Int @unique 
     is_cashier_open     Boolean @default(false)
@@ -67,11 +63,9 @@ model Open-Close {
     @@unique            ([user_id])
 }
 
-
 enum Tax_type {
-
     Service
-    Value-Added Tax
+    VAT //Value-Added Tax
 }
 
 model Tax {
@@ -82,28 +76,32 @@ model Tax {
     tax_status  Boolean @default(false)
     created_at  DateTime @default(now())
     updated_at  DateTime @updatedAt
-    deleted_at  DateTime? @deletedAt
+    deleted_at  DateTime? 
 
     orders      Orders[]
 }
 
 model Product {
-    product_id  Int @id @default(autoincrement())
-    store_id    Int
+    product_id              Int @id @default(autoincrement())
+    store_id                Int
+    product_category_id     Int
+    product_name            String
+    product_price           Int
+    cost_of_good_sold       Int
+    tax                     Int
+    service                 Int
+    product_code            Int
+    product_image           String?
+    created_at              DateTime @default(now())
+    updated_at              DateTime @updatedAt
+    deleted_at              DateTime?
 
-    
-    
-    
-    
-    
-    store_id    Store   @relation(fields: [store_id], references: [store_id])
+    store_id                Store   @relation(fields: [store_id], references: [store_id])
 
-    @@unique    ([store_id])
+    @@unique    ([store_id, product_category_id])
 }
 
-
-
-model Driver-Partner {
+model DriverPartner {
 
     driver_partner_id Int @id @default(autoincrement())
     store_id          Int
@@ -112,19 +110,15 @@ model Driver-Partner {
     benefit           double precision
     created_at        DateTime @default(now())
     updated_at        DateTime @updatedAt
-    deleted_at        DateTime? @deletedAt
+    deleted_at        DateTime?
 
     orders            Orders[]
-
 }
-
-
 
 enum Payment_type {
     Bank
     E-Payment
 }
-
 
 model Payment {
 
@@ -134,17 +128,12 @@ model Payment {
     payment_type    Payment_type
     created_at      DateTime @default(now())
     updated_at      DateTime @updatedAt
-    deleted_at      DateTime? @deletedAt
-
+    deleted_at      DateTime? 
 
     store       Store   @relation(fields: [store_id], references: [store_id])
 
     @@unique ([store_id])
 }
-
-
-
-
 
 enum Order_type {
     Retail
@@ -152,11 +141,9 @@ enum Order_type {
 }
 
 enum Order_payment_type {
-
     Cash
     Bank Transfer
     E-Payment
-
 }
 
 model Orders {
@@ -178,7 +165,7 @@ model Orders {
     change          Int
     created_at      DateTime @default(now())
     updated_at      DateTime @updatedAt
-    deleted_at      DateTime? @deletedAt
+    deleted_at      DateTime?
 
 
 
@@ -188,4 +175,77 @@ model Orders {
 
     @@unique ([store_id, user_id, driver_partner_id])
 
+}
+
+enum Promo_type {
+    Discount // reducing the price of products/service for limited time
+    Sales   //offering product at reduce prices for a predetermined period (seasonal sales/clerance sale/special occasion)
+}
+model Promo {
+    promo_id    Int @id @default(autoincrement())
+    product_id  Int
+    promo_type  Promo_type
+    promo_value Int
+    start_date  DateTime @default(now())
+    end_date    DateTime @default(now())
+    created_at  DateTime @default(now())
+    updated_at  DateTime @updatedAt
+    deleted_at  DateTime?
+
+    @@unique([product_id])
+}
+
+model Supplier {
+    supplier_id         Int @id @default(autoincrement())
+    supplier_name       String
+    supplier_product    String
+    phone_number        Int
+    email               String  @unique
+    created_at          DateTime @default(now())
+    updated_at          DateTime @updatedAt
+    deleted_at          DateTime?    
+}
+
+model Inventory {
+    inventory_id        Int @id @default(autoincrement())
+    product_id          Int
+    store_id            Int
+    inventory_name      String
+    in_storage_date     DateTime @default(now())
+    value_stored        Int
+    value_out           Int
+    out_storage_date    DateTime @default(now())
+    created_at          DateTime @default(now())
+    updated_at          DateTime @updatedAt
+    deleted_at          DateTime?
+
+    @@unique([product_id, store_id])
+}
+
+model ProductPackage {
+    productPackage_id   Int @id @default(autoincrement())
+    product_id          Int
+    package_name        String
+    package_price       Int
+    cost_of_good_sold   Int
+    tax                 Int
+    service             Int
+
+    created_at          DateTime @default(now())
+    updated_at          DateTime @updatedAt
+    deleted_at          DateTime?
+
+    @@unique([product_id])
+}
+
+model ProductCategory {
+    product_category_id     Int @id @default(autoincrement())
+    store_id                Int
+    category_name           String
+
+    created_at              DateTime @default(now())
+    updated_at              DateTime @updatedAt
+    deleted_at              DateTime?
+
+    @@unique([store_id])
 }
