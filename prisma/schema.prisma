@@ -22,6 +22,7 @@ model User {
 
     store       Store[]
     open-close  Open-Close[]
+    orders      Orders[]
 
 }
 
@@ -35,6 +36,10 @@ model Store {
     created_at      DateTime    @default(now())
     updated_at      DateTime    @updatedAt
     deleted_at      DateTime?   @deletedAt
+
+    payments        Payment[]
+    transactions    Transaction[]
+    orders          Orders[]
 
 
     user    User @relation(fields: [user_id], references: [user_id])
@@ -66,11 +71,11 @@ model Open-Close {
 enum Tax_type {
 
     Service
-    fee
+    Value-Added Tax
 }
 
 model Tax {
-    tax_id      int  @id @default(autoincrement())
+    tax_id      Int  @id @default(autoincrement())
     tax_type    Tax_type
     tax_name    String
     tax_value   Int
@@ -78,9 +83,109 @@ model Tax {
     created_at  DateTime @default(now())
     updated_at  DateTime @updatedAt
     deleted_at  DateTime? @deletedAt
+
+    orders      Orders[]
 }
 
 model Product {
-    product_id  int @id @default(autoincrement())
-    store_id    int
+    product_id  Int @id @default(autoincrement())
+    store_id    Int
+
+    
+    
+    
+    
+    
+    store_id    Store   @relation(fields: [store_id], references: [store_id])
+
+    @@unique    ([store_id])
+}
+
+
+
+model Driver-Partner {
+
+    driver_partner_id Int @id @default(autoincrement())
+    store_id          Int
+    tax_id            Int
+    partner_name      String @unique
+    benefit           double precision
+    created_at        DateTime @default(now())
+    updated_at        DateTime @updatedAt
+    deleted_at        DateTime? @deletedAt
+
+    orders            Orders[]
+
+}
+
+
+
+enum Payment_type {
+    Bank
+    E-Payment
+}
+
+
+model Payment {
+
+    payment_id      Int @id @default(autoincrement())
+    store_id        Int 
+    payment_name    String @unique
+    payment_type    Payment_type
+    created_at      DateTime @default(now())
+    updated_at      DateTime @updatedAt
+    deleted_at      DateTime? @deletedAt
+
+
+    store       Store   @relation(fields: [store_id], references: [store_id])
+
+    @@unique ([store_id])
+}
+
+
+
+
+
+enum Order_type {
+    Retail
+    Take_away
+}
+
+enum Order_payment_type {
+
+    Cash
+    Bank Transfer
+    E-Payment
+
+}
+
+model Orders {
+
+    order_id        Int @id @default(uuid())
+    store_id        Int
+    user_id         String
+    order_type      Order_type
+    driver_partner  String
+    receipt_number  Int @id @default(uuid())
+    sub_total       double precision
+    service         double precision
+    tax             double precision
+    discount        double precision
+    rounding        Int
+    grand_total     Int
+    c_o_g_s         double precision
+    payment_type    Order_payment_type
+    change          Int
+    created_at      DateTime @default(now())
+    updated_at      DateTime @updatedAt
+    deleted_at      DateTime? @deletedAt
+
+
+
+    store    Store          @relation(fields: [store_id], references: [store_id])
+    user     User           @relation(fields: [user_id], references: [user_id])
+    partner  Driver-Partner @relation(fields: [driver_partner], references: [partner_name])
+
+    @@unique ([store_id, user_id, driver_partner_id])
+
 }
