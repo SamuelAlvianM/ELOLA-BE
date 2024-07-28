@@ -58,7 +58,7 @@ model OpenClose {
 
     created_at          DateTime @default(now())
     updated_at          DateTime @updatedAt
-    deleted_at          DateTime? @deletedAt
+    deleted_at          DateTime?
 
     @@unique            ([user_id])
 }
@@ -154,13 +154,13 @@ model Orders {
     order_type      Order_type
     driver_partner  String
     receipt_number  Int @default(autoincrement())
-    sub_total       double precision
-    service         double precision
-    tax             double precision
-    discount        double precision
+    sub_total       Float
+    service         Float
+    tax             Float
+    discount        Float
     rounding        Int
     grand_total     Int
-    c_o_g_s         double precision
+    c_o_g_s         Float
     payment_type    Order_payment_type
     change          Int
     created_at      DateTime @default(now())
@@ -171,7 +171,7 @@ model Orders {
 
     store    Store          @relation(fields: [store_id], references: [store_id])
     user     User           @relation(fields: [user_id], references: [user_id])
-    partner  Driver-Partner @relation(fields: [driver_partner], references: [partner_name])
+    partner  DriverPartner @relation(fields: [driver_partner], references: [partner_name])
 
     @@unique ([store_id, user_id, driver_partner_id])
 
