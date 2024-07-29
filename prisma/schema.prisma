@@ -40,7 +40,8 @@ model Store {
     products            Product[]
     productCategory     ProductCategory[]
     inventories         Inventory[]
-    suppliers           Supplier[]     
+    suppliers           Supplier[]    
+    partner             DriverPartner[] 
 
     user                User            @relation(fields: [user_id], references: [user_id])
 }
@@ -199,6 +200,9 @@ model DriverPartner {
     deleted_at          DateTime?
 
     orders              Transaction[]
+    store               Store[]
+
+    @@unique([store_id])
 }
 
 enum Payment_type {
