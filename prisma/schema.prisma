@@ -18,10 +18,10 @@ model User {
     updated_at  DateTime    @updatedAt
     deleted_at  DateTime?
 
-    store       Store[]
+    store          Store[]
     user_opening   OpenClose[] @relation(name: "user_open")
     user_closing   OpenClose[] @relation(name: "user_closed")
-    transacrions Transaction[]
+    transacrions   Transaction[]
 }
 
 model Store {
@@ -34,11 +34,15 @@ model Store {
     updated_at      DateTime        @updatedAt
     deleted_at      DateTime?   
 
+    products        Product[]
     payments        Payment[]
-    transactions    Transaction[]
     open_close      OpenClose[]
+    transactions    Transaction[]
+    driver_partner  DriverPartner[]
+
     products        Product[]
     productCategory ProductCategory[]
+
 
     user            User            @relation(fields: [user_id], references: [user_id])
 }
@@ -176,6 +180,10 @@ model DriverPartner {
     deleted_at        DateTime?
 
     orders            Transaction[]
+
+    store             Store @relation(fields: [store_id], references: [store_id])
+
+    @@unique([store_id, partner_name])
 }
 
 
