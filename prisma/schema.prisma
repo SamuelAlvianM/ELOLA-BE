@@ -40,10 +40,11 @@ model Store {
     products            Product[]
     productCategory     ProductCategory[]
     inventories         Inventory[]
-    suppliers           Supplier[]    
-    partner             DriverPartner[] 
+    // suppliers           Supplier[]     
 
     user                User            @relation(fields: [user_id], references: [user_id])
+
+    StoreSupplier StoreSupplier[]
 }
 
 model OpenClose {
@@ -89,11 +90,14 @@ model Tax {
     updated_at              DateTime        @updatedAt
     deleted_at              DateTime? 
 
-    productPackage          ProductPackage[]
-    product                 Product[]
-    suppliers               Supplier[]
+    // productPackage          ProductPackage[]
+    // product                 Product[]
+    // suppliers               Supplier[]
 
     @@unique ([productPackage_id, product_id])
+    ProductPackageTax ProductPackageTax[]
+    ProductTax ProductTax[]
+    SupplierTax SupplierTax[]
 }
 
 model ProductCategory {
@@ -126,9 +130,11 @@ model Product {
     productpackages         ProductPackage[]
     promos                  Promo[]
     inventories             Inventory[]  
-    taxes                   Tax[]   
+    // taxes                   Tax[]   
 
     @@unique                ([store_id, product_category_id])
+    ProductTax ProductTax[]
+
 }
 
 model ProductPackage {
@@ -143,9 +149,10 @@ model ProductPackage {
     deleted_at              DateTime?
 
     product                 Product         @relation(fields: [product_id], references: [product_id])
-    taxes                   Tax[]
+    // taxes                   Tax[]
 
     @@unique([product_id])
+    ProductPackageTax ProductPackageTax[]
 }
 
 model Inventory {
@@ -163,16 +170,19 @@ model Inventory {
 
     product             Product     @relation(fields: [product_id], references: [product_id])
     store               Store       @relation(fields: [store_id], references: [store_id])
-    suppliers           Supplier[]
+    // suppliers           Supplier[]
+
 
     @@unique([product_id, store_id])
+    InventorySupplier InventorySupplier[]
 }
 
 model Supplier {
     supplier_id         Int             @id @default(autoincrement())
-    store_id            Int
-    inventory_id        Int
-    tax_id              Int
+    // store_id            Int
+    // inventory_id        Int
+    // tax_id              Int
+
     supplier_name       String
     supplier_product    String
     phone_number        Int
@@ -181,11 +191,14 @@ model Supplier {
     updated_at          DateTime        @updatedAt
     deleted_at          DateTime?
     
-    store               Store[]
-    inventories         Inventory[]
-    taxes               Tax[]
+    // store               Store[]
+    // inventories         Inventory[]
+    // taxes               Tax[]
 
-    @@unique ([tax_id, store_id, supplier_id])
+    @@unique ([ supplier_id])
+    InventorySupplier InventorySupplier[]
+    StoreSupplier StoreSupplier[]
+    SupplierTax SupplierTax[]
 }
 
 model DriverPartner {
@@ -284,4 +297,49 @@ model Promo {
     product             Product     @relation(fields: [product_id], references: [product_id])
 
     @@unique([product_id])
+}
+
+model ProductTax {
+    product_id  Int
+    tax_id      Int
+    product     Product @relation(fields: [product_id], references: [product_id])
+    tax         Tax     @relation(fields: [tax_id], references: [tax_id])
+
+    @@id([product_id, tax_id])
+}
+
+model ProductPackageTax {
+    productPackage_id   Int
+    tax_id              Int
+    productPackage      ProductPackage @relation(fields: [productPackage_id], references: [productPackage_id])
+    tax                 Tax             @relation(fields: [tax_id], references: [tax_id])
+
+    @@id([productPackage_id, tax_id])
+}
+
+model StoreSupplier {
+    store_id    Int
+    supplier_id Int
+    store       Store    @relation(fields: [store_id], references: [store_id])
+    supplier    Supplier @relation(fields: [supplier_id], references: [supplier_id])
+
+    @@id([store_id, supplier_id])
+}
+
+model InventorySupplier {
+    inventory_id    Int
+    supplier_id     Int
+    inventory       Inventory @relation(fields: [inventory_id], references: [inventory_id])
+    supplier        Supplier  @relation(fields: [supplier_id], references: [supplier_id])
+
+    @@id([inventory_id, supplier_id])
+}
+
+model SupplierTax {
+    supplier_id Int
+    tax_id      Int
+    supplier    Supplier @relation(fields: [supplier_id], references: [supplier_id])
+    tax         Tax      @relation(fields: [tax_id], references: [tax_id])
+
+    @@id([supplier_id, tax_id])
 }
