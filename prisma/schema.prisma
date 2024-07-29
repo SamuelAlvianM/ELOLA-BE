@@ -9,20 +9,19 @@ datasource db {
 }
 
 model User {
-    user_id         Int             @id @default(autoincrement()) 
-    user_name       String          @unique
-    email           String          @unique
-    pin             String      
-    password        String  
-    
-    created_at      DateTime        @default(now())
-    updated_at      DateTime        @updatedAt
-    deleted_at      DateTime?  
+    user_id     Int         @id @default(autoincrement()) 
+    user_name   String      @unique
+    email       String      @unique
+    pin         String      @unique
+    password    String  
+    created_at  DateTime    @default(now())
+    updated_at  DateTime    @updatedAt
+    deleted_at  DateTime?
 
-    store           Store[]
-    user_opening    OpenClose[]     @relation(name: "user_open")
-    user_closing    OpenClose[]     @relation(name: "user_closed")
-    transacrions    Transaction[]
+    store       Store[]
+    user_opening   OpenClose[] @relation(name: "user_open")
+    user_closing   OpenClose[] @relation(name: "user_closed")
+    transacrions Transaction[]
 }
 
 model Store {
