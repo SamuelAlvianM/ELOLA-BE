@@ -9,42 +9,40 @@ datasource db {
 }
 
 model User {
-    user_id     Int         @id @default(autoincrement()) 
-    user_name   String      @unique
-    email       String      @unique
-    pin         String      @unique
-    password    String  
-    created_at  DateTime    @default(now())
-    updated_at  DateTime    @updatedAt
-    deleted_at  DateTime?
+    user_id        Int         @id @default(autoincrement()) 
+    user_name      String      @unique
+    email          String      @unique
+    pin            String      @unique
+    password       String  
+    created_at     DateTime    @default(now())
+    updated_at     DateTime    @updatedAt
+    deleted_at     DateTime?
 
     store          Store[]
     user_opening   OpenClose[] @relation(name: "user_open")
     user_closing   OpenClose[] @relation(name: "user_closed")
-    transacrions   Transaction[]
+    transactions   Transaction[]
 }
 
 model Store {
-    store_id        Int             @id @default(autoincrement())
-    user_id         Int
-    store_name      String          @unique  
-    store_address   String          @unique
+    store_id            Int             @id @default(autoincrement())
+    user_id             Int
+    store_name          String          @unique  
+    store_address       String          @unique
     
-    created_at      DateTime        @default(now())
-    updated_at      DateTime        @updatedAt
-    deleted_at      DateTime?   
+    created_at          DateTime        @default(now())
+    updated_at          DateTime        @updatedAt
+    deleted_at          DateTime?   
 
-    products        Product[]
-    payments        Payment[]
-    open_close      OpenClose[]
-    transactions    Transaction[]
-    driver_partner  DriverPartner[]
+    payments            Payment[]
+    transactions        Transaction[]
+    open_close          OpenClose[]
+    products            Product[]
+    productCategory     ProductCategory[]
+    inventories         Inventory[]
+    suppliers           Supplier[]     
 
-    products        Product[]
-    productCategory ProductCategory[]
-
-
-    user            User            @relation(fields: [user_id], references: [user_id])
+    user                User            @relation(fields: [user_id], references: [user_id])
 }
 
 model OpenClose {
@@ -79,6 +77,8 @@ enum Tax_type {
 
 model Tax {
     tax_id                  Int             @id @default(autoincrement())
+    product_id              Int
+    productPackage_id       Int
     tax_type                Tax_type
     tax_name                String
     tax_value               Int
@@ -87,6 +87,12 @@ model Tax {
     created_at              DateTime        @default(now())
     updated_at              DateTime        @updatedAt
     deleted_at              DateTime? 
+
+    productPackage          ProductPackage[]
+    product                 Product[]
+    suppliers               Supplier[]
+
+    @@unique ([productPackage_id, product_id])
 }
 
 model ProductCategory {
@@ -98,7 +104,7 @@ model ProductCategory {
     updated_at              DateTime        @updatedAt
     deleted_at              DateTime?
 
-    store    Store          @relation(fields: [store_id], references: [store_id])
+    store                   Store           @relation(fields: [store_id], references: [store_id])
     @@unique([store_id])
 }
 
@@ -109,16 +115,17 @@ model Product {
     product_name            String
     product_price           Int
     cost_of_good_sold       Int
-    tax                     Int
-    service                 Int
     product_code            Int
     product_image           String?
     created_at              DateTime        @default(now())
     updated_at              DateTime        @updatedAt
     deleted_at              DateTime?
 
-    stores                  Store           @relation(fields: [store_id], references: [store_id])
-
+    store                   Store           @relation(fields: [store_id], references: [store_id])
+    productpackages         ProductPackage[]
+    promos                  Promo[]
+    inventories             Inventory[]  
+    taxes                   Tax[]   
 
     @@unique                ([store_id, product_category_id])
 }
@@ -129,80 +136,87 @@ model ProductPackage {
     package_name            String
     package_price           Int
     cost_of_good_sold       Int
-    tax                     Int
-    service                 Int
 
     created_at              DateTime        @default(now())
     updated_at              DateTime        @updatedAt
     deleted_at              DateTime?
 
+    product                 Product         @relation(fields: [product_id], references: [product_id])
+    taxes                   Tax[]
+
     @@unique([product_id])
 }
 
-
 model Inventory {
-    inventory_id        Int @id @default(autoincrement())
+    inventory_id        Int         @id @default(autoincrement())
     product_id          Int
     store_id            Int
     inventory_name      String
-    in_storage_date     DateTime @default(now())
+    in_storage_date     DateTime    @default(now())
     value_stored        Int
     value_out           Int
-    out_storage_date    DateTime @default(now())
-    created_at          DateTime @default(now())
-    updated_at          DateTime @updatedAt
+    out_storage_date    DateTime    @default(now())
+    created_at          DateTime    @default(now())
+    updated_at          DateTime    @updatedAt
     deleted_at          DateTime?
+
+    product             Product     @relation(fields: [product_id], references: [product_id])
+    store               Store       @relation(fields: [store_id], references: [store_id])
+    suppliers           Supplier[]
 
     @@unique([product_id, store_id])
 }
 
 model Supplier {
-    supplier_id         Int @id @default(autoincrement())
+    supplier_id         Int             @id @default(autoincrement())
+    store_id            Int
+    inventory_id        Int
+    tax_id              Int
     supplier_name       String
     supplier_product    String
     phone_number        Int
-    email               String  @unique
-    created_at          DateTime @default(now())
-    updated_at          DateTime @updatedAt
-    deleted_at          DateTime?    
-}
+    email               String          @unique
+    created_at          DateTime        @default(now())
+    updated_at          DateTime        @updatedAt
+    deleted_at          DateTime?
+    
+    store               Store[]
+    inventories         Inventory[]
+    taxes               Tax[]
 
+    @@unique ([tax_id, store_id, supplier_id])
+}
 
 model DriverPartner {
-    driver_partner_id Int @id @default(autoincrement())
-    store_id          Int
-    tax_id            Int
-    partner_name      String @unique
-    benefit           Float
+    driver_partner_id   Int         @id @default(autoincrement())
+    store_id            Int
+    tax_id              Int
+    partner_name        String      @unique
+    benefit             Float
 
-    created_at        DateTime @default(now())
-    updated_at        DateTime @updatedAt
-    deleted_at        DateTime?
+    created_at          DateTime    @default(now())
+    updated_at          DateTime    @updatedAt
+    deleted_at          DateTime?
 
-    orders            Transaction[]
-
-    store             Store @relation(fields: [store_id], references: [store_id])
-
-    @@unique([store_id, partner_name])
+    orders              Transaction[]
 }
-
 
 enum Payment_type {
     Bank
-    EPayment    @map("E-Payment")
+    EPayment @map("E-Payment")
 }
 
 model Payment {
-    payment_id      Int @id @default(autoincrement())
-    store_id        Int 
-    payment_name    String @unique
-    payment_type    Payment_type
+    payment_id          Int         @id @default(autoincrement())
+    store_id            Int 
+    payment_name        String      @unique
+    payment_type        Payment_type
 
-    created_at      DateTime @default(now())
-    updated_at      DateTime @updatedAt
-    deleted_at      DateTime? 
+    created_at          DateTime    @default(now())
+    updated_at          DateTime    @updatedAt
+    deleted_at          DateTime? 
 
-    store       Store   @relation(fields: [store_id], references: [store_id])
+    store               Store       @relation(fields: [store_id], references: [store_id])
 
     @@unique ([store_id])
 }
@@ -215,33 +229,33 @@ enum Order_type {
 enum Order_payment_type {
     Cash
     Bank_Transfer
-    EPayment    @map("E-Payment")
+    EPayment @map("E-Payment")
 }
 
 model Transaction {
-    transaction_id  String      @id @default(uuid())
-    store_id        Int
-    user_id         Int
-    order_type      Order_type
-    driver_partner  String
-    receipt_number  Int         @default(autoincrement())
-    sub_total       Float
-    service         Float
-    tax             Float
-    discount        Float
-    rounding        Int
-    grand_total     Int
-    c_o_g_s         Float
-    payment_type    Order_payment_type
-    change          Int
+    transaction_id      String          @id @default(uuid())
+    store_id            Int
+    user_id             Int
+    order_type          Order_type
+    driver_partner      String
+    receipt_number      Int             @default(autoincrement())
+    sub_total           Float
+    service             Float
+    tax                 Float
+    discount            Float
+    rounding            Int
+    grand_total         Int
+    c_o_g_s             Float
+    payment_type        Order_payment_type
+    change              Int
 
-    created_at      DateTime    @default(now())
-    updated_at      DateTime    @updatedAt
-    deleted_at      DateTime?
+    created_at          DateTime        @default(now())
+    updated_at          DateTime        @updatedAt
+    deleted_at          DateTime?
 
-    store    Store          @relation(fields: [store_id], references: [store_id])
-    user     User           @relation(fields: [user_id], references: [user_id])
-    partner  DriverPartner  @relation(fields: [driver_partner], references: [partner_name])
+    store               Store           @relation(fields: [store_id], references: [store_id])
+    user                User            @relation(fields: [user_id], references: [user_id])
+    partner             DriverPartner   @relation(fields: [driver_partner], references: [partner_name])
 
     @@unique ([store_id, user_id, driver_partner])
 }
@@ -252,21 +266,18 @@ enum Promo_type {
 }
 
 model Promo {
-    promo_id    Int @id @default(autoincrement())
-    product_id  Int
-    promo_type  Promo_type
-    promo_value Int
-    start_date  DateTime @default(now())
-    end_date    DateTime @default(now())
+    promo_id            Int         @id @default(autoincrement())
+    product_id          Int
+    promo_type          Promo_type
+    promo_value         Int
+    start_date          DateTime    @default(now())
+    end_date            DateTime    @default(now())
     
-    created_at  DateTime @default(now())
-    updated_at  DateTime @updatedAt
-    deleted_at  DateTime?
+    created_at          DateTime    @default(now())
+    updated_at          DateTime    @updatedAt
+    deleted_at          DateTime?
+
+    product             Product     @relation(fields: [product_id], references: [product_id])
 
     @@unique([product_id])
 }
-
-
-
-
-
