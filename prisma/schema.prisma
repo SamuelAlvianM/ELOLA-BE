@@ -9,7 +9,6 @@ datasource db {
 }
 
 model User {
-
     user_id     Int         @id @default(autoincrement()) 
     user_name   String      @unique
     email       String      @unique
@@ -25,15 +24,14 @@ model User {
     transacrions   Transaction[]
 }
 
-
 model Store {
-
-    store_id        Int         @id @default(autoincrement())
+    store_id        Int             @id @default(autoincrement())
     user_id         Int
-    store_name      String      @unique  
-    store_address   String      @unique
-    created_at      DateTime    @default(now())
-    updated_at      DateTime    @updatedAt
+    store_name      String          @unique  
+    store_address   String          @unique
+    
+    created_at      DateTime        @default(now())
+    updated_at      DateTime        @updatedAt
     deleted_at      DateTime?   
 
     products        Product[]
@@ -42,39 +40,37 @@ model Store {
     transactions    Transaction[]
     driver_partner  DriverPartner[]
 
-    user    User @relation(fields: [user_id], references: [user_id])
+    products        Product[]
+    productCategory ProductCategory[]
+
+
+    user            User            @relation(fields: [user_id], references: [user_id])
 }
 
-
 model OpenClose {
-    open_close_id       Int @id @default(autoincrement())
-    user_id             Int @unique 
+    open_close_id       Int         @id @default(autoincrement())
+    user_id             Int         @unique 
     store_id            Int 
-    is_cashier_open     Boolean @default(false)
+    is_cashier_open     Boolean     @default(false)
 
-    open_date           DateTime @default(now())
+    open_date           DateTime    @default(now())
     open_by             Int
 
-    close_date          DateTime @default(now())
+    close_date          DateTime    @default(now())
     close_by            Int
 
     bill_quantity       Int
 
-    created_at          DateTime @default(now())
-    updated_at          DateTime @updatedAt
+    created_at          DateTime    @default(now())
+    updated_at          DateTime    @updatedAt
     deleted_at          DateTime? 
 
-
-    user_opened         User @relation(name: "user_open", fields: [open_by], references: [user_id])  
-    user_closed         User @relation(name: "user_closed", fields: [close_by], references: [user_id])
-    store               Store @relation(fields: [store_id], references: [store_id])
-
+    user_opened         User        @relation(name: "user_open", fields: [open_by], references: [user_id])  
+    user_closed         User        @relation(name: "user_closed", fields: [close_by], references: [user_id])
+    store               Store       @relation(fields: [store_id], references: [store_id])
 
     @@unique            ([user_id, store_id])
 }
-
-
-
 
 enum Tax_type {
     Service
@@ -82,33 +78,32 @@ enum Tax_type {
 }
 
 model Tax {
+    tax_id                  Int             @id @default(autoincrement())
+    tax_type                Tax_type
+    tax_name                String
+    tax_value               Int
+    tax_status              Boolean         @default(false)
 
-    tax_id      Int  @id @default(autoincrement())
-    tax_type    Tax_type
-    tax_name    String
-    tax_value   Int
-    tax_status  Boolean @default(false)
-    created_at  DateTime @default(now())
-    updated_at  DateTime @updatedAt
-    deleted_at  DateTime? 
+    created_at              DateTime        @default(now())
+    updated_at              DateTime        @updatedAt
+    deleted_at              DateTime? 
 }
 
-
 model ProductCategory {
-    product_category_id     Int @id @default(autoincrement())
+    product_category_id     Int             @id @default(autoincrement())
     store_id                Int
     category_name           String
 
-    created_at              DateTime @default(now())
-    updated_at              DateTime @updatedAt
+    created_at              DateTime        @default(now())
+    updated_at              DateTime        @updatedAt
     deleted_at              DateTime?
 
+    store    Store          @relation(fields: [store_id], references: [store_id])
     @@unique([store_id])
 }
 
-
 model Product {
-    product_id              Int @id @default(autoincrement())
+    product_id              Int             @id @default(autoincrement())
     store_id                Int
     product_category_id     Int
     product_name            String
@@ -118,27 +113,28 @@ model Product {
     service                 Int
     product_code            Int
     product_image           String?
-    created_at              DateTime @default(now())
-    updated_at              DateTime @updatedAt
+    created_at              DateTime        @default(now())
+    updated_at              DateTime        @updatedAt
     deleted_at              DateTime?
 
-    stores                Store   @relation(fields: [store_id], references: [store_id])
+    stores                  Store           @relation(fields: [store_id], references: [store_id])
 
-    @@unique    ([store_id, product_category_id])
+
+    @@unique                ([store_id, product_category_id])
 }
 
 model ProductPackage {
-    productPackage_id   Int @id @default(autoincrement())
-    product_id          Int
-    package_name        String
-    package_price       Int
-    cost_of_good_sold   Int
-    tax                 Int
-    service             Int
+    productPackage_id       Int             @id @default(autoincrement())
+    product_id              Int
+    package_name            String
+    package_price           Int
+    cost_of_good_sold       Int
+    tax                     Int
+    service                 Int
 
-    created_at          DateTime @default(now())
-    updated_at          DateTime @updatedAt
-    deleted_at          DateTime?
+    created_at              DateTime        @default(now())
+    updated_at              DateTime        @updatedAt
+    deleted_at              DateTime?
 
     @@unique([product_id])
 }
@@ -173,12 +169,12 @@ model Supplier {
 
 
 model DriverPartner {
-
     driver_partner_id Int @id @default(autoincrement())
     store_id          Int
     tax_id            Int
     partner_name      String @unique
     benefit           Float
+
     created_at        DateTime @default(now())
     updated_at        DateTime @updatedAt
     deleted_at        DateTime?
@@ -197,11 +193,11 @@ enum Payment_type {
 }
 
 model Payment {
-
     payment_id      Int @id @default(autoincrement())
     store_id        Int 
     payment_name    String @unique
     payment_type    Payment_type
+
     created_at      DateTime @default(now())
     updated_at      DateTime @updatedAt
     deleted_at      DateTime? 
@@ -223,13 +219,12 @@ enum Order_payment_type {
 }
 
 model Transaction {
-
-    transaction_id  String @id @default(uuid())
+    transaction_id  String      @id @default(uuid())
     store_id        Int
     user_id         Int
     order_type      Order_type
     driver_partner  String
-    receipt_number  Int @default(autoincrement())
+    receipt_number  Int         @default(autoincrement())
     sub_total       Float
     service         Float
     tax             Float
@@ -239,21 +234,17 @@ model Transaction {
     c_o_g_s         Float
     payment_type    Order_payment_type
     change          Int
-    created_at      DateTime @default(now())
-    updated_at      DateTime @updatedAt
+
+    created_at      DateTime    @default(now())
+    updated_at      DateTime    @updatedAt
     deleted_at      DateTime?
 
-
-
     store    Store          @relation(fields: [store_id], references: [store_id])
-    users    User           @relation(fields: [user_id], references: [user_id])
-    partner  DriverPartner @relation(fields: [driver_partner], references: [partner_name])
+    user     User           @relation(fields: [user_id], references: [user_id])
+    partner  DriverPartner  @relation(fields: [driver_partner], references: [partner_name])
 
     @@unique ([store_id, user_id, driver_partner])
-
 }
-
-
 
 enum Promo_type {
     Discount // reducing the price of products/service for limited time
@@ -267,6 +258,7 @@ model Promo {
     promo_value Int
     start_date  DateTime @default(now())
     end_date    DateTime @default(now())
+    
     created_at  DateTime @default(now())
     updated_at  DateTime @updatedAt
     deleted_at  DateTime?
