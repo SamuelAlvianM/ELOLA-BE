@@ -39,6 +39,7 @@ model Store {
     transactions    Transaction[]
     open_close      OpenClose[]
     products        Product[]
+    productCategory ProductCategory[]
 
     user            User            @relation(fields: [user_id], references: [user_id])
 }
@@ -94,6 +95,7 @@ model ProductCategory {
     updated_at              DateTime        @updatedAt
     deleted_at              DateTime?
 
+    store    Store          @relation(fields: [store_id], references: [store_id])
     @@unique([store_id])
 }
 
@@ -113,6 +115,7 @@ model Product {
     deleted_at              DateTime?
 
     stores                  Store           @relation(fields: [store_id], references: [store_id])
+
 
     @@unique                ([store_id, product_category_id])
 }
