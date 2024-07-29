@@ -20,7 +20,14 @@ export class AuthService {
         private jwtService: JwtService,
     ) {}
 
+    async validateUser(user_name: string, password: string) {
+        const user = await this.prisma.user.findUnique({ where: {user_name}});
 
+        if(user && user.password === password) {
+            const {password, ...result} = user;
+            return result;
+        }
+    }
 
     private async generateUniquePin(): Promise<string> {
         let pin: string;
