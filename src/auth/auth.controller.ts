@@ -10,6 +10,7 @@ import {
     ApiBadRequestResponse,
     ApiBearerAuth,
 } from '@nestjs/swagger';
+
 @Controller('auth')
 export class AuthController {
     constructor(private authService: AuthService) {}
