@@ -22,6 +22,7 @@ model User {
     user_opening   OpenClose[] @relation(name: "user_open")
     user_closing   OpenClose[] @relation(name: "user_closed")
     transactions   Transaction[]
+    store_staff    StoreStaff[]
 }
 
 model Store {
@@ -40,7 +41,9 @@ model Store {
     products            Product[]
     productCategory     ProductCategory[]
     inventories         Inventory[]
-    // suppliers           Supplier[]     
+    // suppliers           Supplier[]
+    store_staff         StoreStaff[]
+    driver_partners    DriverPartner[]
 
     user                User            @relation(fields: [user_id], references: [user_id])
 
@@ -342,4 +345,19 @@ model SupplierTax {
     tax         Tax      @relation(fields: [tax_id], references: [tax_id])
 
     @@id([supplier_id, tax_id])
+}
+
+model StoreStaff { 
+    store_staff_id  Int @id @default(autoincrement())
+    store_id        Int
+    user_id         Int
+    role            String
+
+    store Store @relation(fields: [store_id], references: [store_id])
+    user  User  @relation(fields: [user_id], references: [user_id])
+
+    created_at DateTime @default(now())
+    updated_at DateTime @updatedAt
+    deleted_at DateTime?
+
 }
