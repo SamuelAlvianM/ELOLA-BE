@@ -8,12 +8,37 @@ datasource db {
     url = env("DATABASE_URL")
 }
 
+
+enum Role {
+
+    SUPER_ADMIN = 'superadmin',
+    OWNER = 'owner',
+    STAFF = 'staff',
+    USER = 'user',
+}
+
+
+
+model SuperAdmin {
+
+    super_admin_id Int @id @default(autoincrement())
+    admin_name String
+    admin_email String @unique
+    admin_pin String @unique
+    created_at DateTime @default(now())
+    updated_at DateTime @updatedAt
+    deleted_at DateTime?
+
+}
+
+
 model User {
     user_id        Int         @id @default(autoincrement()) 
     user_name      String      @unique
     email          String      @unique
     pin            String      @unique
     password       String  
+    role           Role      @default(USER)
     created_at     DateTime    @default(now())
     updated_at     DateTime    @updatedAt
     deleted_at     DateTime?

@@ -9,12 +9,14 @@ import {
     ApiBadRequestResponse,
     ApiBearerAuth,
 } from '@nestjs/swagger';
+import { JwtAuthGuard } from 'src/utils/guard/jwt.guard';
 
 @Controller('user')
 export class UserController {
     constructor(private user_service: UserService) {}
 
     @Post()
+    @UseGuards(JwtAuthGuard)
     @HttpCode(HttpStatus.CREATED)
     @ApiResponse( {status: 201, description: 'Successfully created'})
     @ApiBadRequestResponse({status: 400, description: 'Invalid data'})
@@ -31,6 +33,7 @@ export class UserController {
     }
 
     @Get()
+    @UseGuards(JwtAuthGuard)
     @HttpCode(HttpStatus.OK)
     @ApiResponse( {status: 200, description: 'This is All users data'})
     @ApiBadRequestResponse({status: 400, description: 'Something wrong when fetching data'})
@@ -46,6 +49,7 @@ export class UserController {
     }
 
     @Get(':user_id')
+    @UseGuards(JwtAuthGuard)
     @HttpCode(HttpStatus.OK)
     @ApiResponse( {status: 200, description: 'This is user data'})
     @ApiBadRequestResponse({status: 400, description: 'Something wrong when fetching data'})
@@ -61,6 +65,7 @@ export class UserController {
     }
 
     @Patch(':user_id')
+    @UseGuards(JwtAuthGuard)
     @HttpCode(HttpStatus.OK)
     @ApiResponse( {status: 200, description: 'This is updated user data'})
     @ApiBadRequestResponse({status: 400, description: 'Something wrong when updating data'})
@@ -76,6 +81,7 @@ export class UserController {
     }
 
     @Delete(':user_id')
+    @UseGuards(JwtAuthGuard)
     @HttpCode(HttpStatus.NO_CONTENT)
     @ApiResponse( {status: 204, description: 'This is deleted user data'})
     @ApiBadRequestResponse({status: 400, description: 'Something wrong when deleting data'})

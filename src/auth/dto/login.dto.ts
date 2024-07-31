@@ -8,3 +8,8 @@ export class LoginDto {
     @IsNotEmpty()
     password: string;
 }
+
+export class LoginStaffDto {
+    @IsNotEmpty()
+    pin: string;
+}

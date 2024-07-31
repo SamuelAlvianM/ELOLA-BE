@@ -2,6 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { Create_Store_Dto, Invite_User_Dto, Update_Store_Dto } from './dto/store.dto';
 
+
+// add SERVICE login staff, with pin
+// OWNER must make staff account 1 owner many account staffs
 @Injectable()
 export class StoreService {
     constructor(private prisma: PrismaService) {}
