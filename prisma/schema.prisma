@@ -67,6 +67,7 @@ model Store {
     productCategory     ProductCategory[]
     inventories         Inventory[]
 <<<<<<< HEAD
+<<<<<<< HEAD
     // suppliers           Supplier[]    
     partners            DriverPartner[] 
 =======
@@ -74,6 +75,11 @@ model Store {
     store_staff         StoreStaff[]
     driver_partners    DriverPartner[]
 >>>>>>> 5f6a9113152f90af120ff0640690db7885a77efe
+=======
+    // suppliers           Supplier[]
+    store_staff         StoreStaff[]
+    driver_partners    DriverPartner[]
+>>>>>>> fc000bb92cb484ed5226ebe50e02084f88fcc4cc
 
     user                User            @relation(fields: [user_id], references: [user_id])
 
