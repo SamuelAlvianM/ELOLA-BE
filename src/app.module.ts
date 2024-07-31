@@ -10,6 +10,7 @@ import { PrismaService } from './prisma/prisma.service';
 import { ConfigModule } from '@nestjs/config';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
+import { StoreModule } from './store/store.module';
 import { PaymentModule } from './payment/payment.module';
 
 @Module({
@@ -20,6 +21,7 @@ import { PaymentModule } from './payment/payment.module';
     AuthModule, 
     PrismaModule, 
     UserModule,
+    StoreModule,
     PaymentModule,
     PassportModule.register({ defaultStrategy: 'jwt'}),
     JwtModule.register({

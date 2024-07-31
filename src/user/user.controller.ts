@@ -2,6 +2,7 @@ import { Controller, UseGuards, Get, Post, Body, HttpCode, HttpStatus, Delete, P
 import { UserService } from './user.service';
 import { UserDto } from './dto/user.dto';
 import { UpdateDto } from './dto/user.dto';
+import { Roles } from '../utils/decorator/roles.decorator';
 import {
     ApiTags,
     ApiResponse,
@@ -10,6 +11,7 @@ import {
     ApiBearerAuth,
 } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/utils/guard/jwt.guard';
+import { Role } from '@prisma/client';
 
 @Controller('user')
 export class UserController {
@@ -18,6 +20,7 @@ export class UserController {
     @Post()
     @UseGuards(JwtAuthGuard)
     @HttpCode(HttpStatus.CREATED)
+    @Roles(Role.SUPER_ADMIN, Role.OWNER)
     @ApiResponse( {status: 201, description: 'Successfully created'})
     @ApiBadRequestResponse({status: 400, description: 'Invalid data'})
     @ApiUnauthorizedResponse({ status: 401, description: 'Unauthorized' })
@@ -35,6 +38,7 @@ export class UserController {
     @Get()
     @UseGuards(JwtAuthGuard)
     @HttpCode(HttpStatus.OK)
+    @Roles(Role.SUPER_ADMIN, Role.OWNER)
     @ApiResponse( {status: 200, description: 'This is All users data'})
     @ApiBadRequestResponse({status: 400, description: 'Something wrong when fetching data'})
     @ApiUnauthorizedResponse({ status: 401, description: 'Unauthorized' })
@@ -67,6 +71,7 @@ export class UserController {
     @Patch(':user_id')
     @UseGuards(JwtAuthGuard)
     @HttpCode(HttpStatus.OK)
+    @Roles(Role.SUPER_ADMIN, Role.OWNER)
     @ApiResponse( {status: 200, description: 'This is updated user data'})
     @ApiBadRequestResponse({status: 400, description: 'Something wrong when updating data'})
     @ApiUnauthorizedResponse({ status: 401, description: 'Unauthorized' })
@@ -82,7 +87,8 @@ export class UserController {
 
     @Delete(':user_id')
     @UseGuards(JwtAuthGuard)
-    @HttpCode(HttpStatus.NO_CONTENT)
+    @HttpCode(HttpStatus.OK)
+    @Roles(Role.SUPER_ADMIN, Role.OWNER)
     @ApiResponse( {status: 204, description: 'This is deleted user data'})
     @ApiBadRequestResponse({status: 400, description: 'Something wrong when deleting data'})
     @ApiUnauthorizedResponse({ status: 401, description: 'Unauthorized' })
@@ -90,7 +96,7 @@ export class UserController {
     async remove(@Param('user_id') user_id: number) {
         const result = await this.user_service.remove(+user_id);
         return {
-            statusCode: HttpStatus.NO_CONTENT,
+            statusCode: HttpStatus.OK,
             message: 'This is deleted user data',
             data: result,
         };
