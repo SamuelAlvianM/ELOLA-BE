@@ -9,7 +9,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { UserDto } from '../user/dto/user.dto';
-import { LoginDto } from './dto/login.dto';
+import { LoginStaffDto } from './dto/login.dto';
 
 @Injectable()
 export class AuthService {
@@ -27,6 +27,7 @@ export class AuthService {
             const {password, ...result} = user;
             return result;
         }
+        return null;
     }
 
     private async generateUniquePin(): Promise<string> {
@@ -104,6 +105,20 @@ export class AuthService {
         return {
           access_token: this.jwtService.sign(payload),
         };
+      }
+
+
+      async loginWithPin(pin: LoginStaffDto) {
+        const user = await this.prisma.user.findUnique({ where: pin});
+
+        if(!user) {
+            throw new NotFoundException('User not found');
+        }
+
+        const payload = { email: user.email, sub: user.user_id };
+        return {
+            access_token: this.jwtService.sign(payload),
+        }
       }
     }
 

@@ -1,18 +1,24 @@
-import { Controller, Post, Body, HttpCode, HttpStatus, UseGuards, Get, Param} from '@nestjs/common';
+import { Controller, Post, Body, HttpCode, HttpStatus, UseGuards, Get, Param, Patch, Delete} from '@nestjs/common';
+
+import { Role } from '@prisma/client';
+import { JwtAuthGuard } from 'src/utils/guard/jwt.guard';
+import { RolesGuard } from 'src/utils/guard/roles.guard';
+import { User } from 'src/utils/decorator/user.decorator';
+import { Roles } from 'src/utils/decorator/roles.decorator';
+
 import { StoreService } from './store.service';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { JwtAuthGuard } from 'src/utils/guard/jwt.guard';
-import { User } from 'src/utils/decorator/user.decorator';
 import { Create_Store_Dto, Invite_User_Dto, Update_Store_Dto } from './dto/store.dto';
 import { ApiResponse, ApiBadRequestResponse, ApiUnauthorizedResponse, ApiBearerAuth } from '@nestjs/swagger';
 
 @Controller('store')
+@UseGuards(JwtAuthGuard, RolesGuard)
 export class StoreController {
     constructor(private store_service: StoreService, private prisma: PrismaService) {}
 
     @Post()
-    @UseGuards(JwtAuthGuard)
     @HttpCode(HttpStatus.CREATED)
+    @Roles(Role.SUPER_ADMIN, Role.OWNER)
     @ApiResponse( {status: 201, description: 'Successfully created'})
     @ApiBadRequestResponse({status: 400, description: 'Invalid data'})
     @ApiUnauthorizedResponse({ status: 401, description: 'Unauthorized' })
@@ -27,8 +33,8 @@ export class StoreController {
     }
 
     @Post(':store_id/invite')
-    @UseGuards(JwtAuthGuard)
     @HttpCode(HttpStatus.CREATED)
+    @Roles(Role.SUPER_ADMIN, Role.OWNER)
     @ApiResponse( {status: 201, description: 'Successfully invited new staff'})
     @ApiBadRequestResponse({status: 400, description: 'Invalid data'})
     @ApiUnauthorizedResponse({ status: 401, description: 'Unauthorized' })
@@ -47,7 +53,7 @@ export class StoreController {
     }
 
     @Get()
-    @UseGuards(JwtAuthGuard)
+    @HttpCode(HttpStatus.OK)
     @ApiResponse({status: 200, description: 'Successfully fetched all stores'})
     @ApiBadRequestResponse({status: 400, description: 'Invalid data'})
     @ApiUnauthorizedResponse({ status: 401, description: 'Unauthorized' })
@@ -61,8 +67,8 @@ export class StoreController {
         };
     }
 
-    @Get()
-    @UseGuards(JwtAuthGuard)
+    @Get('staff')
+    @HttpCode(HttpStatus.OK)
     @ApiResponse({status: 200, description: 'Successfully fetched all Staffs'})
     @ApiBadRequestResponse({status: 400, description: 'Invalid data'})
     @ApiUnauthorizedResponse({ status: 401, description: 'Unauthorized' })
@@ -77,7 +83,7 @@ export class StoreController {
     }
 
     @Get(':store_staff_id')
-    @UseGuards(JwtAuthGuard)
+    @HttpCode(HttpStatus.OK)
     @ApiResponse({status: 200, description: 'Successfully fetched Staff'})
     @ApiBadRequestResponse({status: 400, description: 'Invalid data'})
     @ApiUnauthorizedResponse({ status: 401, description: 'Unauthorized' })
@@ -89,6 +95,53 @@ export class StoreController {
             response: 'Successfully fetched Staff',
             data: result,
         };
+    }
+    
+
+    @Patch()
+    @HttpCode(HttpStatus.OK)
+    @Roles(Role.SUPER_ADMIN, Role.OWNER)
+    @ApiResponse({status: 200, description: 'Successfully updated Store'})
+    @ApiUnauthorizedResponse({status: 401, description: 'Unauthorized'})
+    @ApiBadRequestResponse({status: 400, description: 'Invalid data'})
+    @ApiBearerAuth()
+    async update(@User() user: any, @Body() update_store: Update_Store_Dto) {
+        const result = await this.store_service.update(user.user_id, update_store);
+        return {
+            StatusCode: HttpStatus.OK,
+            response: 'Successfully updated store',
+            data: result,
+        };
+    }
+
+    @Delete(':store_id')
+    @ApiResponse({ status: 200, description: 'Successfully deleted store' })
+    @ApiUnauthorizedResponse({ status: 401, description: 'Unauthorized' })
+    @ApiBadRequestResponse({ status: 400, description: 'Invalid data' })
+    @ApiBearerAuth()
+    @Roles(Role.SUPER_ADMIN, Role.OWNER)
+    async delete(@Param('store_id') store_id: number) {
+      const result = await this.store_service.delete(store_id);
+      return {
+        StatusCode: HttpStatus.OK,
+        response: 'Successfully deleted store',
+        data: result,
+      };
+    }
+  
+    @Delete('staff/:store_staff_id')
+    @ApiResponse({ status: 200, description: 'Successfully deleted staff' })
+    @ApiUnauthorizedResponse({ status: 401, description: 'Unauthorized' })
+    @ApiBadRequestResponse({ status: 400, description: 'Invalid data' })
+    @ApiBearerAuth()
+    @Roles(Role.SUPER_ADMIN, Role.OWNER)
+    async deleteStaff(@Param('store_staff_id') store_staff_id: number) {
+      const result = await this.store_service.deleteStaff(store_staff_id);
+      return {
+        StatusCode: HttpStatus.OK,
+        response: 'Successfully deleted staff',
+        data: result,
+      };
     }
     
 
