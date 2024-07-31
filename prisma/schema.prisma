@@ -40,7 +40,8 @@ model Store {
     products            Product[]
     productCategory     ProductCategory[]
     inventories         Inventory[]
-    // suppliers           Supplier[]     
+    // suppliers           Supplier[]    
+    partners            DriverPartner[] 
 
     user                User            @relation(fields: [user_id], references: [user_id])
 
