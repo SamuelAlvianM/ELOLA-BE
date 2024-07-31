@@ -10,7 +10,7 @@ import { PrismaService } from './prisma/prisma.service';
 import { ConfigModule } from '@nestjs/config';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
-import { StoreModule } from './store/store.module';
+import { StoreModule } from './store_and_staff/store.module';
 import { PaymentModule } from './payment/payment.module';
 
 @Module({
