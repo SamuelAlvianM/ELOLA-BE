@@ -12,6 +12,10 @@ import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { StoreModule } from './store_and_staff/store.module';
 import { PaymentModule } from './payment/payment.module';
+import { TaxModule } from './tax/tax.module';
+import { DriverPartnerController } from './driver_partner/driver_partner.controller';
+import { DriverPartnerService } from './driver_partner/driver_partner.service';
+import { DriverPartnerModule } from './driver_partner/driver_partner.module';
 
 @Module({
   imports: [
@@ -28,8 +32,10 @@ import { PaymentModule } from './payment/payment.module';
       secret: process.env.JWT_SECRET_KEY,
       signOptions: { expiresIn: '60m'},
     }),
+    TaxModule,
+    DriverPartnerModule,
   ],
-  controllers: [AppController],
-  providers: [AppService, UserService, PrismaService],
+  controllers: [AppController, DriverPartnerController],
+  providers: [AppService, UserService, PrismaService, DriverPartnerService],
 })
 export class AppModule {}
