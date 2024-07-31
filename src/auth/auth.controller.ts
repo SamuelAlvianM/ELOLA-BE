@@ -1,7 +1,7 @@
 import { Controller, Post, Request, Body, UseGuards, Req, HttpCode, HttpStatus, Get } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { UserDto } from '../user/dto/user.dto';
-import { LoginDto, LoginStaffDto } from './dto/login.dto';
+import { LoginDto, LoginStaffDto, Super_Login } from './dto/login.dto';
 import { Role } from '@prisma/client';
 import { Roles } from '../utils/decorator/roles.decorator';
 import { JwtAuthGuard } from '../utils/guard/jwt.guard';
@@ -35,8 +35,23 @@ export class AuthController {
         };
     }
 
-    @Post('login/owner')
-    @UseGuards(JwtAuthGuard)
+    @Post('super-login')
+    @HttpCode(HttpStatus.OK)
+    @ApiResponse( {status: 200, description: 'Successfully logged in'})
+    @ApiBadRequestResponse({status: 400, description: 'Invalid data'})
+    @ApiUnauthorizedResponse({ status: 401, description: 'Unauthorized' })
+    @ApiBearerAuth()
+    async login_super_admin(
+        @Body() login_super_admin: Super_Login){
+        const result = await this.authService.super_login(login_super_admin, login_super_admin.password);
+        return {
+            statusCode: HttpStatus.OK,
+            message: 'Successfully logged in',
+            data: result,
+        };
+    }
+
+    @Post('login')
     @HttpCode(HttpStatus.OK)
     @ApiResponse( {status: 200, description: 'Successfully logged in'})
     @ApiBadRequestResponse({status: 400, description: 'Invalid data'})
@@ -52,8 +67,7 @@ export class AuthController {
         };
     }
 
-    @Post('login/staff')
-    @UseGuards(JwtAuthGuard)
+    @Post('login/pin')
     @HttpCode(HttpStatus.OK)
     @ApiResponse( {status: 200, description: 'Successfully logged in'})
     @ApiBadRequestResponse({status: 400, description: 'Invalid data'})
@@ -69,8 +83,8 @@ export class AuthController {
         };
     }
 
-    @UseGuards(JwtAuthGuard)
     @Post('logout')
+    @UseGuards(JwtAuthGuard)
     @HttpCode(HttpStatus.NO_CONTENT)
     @ApiResponse( {status: 204, description: 'Successfully logged out'})
     async logout(@Req() req:any) {
@@ -81,8 +95,8 @@ export class AuthController {
         };
     }
 
-    @UseGuards(JwtAuthGuard)
     @Get('user')
+    @UseGuards(JwtAuthGuard)
     @HttpCode(HttpStatus.OK)
     @ApiResponse( {status: 200, description: 'Successfully logged in'})
     @ApiBadRequestResponse({status: 400, description: 'Invalid data'})

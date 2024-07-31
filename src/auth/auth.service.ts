@@ -9,7 +9,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { UserDto } from '../user/dto/user.dto';
-import { LoginStaffDto } from './dto/login.dto';
+import { LoginStaffDto, Super_Login } from './dto/login.dto';
 
 @Injectable()
 export class AuthService {
@@ -72,6 +72,7 @@ export class AuthService {
                     user_name: registerUser.user_name,
                     email: registerUser.email,
                     password: hashedPassword,
+                    role: registerUser.role,
                     pin: uniquePin,
                 }
             });
@@ -85,6 +86,26 @@ export class AuthService {
             throw new ConflictException(`Error occured: ${error.message}`);
         }
     }
+
+    async super_login(super_admin_login: Super_Login, password: string): Promise<any> {
+        const super_admin = await this.prisma.superAdmin.findFirst({ where: { admin_name: super_admin_login.admin_name } });
+    
+        if (!super_admin) {
+            throw new NotFoundException('I think you are not Admin');
+        }
+    
+        const isPasswordValid = await bcrypt.compare(password, super_admin.password);
+    
+        if (!isPasswordValid) {
+            throw new UnauthorizedException('Check your password again, something went wrong');
+        }
+    
+        const payload = { admin_name: super_admin.admin_name, sub: super_admin.super_admin_id };
+        return {
+            access_token: this.jwtService.sign(payload),
+        };
+    }
+
 
 
     async login(email: string, password: string): Promise<any> {
