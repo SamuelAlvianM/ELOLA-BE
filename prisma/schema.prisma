@@ -11,10 +11,9 @@ datasource db {
 
 enum Role {
 
-    SUPER_ADMIN = 'superadmin',
-    OWNER = 'owner',
-    STAFF = 'staff',
-    USER = 'user',
+    SUPER_ADMIN
+    OWNER 
+    STAFF 
 }
 
 
@@ -22,12 +21,13 @@ enum Role {
 model SuperAdmin {
 
     super_admin_id Int @id @default(autoincrement())
-    admin_name String
+    admin_name  String
     admin_email String @unique
-    admin_pin String @unique
-    created_at DateTime @default(now())
-    updated_at DateTime @updatedAt
-    deleted_at DateTime?
+    password    String @unique
+    admin_pin   String @unique
+    created_at  DateTime @default(now())
+    updated_at  DateTime @updatedAt
+    deleted_at  DateTime?
 
 }
 
@@ -38,7 +38,7 @@ model User {
     email          String      @unique
     pin            String      @unique
     password       String  
-    role           Role      @default(USER)
+    role           Role      
     created_at     DateTime    @default(now())
     updated_at     DateTime    @updatedAt
     deleted_at     DateTime?

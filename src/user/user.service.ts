@@ -30,6 +30,7 @@ export class UserService {
         return this.prisma.user.create({
             data: {
                 ...user_dto,
+                role: user_dto.role,
                 password: hashed_password,
                 pin: unique_pin,
             },
