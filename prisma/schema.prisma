@@ -8,12 +8,37 @@ datasource db {
     url = env("DATABASE_URL")
 }
 
+
+enum Role {
+
+    SUPER_ADMIN = 'superadmin',
+    OWNER = 'owner',
+    STAFF = 'staff',
+    USER = 'user',
+}
+
+
+
+model SuperAdmin {
+
+    super_admin_id Int @id @default(autoincrement())
+    admin_name String
+    admin_email String @unique
+    admin_pin String @unique
+    created_at DateTime @default(now())
+    updated_at DateTime @updatedAt
+    deleted_at DateTime?
+
+}
+
+
 model User {
     user_id        Int         @id @default(autoincrement()) 
     user_name      String      @unique
     email          String      @unique
     pin            String      @unique
     password       String  
+    role           Role      @default(USER)
     created_at     DateTime    @default(now())
     updated_at     DateTime    @updatedAt
     deleted_at     DateTime?
@@ -22,6 +47,7 @@ model User {
     user_opening   OpenClose[] @relation(name: "user_open")
     user_closing   OpenClose[] @relation(name: "user_closed")
     transactions   Transaction[]
+    store_staff    StoreStaff[]
 }
 
 model Store {
@@ -40,8 +66,14 @@ model Store {
     products            Product[]
     productCategory     ProductCategory[]
     inventories         Inventory[]
+<<<<<<< HEAD
     // suppliers           Supplier[]    
     partners            DriverPartner[] 
+=======
+    // suppliers           Supplier[]
+    store_staff         StoreStaff[]
+    driver_partners    DriverPartner[]
+>>>>>>> 5f6a9113152f90af120ff0640690db7885a77efe
 
     user                User            @relation(fields: [user_id], references: [user_id])
 
@@ -343,4 +375,19 @@ model SupplierTax {
     tax         Tax      @relation(fields: [tax_id], references: [tax_id])
 
     @@id([supplier_id, tax_id])
+}
+
+model StoreStaff { 
+    store_staff_id  Int @id @default(autoincrement())
+    store_id        Int
+    user_id         Int
+    role            String
+
+    store Store @relation(fields: [store_id], references: [store_id])
+    user  User  @relation(fields: [user_id], references: [user_id])
+
+    created_at DateTime @default(now())
+    updated_at DateTime @updatedAt
+    deleted_at DateTime?
+
 }
