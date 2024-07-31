@@ -10,23 +10,23 @@ import { PrismaService } from './prisma/prisma.service';
 import { ConfigModule } from '@nestjs/config';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
-import { StoreModule } from './store_and_staff/store.module';
+import { StoreModule } from './store/store.module';
 import { PaymentModule } from './payment/payment.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
-      isGlobal:true,
+      isGlobal: true,
     }),
-    AuthModule, 
-    PrismaModule, 
+    AuthModule,
+    PrismaModule,
     UserModule,
     StoreModule,
     PaymentModule,
-    PassportModule.register({ defaultStrategy: 'jwt'}),
+    PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.register({
       secret: process.env.JWT_SECRET_KEY,
-      signOptions: { expiresIn: '60m'},
+      signOptions: { expiresIn: '60m' },
     }),
   ],
   controllers: [AppController],
