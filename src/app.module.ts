@@ -22,19 +22,19 @@ import { ProductCategoryModule } from './product_category/productCategory.module
 @Module({
   imports: [
     ConfigModule.forRoot({
-      isGlobal:true,
+      isGlobal: true,
     }),
-    AuthModule, 
-    PrismaModule, 
+    AuthModule,
+    PrismaModule,
     UserModule,
     StoreModule,
     PromoModule,
     ProductCategoryModule,
     PaymentModule,
-    PassportModule.register({ defaultStrategy: 'jwt'}),
+    PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.register({
       secret: process.env.JWT_SECRET_KEY,
-      signOptions: { expiresIn: '60m'},
+      signOptions: { expiresIn: '60m' },
     }),
     TaxModule,
     DriverPartnerModule,
