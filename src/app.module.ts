@@ -15,6 +15,12 @@ import { PaymentModule } from './payment/payment.module';
 import { ProductModule } from './product/product.module';
 import { SupplierModule } from './supplier/supplier.module';
 import { TransactionModule } from './transactions/transaction.module';
+import { TaxModule } from './tax/tax.module';
+import { DriverPartnerController } from './driver_partner/driver_partner.controller';
+import { DriverPartnerService } from './driver_partner/driver_partner.service';
+import { DriverPartnerModule } from './driver_partner/driver_partner.module';
+import { PromoModule } from './promo/promo.module';
+import { ProductCategoryModule } from './product_category/productCategory.module';
 
 @Module({
   imports: [
@@ -25,6 +31,8 @@ import { TransactionModule } from './transactions/transaction.module';
     PrismaModule,
     UserModule,
     StoreModule,
+    PromoModule,
+    ProductCategoryModule,
     PaymentModule,
     ProductModule,
     SupplierModule,
@@ -34,8 +42,10 @@ import { TransactionModule } from './transactions/transaction.module';
       secret: process.env.JWT_SECRET_KEY,
       signOptions: { expiresIn: '60m' },
     }),
+    TaxModule,
+    DriverPartnerModule,
   ],
-  controllers: [AppController],
-  providers: [AppService, UserService, PrismaService],
+  controllers: [AppController, DriverPartnerController],
+  providers: [AppService, UserService, PrismaService, DriverPartnerService],
 })
 export class AppModule {}
