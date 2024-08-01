@@ -132,7 +132,6 @@ model ProductCategory {
 }
 
 model Product {
-<<<<<<< HEAD
   product_id          Int       @id @default(autoincrement())
   store_id            Int
   product_category_id Int
@@ -172,55 +171,12 @@ model Inventory {
   InventorySupplier InventorySupplier[]
 
   @@unique([product_id, store_id])
-=======
-    product_id              Int             @id @default(autoincrement())
-    store_id                Int
-    product_category_id     Int
-    product_name            String
-    product_price           Int
-    cost_of_good_sold       Int
-    product_code            Int
-    product_image           String?
-    
-    created_at              DateTime        @default(now())
-    updated_at              DateTime        @updatedAt
-    deleted_at              DateTime?
 
-    store                   Store           @relation(fields: [store_id], references: [store_id])
-    promos                  Promo[]
-    inventories             Inventory[]  
-    taxes                   Tax[]   
-    ProductTax              ProductTax[]
-
-    @@unique([store_id, product_category_id])
-}
-
-model Inventory {
-    inventory_id        Int                     @id @default(autoincrement())
-    product_id          Int
-    store_id            Int
-    inventory_name      String
-    in_storage_date     DateTime                @default(now())
-    value_stored        Int
-    value_out           Int
-    out_storage_date    DateTime                @default(now())
-    
-    created_at          DateTime                @default(now())
-    updated_at          DateTime                @updatedAt
-    deleted_at          DateTime?
-
-    InventorySupplier   InventorySupplier[]
-    product             Product                 @relation(fields: [product_id], references: [product_id])
-    store               Store                   @relation(fields: [store_id], references: [store_id])
-    
-    @@unique([product_id, store_id])
->>>>>>> 3930218c8553773c0f38ad20c4fa1ea581b31e96
 }
 
 model Supplier {
   supplier_id Int @id @default(autoincrement())
 
-<<<<<<< HEAD
   supplier_name    String
   supplier_product String
   phone_number     Int
@@ -228,20 +184,7 @@ model Supplier {
   created_at       DateTime  @default(now())
   updated_at       DateTime  @updatedAt
   deleted_at       DateTime?
-=======
-    supplier_name       String
-    supplier_product    String
-    phone_number        Int
-    email               String          @unique
-    created_at          DateTime        @default(now())
-    updated_at          DateTime        @updatedAt
-    deleted_at          DateTime?
-    
-    SupplierTax         SupplierTax[]
-    StoreSupplier       StoreSupplier[]
-    InventorySupplier   InventorySupplier[]
-    Taxes               Tax[]
->>>>>>> 3930218c8553773c0f38ad20c4fa1ea581b31e96
+
 
   SupplierTax       SupplierTax[]
   StoreSupplier     StoreSupplier[]
@@ -274,7 +217,7 @@ enum Payment_type {
 }
 
 model Payment {
-<<<<<<< HEAD
+
   payment_id   Int          @id @default(autoincrement())
   store_id     Int
   payment_name String       @unique
@@ -285,18 +228,7 @@ model Payment {
   deleted_at DateTime?
 
   store Store @relation(fields: [store_id], references: [store_id])
-=======
-    payment_id          Int             @id @default(autoincrement())
-    store_id            Int 
-    payment_name        String          @unique
-    payment_type        Payment_type
 
-    created_at          DateTime        @default(now())
-    updated_at          DateTime        @updatedAt
-    deleted_at          DateTime? 
-
-    store               Store           @relation(fields: [store_id], references: [store_id])
->>>>>>> 3930218c8553773c0f38ad20c4fa1ea581b31e96
 
   @@unique([store_id])
 }
@@ -313,7 +245,6 @@ enum Order_payment_type {
 }
 
 model Transaction {
-<<<<<<< HEAD
   transaction_id String             @id @default(uuid())
   store_id       Int
   user_id        Int
@@ -337,31 +268,6 @@ model Transaction {
   store   Store         @relation(fields: [store_id], references: [store_id])
   user    User          @relation(fields: [user_id], references: [user_id])
   partner DriverPartner @relation(fields: [driver_partner], references: [partner_name])
-=======
-    transaction_id      String              @id @default(uuid())
-    store_id            Int
-    user_id             Int
-    order_type          Order_type
-    driver_partner      String
-    receipt_number      Int                 @default(autoincrement())
-    sub_total           Float
-    service             Float
-    tax                 Float
-    discount            Float
-    rounding            Int
-    grand_total         Int
-    c_o_g_s             Float
-    payment_type        Order_payment_type
-    change              Int
-
-    created_at          DateTime            @default(now())
-    updated_at          DateTime            @updatedAt
-    deleted_at          DateTime?
-
-    store               Store               @relation(fields: [store_id], references: [store_id])
-    user                User                @relation(fields: [user_id], references: [user_id])
-    partner             DriverPartner       @relation(fields: [driver_partner], references: [partner_name])
->>>>>>> 3930218c8553773c0f38ad20c4fa1ea581b31e96
 
   @@unique([store_id, user_id, driver_partner])
 }
@@ -372,7 +278,7 @@ enum Promo_type {
 }
 
 model Promo {
-<<<<<<< HEAD
+
   promo_id    Int        @id @default(autoincrement())
   product_id  Int
   promo_type  Promo_type
@@ -383,20 +289,6 @@ model Promo {
   created_at DateTime  @default(now())
   updated_at DateTime  @updatedAt
   deleted_at DateTime?
-=======
-    promo_id            Int             @id @default(autoincrement())
-    product_id          Int
-    promo_type          Promo_type
-    promo_value         Int
-    start_date          DateTime        @default(now())
-    end_date            DateTime        @default(now())
-    
-    created_at          DateTime        @default(now())
-    updated_at          DateTime        @updatedAt
-    deleted_at          DateTime?
-
-    product             Product         @relation(fields: [product_id], references: [product_id])
->>>>>>> 3930218c8553773c0f38ad20c4fa1ea581b31e96
 
   product Product @relation(fields: [product_id], references: [product_id])
 
@@ -412,7 +304,6 @@ model ProductTax {
   @@id([product_id, tax_id])
 }
 
-<<<<<<< HEAD
 model DriverPartnerStore {
   driver_partner_id Int
   store_id          Int
@@ -422,8 +313,7 @@ model DriverPartnerStore {
   @@id([driver_partner_id, store_id])
 }
 
-=======
->>>>>>> 3930218c8553773c0f38ad20c4fa1ea581b31e96
+
 model StoreSupplier {
   store_id    Int
   supplier_id Int
@@ -451,7 +341,7 @@ model SupplierTax {
   @@id([supplier_id, tax_id])
 }
 
-<<<<<<< HEAD
+
 model StoreStaff {
   store_staff_id Int    @id @default(autoincrement())
   store_id       Int
@@ -465,18 +355,3 @@ model StoreStaff {
   updated_at DateTime  @updatedAt
   deleted_at DateTime?
 }
-=======
-model StoreStaff { 
-    store_staff_id  Int         @id @default(autoincrement())
-    store_id        Int
-    user_id         Int
-    role            String
-
-    created_at      DateTime    @default(now())
-    updated_at      DateTime    @updatedAt
-    deleted_at      DateTime?
-
-    store           Store       @relation(fields: [store_id], references: [store_id])
-    user            User        @relation(fields: [user_id], references: [user_id])
-}
->>>>>>> 3930218c8553773c0f38ad20c4fa1ea581b31e96
