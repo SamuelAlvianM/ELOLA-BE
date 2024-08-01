@@ -10,11 +10,9 @@ import { PrismaService } from './prisma/prisma.service';
 import { ConfigModule } from '@nestjs/config';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
-import { StoreModule } from './store_and_staff/store.module';
+import { StoreModule } from './store/store.module';
 import { PaymentModule } from './payment/payment.module';
 import { TaxModule } from './tax/tax.module';
-import { DriverPartnerController } from './driver_partner/driver_partner.controller';
-import { DriverPartnerService } from './driver_partner/driver_partner.service';
 import { DriverPartnerModule } from './driver_partner/driver_partner.module';
 
 @Module({
@@ -30,12 +28,12 @@ import { DriverPartnerModule } from './driver_partner/driver_partner.module';
     PassportModule.register({ defaultStrategy: 'jwt'}),
     JwtModule.register({
       secret: process.env.JWT_SECRET_KEY,
-      signOptions: { expiresIn: '60m'},
+      signOptions: { expiresIn: '24h'},
     }),
     TaxModule,
     DriverPartnerModule,
   ],
-  controllers: [AppController, DriverPartnerController],
-  providers: [AppService, UserService, PrismaService, DriverPartnerService],
+  controllers: [AppController],
+  providers: [AppService, UserService, PrismaService],
 })
 export class AppModule {}

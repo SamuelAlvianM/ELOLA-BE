@@ -4,6 +4,7 @@ import { UserDto } from '../user/dto/user.dto';
 import { LoginDto, LoginStaffDto, Super_Login } from './dto/login.dto';
 import { Role } from '@prisma/client';
 import { Roles } from '../utils/decorator/roles.decorator';
+import { RolesGuard} from '../utils/guard/roles.guard';
 import { JwtAuthGuard } from '../utils/guard/jwt.guard';
 import {
     ApiTags,
@@ -18,8 +19,8 @@ export class AuthController {
     constructor(private authService: AuthService) {}
         
     @Post('register')
+    @UseGuards(RolesGuard)
     @Roles(Role.SUPER_ADMIN)
-    @UseGuards(JwtAuthGuard)
     @HttpCode(HttpStatus.CREATED)
     @ApiResponse( {status: 201, description: 'Successfully registered'})
     @ApiBadRequestResponse({status: 400, description: 'Invalid data'})
