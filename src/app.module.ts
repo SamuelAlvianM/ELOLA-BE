@@ -10,12 +10,14 @@ import { PrismaService } from './prisma/prisma.service';
 import { ConfigModule } from '@nestjs/config';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
-import { StoreModule } from './store_and_staff/store.module';
+import { StoreModule } from './store/store.module';
 import { PaymentModule } from './payment/payment.module';
 import { TaxModule } from './tax/tax.module';
 import { DriverPartnerController } from './driver_partner/driver_partner.controller';
 import { DriverPartnerService } from './driver_partner/driver_partner.service';
 import { DriverPartnerModule } from './driver_partner/driver_partner.module';
+import { PromoModule } from './promo/promo.module';
+import { ProductCategoryModule } from './product_category/productCategory.module';
 
 @Module({
   imports: [
@@ -26,6 +28,8 @@ import { DriverPartnerModule } from './driver_partner/driver_partner.module';
     PrismaModule, 
     UserModule,
     StoreModule,
+    PromoModule,
+    ProductCategoryModule,
     PaymentModule,
     PassportModule.register({ defaultStrategy: 'jwt'}),
     JwtModule.register({
