@@ -16,7 +16,7 @@ async function main() {
         admin_name: 'Samuel Alvian',
         admin_email: super_admin_email,
         password: hashed_password,
-        admin_pin: '7699', 
+        admin_pin: '070699', 
     },
   });
 
@@ -31,3 +31,6 @@ main()
   .finally(async () => {
     await prisma.$disconnect();
   });
+
+
+  // to run = npx ts-node prisma/seed.ts

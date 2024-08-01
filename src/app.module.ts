@@ -16,8 +16,6 @@ import { ProductModule } from './product/product.module';
 import { SupplierModule } from './supplier/supplier.module';
 import { TransactionModule } from './transactions/transaction.module';
 import { TaxModule } from './tax/tax.module';
-import { DriverPartnerController } from './driver_partner/driver_partner.controller';
-import { DriverPartnerService } from './driver_partner/driver_partner.service';
 import { DriverPartnerModule } from './driver_partner/driver_partner.module';
 import { PromoModule } from './promo/promo.module';
 import { ProductCategoryModule } from './product_category/productCategory.module';
@@ -40,12 +38,13 @@ import { ProductCategoryModule } from './product_category/productCategory.module
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.register({
       secret: process.env.JWT_SECRET_KEY,
-      signOptions: { expiresIn: '60m' },
+      signOptions: { expiresIn: '24h'},
+
     }),
     TaxModule,
     DriverPartnerModule,
   ],
-  controllers: [AppController, DriverPartnerController],
-  providers: [AppService, UserService, PrismaService, DriverPartnerService],
+  controllers: [AppController],
+  providers: [AppService, UserService, PrismaService],
 })
 export class AppModule {}
