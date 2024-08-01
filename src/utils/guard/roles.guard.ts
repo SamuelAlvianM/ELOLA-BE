@@ -19,6 +19,7 @@ export class RolesGuard implements CanActivate {
     }
     // role(s) yang dibutuhkan untuk request 
     const request  = context.switchToHttp().getRequest();
+    const super_admin = request.superAdmin;
     const user = request.user;
 
     if(!user) {
@@ -26,7 +27,10 @@ export class RolesGuard implements CanActivate {
     }
 
     const hasRole =  () => role_required.some((role) => user.role.includes(role));
-    return user && user.roles && hasRole();
+    if (!hasRole()) {
+      throw new ForbiddenException('You do not have the required roles');
+    }
+    return true;
 
   }
 }
