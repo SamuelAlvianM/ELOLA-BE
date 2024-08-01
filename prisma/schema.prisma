@@ -118,8 +118,6 @@ enum Tax_type {
 
 model Tax {
     tax_id                  Int             @id @default(autoincrement())
-    product_id              Int
-    productPackage_id       Int
     tax_type                Tax_type
     tax_name                String
     tax_value               Int
@@ -129,14 +127,11 @@ model Tax {
     updated_at              DateTime        @updatedAt
     deleted_at              DateTime? 
 
-    // productPackage          ProductPackage[]
-    // product                 Product[]
-    // suppliers               Supplier[]
+    product                 Product[]
+    suppliers               Supplier[]
+    ProductTax              ProductTax[]
+    SupplierTax             SupplierTax[]
 
-    @@unique ([productPackage_id, product_id])
-    ProductPackageTax ProductPackageTax[]
-    ProductTax ProductTax[]
-    SupplierTax SupplierTax[]
 }
 
 model ProductCategory {
@@ -166,33 +161,15 @@ model Product {
     deleted_at              DateTime?
 
     store                   Store           @relation(fields: [store_id], references: [store_id])
-    productpackages         ProductPackage[]
     promos                  Promo[]
     inventories             Inventory[]  
-    // taxes                   Tax[]   
+    taxes                   Tax[]   
 
     @@unique                ([store_id, product_category_id])
     ProductTax ProductTax[]
 
 }
 
-model ProductPackage {
-    productPackage_id       Int             @id @default(autoincrement())
-    product_id              Int
-    package_name            String
-    package_price           Int
-    cost_of_good_sold       Int
-
-    created_at              DateTime        @default(now())
-    updated_at              DateTime        @updatedAt
-    deleted_at              DateTime?
-
-    product                 Product         @relation(fields: [product_id], references: [product_id])
-    // taxes                   Tax[]
-
-    @@unique([product_id])
-    ProductPackageTax ProductPackageTax[]
-}
 
 model Inventory {
     inventory_id        Int         @id @default(autoincrement())
@@ -209,7 +186,6 @@ model Inventory {
 
     product             Product     @relation(fields: [product_id], references: [product_id])
     store               Store       @relation(fields: [store_id], references: [store_id])
-    // suppliers           Supplier[]
 
 
     @@unique([product_id, store_id])
@@ -218,9 +194,6 @@ model Inventory {
 
 model Supplier {
     supplier_id         Int             @id @default(autoincrement())
-    // store_id            Int
-    // inventory_id        Int
-    // tax_id              Int
 
     supplier_name       String
     supplier_product    String
@@ -230,14 +203,12 @@ model Supplier {
     updated_at          DateTime        @updatedAt
     deleted_at          DateTime?
     
-    // store               Store[]
-    // inventories         Inventory[]
-    // taxes               Tax[]
+    SupplierTax SupplierTax[]
+    StoreSupplier StoreSupplier[]
+    InventorySupplier InventorySupplier[]
+    Taxes Tax[]
 
     @@unique ([ supplier_id])
-    InventorySupplier InventorySupplier[]
-    StoreSupplier StoreSupplier[]
-    SupplierTax SupplierTax[]
 }
 
 model DriverPartner {
@@ -347,14 +318,6 @@ model ProductTax {
     @@id([product_id, tax_id])
 }
 
-model ProductPackageTax {
-    productPackage_id   Int
-    tax_id              Int
-    productPackage      ProductPackage @relation(fields: [productPackage_id], references: [productPackage_id])
-    tax                 Tax             @relation(fields: [tax_id], references: [tax_id])
-
-    @@id([productPackage_id, tax_id])
-}
 
 model StoreSupplier {
     store_id    Int
