@@ -217,13 +217,12 @@ enum Payment_type {
 }
 
 model Payment {
-
   payment_id   Int          @id @default(autoincrement())
   store_id     Int
   payment_name String       @unique
   payment_type Payment_type
 
-  created_at DateTime  @default(now())
+  created_at  DateTime  @default(now())
   updated_at DateTime  @updatedAt
   deleted_at DateTime?
 

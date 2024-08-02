@@ -3,10 +3,6 @@ import { IsInt, IsNotEmpty, IsString, IsEnum } from "class-validator";
 import { Payment_type } from "@prisma/client";
 
 export class createPayment {
-    // @IsInt()
-    // @IsNotEmpty()
-    // payment_id: number;
-
     @IsInt()
     @IsNotEmpty()
     store_id: number;
