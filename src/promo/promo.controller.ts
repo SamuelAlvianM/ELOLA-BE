@@ -1,18 +1,34 @@
 /* eslint-disable prettier/prettier */
 // src/controller/promo.controller.ts
 
-import { Controller, Get, Post, Body, Param, Patch, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Patch, Delete, HttpStatus, HttpCode, UseGuards } from '@nestjs/common';
 import { PromoService } from './promo.service';
 import { CreatePromoDto, UpdatePromoDto } from './dto/promo.dto';
+import { Role } from '@prisma/client';
+import { RolesGuard } from 'src/utils/guard/roles.guard';
+import { Roles } from 'src/utils/decorator/roles.decorator';
+import { ApiResponse, ApiBadRequestResponse, ApiUnauthorizedResponse, ApiBearerAuth } from '@nestjs/swagger';
+import { JwtAuthGuard } from 'src/utils/guard/jwt.guard';
 
 @Controller('promos')
+@UseGuards(JwtAuthGuard, RolesGuard)
 export class PromoController {
   constructor(private readonly promoService: PromoService) {}
 
+  
   @Post()
-  create(@Body() createPromoDto: CreatePromoDto) {
-    return this.promoService.createPromo(createPromoDto);
-  }
+  @Roles(Role.SUPER_ADMIN, Role.OWNER)
+  @HttpCode(HttpStatus.CREATED)
+  @ApiResponse( {status: 201, description: 'Successfully created'})
+  @ApiBadRequestResponse({status: 400, description: 'Invalid data'})
+  @ApiUnauthorizedResponse({ status: 401, description: 'Unauthorized' })
+  @ApiBearerAuth()
+    async createPromo(@Body() createPromoDto: CreatePromoDto) {
+        const result = await this.promoService.createPromo(createPromoDto)
+        return {
+          data: result
+        }
+      }
 
   @Get()
   findAll() {
