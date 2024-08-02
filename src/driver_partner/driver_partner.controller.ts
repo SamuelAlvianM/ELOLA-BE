@@ -6,6 +6,7 @@ import { Roles } from '../utils/decorator/roles.decorator';
 import { Role } from '@prisma/client';
 import { ApiBadRequestResponse, ApiResponse, ApiUnauthorizedResponse } from '@nestjs/swagger';
 import { Create_DP_Dto, Update_DP_Dto } from './dto/dp.dto';
+import { CurrentStore, User } from 'src/utils/decorator/user.decorator';
 
 @Controller('driver-partner')
 export class DriverPartnerController {
@@ -51,13 +52,15 @@ export class DriverPartnerController {
     @ApiResponse( {status: 201, description: 'Successfully created driver partner'})
     @ApiBadRequestResponse({status: 400, description: 'error when creating driver partner'})
     @ApiUnauthorizedResponse({ status: 401, description: 'Unauthorized' })
-    async createDriver_Partner(@Body() create_driver_partner: Create_DP_Dto, store_id: number) {
-        const result = await this.service_dp.create_Driver_Partner(create_driver_partner, store_id);
-
+    async createDriver_Partner(
+        @Body() create_driver_partner: Create_DP_Dto,
+    ) {
+        const result = await this.service_dp.create_Driver_Partner(create_driver_partner);
         return {
             StatusCode: HttpStatus.CREATED,
             response: 'Successfully created driver partner',
             data: result,
+
         }
     }
 
