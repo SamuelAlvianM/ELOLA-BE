@@ -1,9 +1,14 @@
 import { IsString, IsInt, IsNotEmpty, IsOptional } from 'class-validator';
 
 export class Create_DP_Dto {
+
+    @IsNotEmpty()
+    @IsInt()
+    store_id: number;
+
     @IsString()
     @IsNotEmpty()
-    driver_partner_name: string;
+    partner_name: string;
 
     @IsInt()
     @IsNotEmpty()

@@ -71,7 +71,7 @@ export class UserController {
     @Patch(':user_id')
     @UseGuards(JwtAuthGuard)
     @HttpCode(HttpStatus.OK)
-    @Roles(Role.SUPER_ADMIN, Role.OWNER)
+    @Roles(Role.SUPER_ADMIN, Role.OWNER, Role.STAFF)
     @ApiResponse( {status: 200, description: 'This is updated user data'})
     @ApiBadRequestResponse({status: 400, description: 'Something wrong when updating data'})
     @ApiUnauthorizedResponse({ status: 401, description: 'Unauthorized' })

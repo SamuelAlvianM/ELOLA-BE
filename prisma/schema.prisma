@@ -206,9 +206,9 @@ model DriverPartner {
 
   orders               Transaction[]
   driver_partner_store DriverPartnerStore[]
-  store                Store                @relation(fields: [store_id], references: [store_id])
+  stores                Store?  @relation(fields: [store_id], references: [store_id])
 
-  @@unique([store_id])
+  @@unique([store_id, partner_name])
 }
 
 enum Payment_type {
