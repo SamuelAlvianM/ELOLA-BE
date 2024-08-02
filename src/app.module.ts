@@ -20,6 +20,7 @@ import { DriverPartnerModule } from './driver_partner/driver_partner.module';
 import { PromoModule } from './promo/promo.module';
 import { ProductCategoryModule } from './product_category/productCategory.module';
 import { InventoryModule } from './inventory/inventory.module';
+import { OpenCloseModule } from './open_close/open_close.module';
 
 @Module({
   imports: [
@@ -37,6 +38,7 @@ import { InventoryModule } from './inventory/inventory.module';
     ProductModule,
     SupplierModule,
     TransactionModule,
+    OpenCloseModule,
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.register({
       secret: process.env.JWT_SECRET_KEY,
@@ -45,6 +47,7 @@ import { InventoryModule } from './inventory/inventory.module';
     }),
     TaxModule,
     DriverPartnerModule,
+    OpenCloseModule,
   ],
   controllers: [AppController],
   providers: [AppService, UserService, PrismaService],

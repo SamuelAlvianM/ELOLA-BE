@@ -76,11 +76,11 @@ model OpenClose {
   store_id        Int
   is_cashier_open Boolean @default(false)
 
-  open_date DateTime @default(now())
-  open_by   Int
+  open_date DateTime? @default(now())
+  open_by   Int?    // optional condition
 
-  close_date DateTime @default(now())
-  close_by   Int
+  close_date DateTime? @default(now())
+  close_by   Int?  // optional condition
 
   bill_quantity Int
 
@@ -88,8 +88,8 @@ model OpenClose {
   updated_at DateTime  @updatedAt
   deleted_at DateTime?
 
-  user_opened User  @relation(name: "user_open", fields: [open_by], references: [user_id])
-  user_closed User  @relation(name: "user_closed", fields: [close_by], references: [user_id])
+  user_opened User?  @relation(name: "user_open", fields: [open_by], references: [user_id])
+  user_closed User?  @relation(name: "user_closed", fields: [close_by], references: [user_id])
   store       Store @relation(fields: [store_id], references: [store_id])
 
   @@unique([user_id, store_id])
