@@ -19,7 +19,7 @@ export class AuthController {
     constructor(private authService: AuthService) {}
         
     @Post('register')
-    @UseGuards(RolesGuard)
+    // @UseGuards(RolesGuard)
     @Roles(Role.SUPER_ADMIN, Role.OWNER)
     @HttpCode(HttpStatus.CREATED)
     @ApiResponse( {status: 201, description: 'Successfully registered'})

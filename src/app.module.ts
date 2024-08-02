@@ -19,6 +19,7 @@ import { TaxModule } from './tax/tax.module';
 import { DriverPartnerModule } from './driver_partner/driver_partner.module';
 import { PromoModule } from './promo/promo.module';
 import { ProductCategoryModule } from './product_category/productCategory.module';
+import { InventoryModule } from './inventory/inventory.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { ProductCategoryModule } from './product_category/productCategory.module
     UserModule,
     StoreModule,
     PromoModule,
+    InventoryModule,
     ProductCategoryModule,
     PaymentModule,
     ProductModule,
