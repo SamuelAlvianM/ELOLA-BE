@@ -19,8 +19,8 @@ export class AuthController {
     constructor(private authService: AuthService) {}
         
     @Post('register')
-    // @UseGuards(RolesGuard)
     @Roles(Role.SUPER_ADMIN, Role.OWNER)
+    @UseGuards(JwtAuthGuard, RolesGuard)
     @HttpCode(HttpStatus.CREATED)
     @ApiResponse( {status: 201, description: 'Successfully registered'})
     @ApiBadRequestResponse({status: 400, description: 'Invalid data'})
@@ -75,7 +75,7 @@ export class AuthController {
     @ApiUnauthorizedResponse({ status: 401, description: 'Unauthorized' })
     @ApiBearerAuth()
     async loginStaff(
-        @Body('pin') pin: LoginStaffDto){
+        @Body() pin: LoginStaffDto){
         const result = await this.authService.loginWithPin(pin);
         return {
             statusCode: HttpStatus.OK,
