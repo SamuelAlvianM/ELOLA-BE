@@ -67,7 +67,6 @@ model Store {
 
   StoreSupplier      StoreSupplier[]
   DriverPartnerStore DriverPartnerStore[]
-
 }
 
 model OpenClose {
@@ -77,10 +76,10 @@ model OpenClose {
   is_cashier_open Boolean @default(false)
 
   open_date DateTime? @default(now())
-  open_by   Int?    // optional condition
+  open_by   Int? // optional condition
 
   close_date DateTime? @default(now())
-  close_by   Int?  // optional condition
+  close_by   Int? // optional condition
 
   bill_quantity Int
 
@@ -88,8 +87,8 @@ model OpenClose {
   updated_at DateTime  @updatedAt
   deleted_at DateTime?
 
-  user_opened User?  @relation(name: "user_open", fields: [open_by], references: [user_id])
-  user_closed User?  @relation(name: "user_closed", fields: [close_by], references: [user_id])
+  user_opened User? @relation(name: "user_open", fields: [open_by], references: [user_id])
+  user_closed User? @relation(name: "user_closed", fields: [close_by], references: [user_id])
   store       Store @relation(fields: [store_id], references: [store_id])
 
   @@unique([user_id, store_id])
@@ -111,10 +110,10 @@ model Tax {
   updated_at DateTime  @updatedAt
   deleted_at DateTime?
 
-  product     Product[]
-  suppliers   Supplier[]
-  ProductTax  ProductTax[]
-  SupplierTax SupplierTax[]
+  ProductTax          ProductTax[]
+  SupplierTax         SupplierTax[]
+  Supplier            Supplier?     @relation(fields: [supplierSupplier_id], references: [supplier_id])
+  supplierSupplier_id Int?
 }
 
 model ProductCategory {
@@ -144,11 +143,10 @@ model Product {
   updated_at          DateTime  @updatedAt
   deleted_at          DateTime?
 
-  store       Store        @relation(fields: [store_id], references: [store_id])
-  promos      Promo[]
-  inventories Inventory[]
-  taxes       Tax[]
-  ProductTax  ProductTax[]
+  stores       Store          @relation(fields: [store_id], references: [store_id])
+  inventories  Inventory[]
+  ProductPromo ProductPromo[]
+  ProductTax   ProductTax[]
 
   @@unique([store_id, product_category_id])
 }
@@ -171,7 +169,6 @@ model Inventory {
   InventorySupplier InventorySupplier[]
 
   @@unique([product_id, store_id])
-
 }
 
 model Supplier {
@@ -184,7 +181,6 @@ model Supplier {
   created_at       DateTime  @default(now())
   updated_at       DateTime  @updatedAt
   deleted_at       DateTime?
-
 
   SupplierTax       SupplierTax[]
   StoreSupplier     StoreSupplier[]
@@ -206,7 +202,7 @@ model DriverPartner {
 
   orders               Transaction[]
   driver_partner_store DriverPartnerStore[]
-  stores                Store?  @relation(fields: [store_id], references: [store_id])
+  stores               Store?               @relation(fields: [store_id], references: [store_id])
 
   @@unique([store_id, partner_name])
 }
@@ -222,12 +218,11 @@ model Payment {
   payment_name String       @unique
   payment_type Payment_type
 
-  created_at  DateTime  @default(now())
+  created_at DateTime  @default(now())
   updated_at DateTime  @updatedAt
   deleted_at DateTime?
 
   store Store @relation(fields: [store_id], references: [store_id])
-
 
   @@unique([store_id])
 }
@@ -277,7 +272,6 @@ enum Promo_type {
 }
 
 model Promo {
-
   promo_id    Int        @id @default(autoincrement())
   product_id  Int
   promo_type  Promo_type
@@ -289,18 +283,29 @@ model Promo {
   updated_at DateTime  @updatedAt
   deleted_at DateTime?
 
-  product Product @relation(fields: [product_id], references: [product_id])
+  ProductPromo ProductPromo[]
+}
 
-  @@unique([product_id])
+model ProductPromo {
+  product_promo_id Int @id @default(autoincrement())
+  product_id       Int
+  promo_id         Int
+
+  product Product @relation(fields: [product_id], references: [product_id])
+  promo   Promo   @relation(fields: [promo_id], references: [promo_id])
+
+  @@unique([product_id, promo_id])
 }
 
 model ProductTax {
-  product_id Int
-  tax_id     Int
-  product    Product @relation(fields: [product_id], references: [product_id])
-  tax        Tax     @relation(fields: [tax_id], references: [tax_id])
+  product_tax_id Int @id @default(autoincrement())
+  product_id     Int
+  tax_id         Int
 
-  @@id([product_id, tax_id])
+  product Product @relation(fields: [product_id], references: [product_id])
+  tax     Tax     @relation(fields: [tax_id], references: [tax_id])
+
+  @@unique([product_id, tax_id])
 }
 
 model DriverPartnerStore {
@@ -311,7 +316,6 @@ model DriverPartnerStore {
 
   @@id([driver_partner_id, store_id])
 }
-
 
 model StoreSupplier {
   store_id    Int
@@ -339,7 +343,6 @@ model SupplierTax {
 
   @@id([supplier_id, tax_id])
 }
-
 
 model StoreStaff {
   store_staff_id Int    @id @default(autoincrement())

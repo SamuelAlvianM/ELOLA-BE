@@ -15,6 +15,7 @@ import { UpdateProductDto } from './dto/update-product.dto';
 export class ProductController {
   constructor(private readonly productService: ProductService) {}
 
+
   @Post()
   create(@Body() createProductDto: CreateProductDto) {
     return this.productService.create(createProductDto);
@@ -39,4 +40,44 @@ export class ProductController {
   remove(@Param('id') id: string) {
     return this.productService.remove(+id);
   }
+
+
+  
+  @Post(':productId/taxes/:taxId')
+  async addTaxToProduct(
+    @Param('productId') productId: number,
+    @Param('taxId') taxId: number,
+  ) {
+    return this.productService.add_tax_product(productId, taxId);
+  }
+
+  @Delete(':productId/taxes/:taxId')
+  async removeTaxFromProduct(
+    @Param('productId') productId: number,
+    @Param('taxId') taxId: number,
+  ) {
+    return this.productService.remove_tax_product(productId, taxId);
+  }
+
+  @Post(':productId/promos/:promoId')
+  async addPromoToProduct(
+    @Param('productId') productId: number,
+    @Param('promoId') promoId: number,
+  ) {
+    return this.productService.add_promo_product(productId, promoId);
+  }
+
+  @Delete(':productId/promos/:promoId')
+  async removePromoFromProduct(
+    @Param('productId') productId: number,
+    @Param('promoId') promoId: number,
+  ) {
+    return this.productService.remove_promo_product(productId, promoId);
+  }
+
+  @Get(':productId')
+  async getProductWithTaxesAndPromos(@Param('productId') productId: number) {
+    return this.productService.get_product_taxes_promos(productId);
+  }
+
 }
