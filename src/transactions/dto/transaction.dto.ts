@@ -1,4 +1,4 @@
-import { IsInt, IsNumber, IsString, IsEnum } from 'class-validator';
+import { IsInt, IsNumber, IsString, IsEnum, isString } from 'class-validator';
 import { Order_type, Order_payment_type } from '@prisma/client';
 import { IsDateString } from 'class-validator';
 
@@ -14,6 +14,12 @@ export class CreateTransactionDto {
 
   @IsString()
   driver_partner: string;
+
+  @IsString()
+  product_name: string;
+
+  @IsString()
+  tax_name: string;
 
   @IsNumber()
   sub_total: number;
