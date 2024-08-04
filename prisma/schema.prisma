@@ -114,6 +114,9 @@ model Tax {
   SupplierTax         SupplierTax[]
   Supplier            Supplier?     @relation(fields: [supplierSupplier_id], references: [supplier_id])
   supplierSupplier_id Int?
+  Transaction         Transaction[]
+
+  @@unique([tax_name])
 }
 
 model ProductCategory {
@@ -134,7 +137,7 @@ model Product {
   product_id          Int       @id @default(autoincrement())
   store_id            Int
   product_category_id Int
-  product_name        String
+  product_name        String    @unique
   product_price       Int
   cost_of_good_sold   Int
   product_code        Int
@@ -147,6 +150,7 @@ model Product {
   inventories  Inventory[]
   ProductPromo ProductPromo[]
   ProductTax   ProductTax[]
+  transaction Transaction[]
 
   @@unique([store_id, product_category_id])
 }
@@ -242,12 +246,13 @@ model Transaction {
   transaction_id String             @id @default(uuid())
   store_id       Int
   user_id        Int
+  product_name String
   order_type     Order_type
   driver_partner String
   receipt_number Int                @default(autoincrement())
   sub_total      Float
   service        Float
-  tax            Float
+  tax_name       String
   discount       Float
   rounding       Int
   grand_total    Int
@@ -262,6 +267,9 @@ model Transaction {
   store   Store         @relation(fields: [store_id], references: [store_id])
   user    User          @relation(fields: [user_id], references: [user_id])
   partner DriverPartner @relation(fields: [driver_partner], references: [partner_name])
+  taxes     Tax           @relation(fields: [tax_name], references: [tax_name]) 
+  selected_product Product @relation(fields: [product_name], references: [product_name])
+
 
   @@unique([store_id, user_id, driver_partner])
 }
