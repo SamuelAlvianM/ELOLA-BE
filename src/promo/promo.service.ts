@@ -1,7 +1,8 @@
 /* eslint-disable prettier/prettier */
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreatePromoDto, UpdatePromoDto } from './dto/promo.dto';
+import { Promo } from '@prisma/client';
 
 @Injectable()
 export class PromoService {
@@ -13,14 +14,27 @@ export class PromoService {
     });
   }
 
-  async getAllPromos() {
-    return this.prisma.promo.findMany();
+  async getAllPromos(): Promise<Promo[]>{
+    return this.prisma.promo.findMany({
+      where: {
+        deleted_at: null
+      },
+    })
   }
-
-  async getPromoById(promo_id: number) {
-    return this.prisma.promo.findUnique({
-      where: { promo_id },
+  
+  async getPromoById(promo_id: number): Promise<Promo> {
+    const promo = await this.prisma.promo.findFirst({
+      where: {
+        promo_id,
+        deleted_at: null,
+      },
     });
+
+    if (!promo) {
+      throw new NotFoundException(`Payment with ID ${promo_id} not found or has been deleted.`);
+    }
+
+    return promo;
   }
 
   async updatePromo(promo_id: number, data: UpdatePromoDto) {
@@ -30,9 +44,14 @@ export class PromoService {
     });
   }
 
-  async deletePromo(promo_id: number) {
-    return this.prisma.promo.delete({
-      where: { promo_id },
+  async softDeletePromo(promo_id: number): Promise<Promo> {
+    return this.prisma.promo.update({
+      where: {
+        promo_id
+      },
+      data: {
+        deleted_at: new Date()
+      }
     });
   }
 }
