@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { Controller, Post, Body, HttpCode, HttpStatus, UseGuards, Get, Param, Patch, Delete} from '@nestjs/common';
 
 import { Role } from '@prisma/client';

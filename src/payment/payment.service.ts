@@ -1,13 +1,15 @@
 /* eslint-disable prettier/prettier */
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { createPayment, updatePayment } from './dto/payment.dto';
+import { CreatePayment, UpdatePayment } from './dto/payment.dto';
+import { Payment } from '@prisma/client';
 
 @Injectable()
 export class PaymentService {
   constructor(private prisma: PrismaService) {}
 
-  async createPayment(data: createPayment) {
+  async createPayment(data: CreatePayment) {
+
     // Check if the store_id exists
     const store = await this.prisma.store.findUnique({
       where: { store_id: data.store_id },
@@ -26,17 +28,42 @@ export class PaymentService {
     });
   }
 
-  async getPaymentById(payment_id: number) {
-    return this.prisma.payment.findUnique({
-      where: { payment_id },
+  //Show Payment data by Id including delete payment data
+  // async getPaymentById(payment_id: number) {
+  //   return this.prisma.payment.findUnique({
+  //     where: { payment_id },
+  //   });
+  // }
+
+  async getPaymentById(payment_id: number): Promise<Payment> {
+    const payment = await this.prisma.payment.findFirst({
+      where: {
+        payment_id: payment_id,
+        deleted_at: null,
+      },
     });
+
+    if (!payment) {
+      throw new NotFoundException(`Payment with ID ${payment_id} not found or has been deleted.`);
+    }
+
+    return payment;
   }
 
-  async getAllPayments() {
-    return this.prisma.payment.findMany();
+  //Show all payment including delete data
+  // async getAllPayments() {
+  //   return this.prisma.payment.findMany();
+  // }
+
+  async getAllPayments(): Promise<Payment[]>{
+    return this.prisma.payment.findMany({
+      where: {
+        deleted_at: null
+      },
+    })
   }
 
-  async updatePayment(payment_id: number, data: updatePayment) {
+  async updatePayment(payment_id: number, data: UpdatePayment) {
     return this.prisma.payment.update({
       where: { payment_id },
       data: {
@@ -47,9 +74,21 @@ export class PaymentService {
     });
   }
 
-  async deletePayment(payment_id: number) {
-    return this.prisma.payment.delete({
-      where: { payment_id },
+  // async deletePayment(payment_id: number) {
+  //   return this.prisma.payment.delete({
+  //     where: { payment_id },
+  //   });
+  // }
+
+  //Soft Delete for Payments
+  async softDeletePayment(payment_id: number): Promise<Payment> {
+    return this.prisma.payment.update({
+      where: {
+        payment_id: payment_id,
+      },
+      data: {
+        deleted_at: new Date()
+      }
     });
   }
 }
