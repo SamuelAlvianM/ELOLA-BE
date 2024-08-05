@@ -13,7 +13,7 @@ import { ApiBadRequestResponse, ApiBearerAuth, ApiResponse, ApiUnauthorizedRespo
 export class PaymentController {
   constructor(private readonly paymentService: PaymentService) {}
 
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  // @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.SUPER_ADMIN, Role.OWNER)
   @Post()
   @HttpCode(HttpStatus.CREATED)
@@ -32,7 +32,7 @@ export class PaymentController {
     }
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  // @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.SUPER_ADMIN, Role.OWNER, Role.STAFF)
   @HttpCode(HttpStatus.OK)
   @ApiResponse({status: 200, description: 'Fetch Data Payment Success'})
@@ -49,7 +49,7 @@ export class PaymentController {
     return this.paymentService.getPaymentById(id);
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  // @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.SUPER_ADMIN, Role.OWNER, Role.STAFF)
   @HttpCode(HttpStatus.OK)
   @ApiResponse({status: 200, description: 'Fetch Data Payment Success'})
@@ -65,7 +65,7 @@ export class PaymentController {
     return this.paymentService.getAllPayments();
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  // @UseGuards(JwtAuthGuard, RolesGuard)
   @HttpCode(HttpStatus.CREATED)
   @Roles(Role.SUPER_ADMIN, Role.OWNER)
   @ApiResponse( {status: 201, description: 'Update Data Payment Success!'})
@@ -83,7 +83,7 @@ export class PaymentController {
 //   }
 // }
 
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  // @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.SUPER_ADMIN, Role.OWNER)
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiResponse({ status: 201, description: 'Data Payment Successfully Deleted!' })
