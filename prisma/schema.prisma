@@ -205,7 +205,7 @@ model DriverPartner {
   deleted_at DateTime?
 
   orders               Transaction[]
-  driver_partner_store DriverPartnerStore[]
+  DriverPartnerStore DriverPartnerStore[]
   stores               Store?               @relation(fields: [store_id], references: [store_id])
 
   @@unique([store_id, partner_name])
@@ -218,8 +218,8 @@ enum Payment_type {
 
 model Payment {
   payment_id   Int          @id @default(autoincrement())
-  store_id     Int
-  payment_name String       @unique
+  store_id     Int         
+  payment_name String      
   payment_type Payment_type
 
   created_at DateTime  @default(now())
@@ -228,7 +228,7 @@ model Payment {
 
   store Store @relation(fields: [store_id], references: [store_id])
 
-  @@unique([store_id])
+  // @@unique([store_id])
 }
 
 enum Order_type {
