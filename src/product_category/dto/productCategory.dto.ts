@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import { IsInt, IsNotEmpty, IsString } from "class-validator";
+import { IsInt, IsNotEmpty, IsOptional, IsString } from "class-validator";
 
 export class CreateProductCategoryDto {
     // @IsInt()
@@ -11,6 +11,7 @@ export class CreateProductCategoryDto {
     store_id: number;
 
     @IsString()
+    @IsNotEmpty()
     category_name: string;
 }
 
@@ -20,9 +21,10 @@ export class UpdateProductCategoryDto {
     // product_category_id: number;
 
     @IsInt()
-    @IsNotEmpty()
-    store_id: number;
+    @IsOptional()
+    store_id?: number;
 
     @IsString()
-    category_name: string;
+    @IsOptional()
+    category_name?: string;
 }

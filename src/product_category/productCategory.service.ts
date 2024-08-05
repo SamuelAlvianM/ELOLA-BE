@@ -1,7 +1,8 @@
 /* eslint-disable prettier/prettier */
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateProductCategoryDto, UpdateProductCategoryDto } from './dto/productCategory.dto';
+import { ProductCategory } from '@prisma/client';
 
 @Injectable()
 export class ProductCategoryService {
@@ -12,27 +13,46 @@ export class ProductCategoryService {
       data,
     });
   }
-
-  async findAll() {
-    return this.prisma.productCategory.findMany();
+  
+  async getAllProductCategory(): Promise<ProductCategory[]> {
+    return this.prisma.productCategory.findMany({
+      where: {
+        deleted_at: null
+      },
+    })
   }
 
-  async findOne(id: number) {
-    return this.prisma.productCategory.findUnique({
-      where: { product_category_id: id },
+  async getProductCategoryById(product_category_id: number): Promise<ProductCategory> {
+    const category = await this.prisma.productCategory.findFirst({
+      where:{
+        product_category_id: product_category_id,
+        deleted_at: null
+      },
     });
+    
+    if (!category) {
+      throw new NotFoundException(`Category Product with ID ${product_category_id} not found or has been deleted.`);
+    }
+    
+    return category;
   }
 
-  async update(id: number, data: UpdateProductCategoryDto) {
+
+  async update(product_category_id: number, data: UpdateProductCategoryDto) {
     return this.prisma.productCategory.update({
-      where: { product_category_id: id },
+      where: { product_category_id: product_category_id },
       data,
     });
   }
 
-  async remove(id: number) {
-    return this.prisma.productCategory.delete({
-      where: { product_category_id: id },
-    });
+  async softDeleteProductCategory(product_category_id: number){
+    return this.prisma.productCategory.update({
+      where: {
+        product_category_id: product_category_id
+      },
+      data: {
+        deleted_at: new Date()
+      },
+    })
   }
 }

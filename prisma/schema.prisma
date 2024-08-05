@@ -120,17 +120,17 @@ model Tax {
 }
 
 model ProductCategory {
-  product_category_id Int    @id @default(autoincrement())
-  store_id            Int
+  product_category_id Int       @id @default(autoincrement())
+  store_id            Int       
   category_name       String
 
-  created_at DateTime  @default(now())
-  updated_at DateTime  @updatedAt
-  deleted_at DateTime?
+  created_at          DateTime  @default(now())
+  updated_at          DateTime  @updatedAt
+  deleted_at          DateTime?
 
-  store Store @relation(fields: [store_id], references: [store_id])
+  store               Store     @relation(fields: [store_id], references: [store_id])
 
-  @@unique([store_id])
+  // @@unique([store_id, category_name])
 }
 
 model Product {
