@@ -1,4 +1,5 @@
-import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Patch, Post, UseGuards } from '@nestjs/common';
+/* eslint-disable prettier/prettier */
+import { Body, Controller, Delete, Get, HttpCode, HttpStatus, NotFoundException, Param, Patch, Post, UseGuards } from '@nestjs/common';
 import { DriverPartnerService } from './driver_partner.service';
 import { JwtAuthGuard } from '../utils/guard/jwt.guard';
 import { RolesGuard } from '../utils/guard/roles.guard';
@@ -90,13 +91,15 @@ export class DriverPartnerController {
     @ApiUnauthorizedResponse({status: 401, description: 'Unauthorized'})
     @ApiBadRequestResponse({status: 400, description: 'error when deleting driver partner'})
     async deleteDriver_Partner(@Param('driver_partner_id') driver_partner_id: number) {
-        const result = await this.service_dp.delete_driver_partner(driver_partner_id);
+        const driverPartner = await this.service_dp.delete_driver_partner(driver_partner_id);
 
+        if (!driverPartner){
+            throw new NotFoundException("Payment Data Not Found!")
+        }
         return {
             StatusCode: HttpStatus.OK,
             response: 'Successfully deleted driver partner',
-            data: result,
+            data: driverPartner,
         }
     }
-
 }
