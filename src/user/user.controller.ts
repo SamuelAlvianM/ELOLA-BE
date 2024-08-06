@@ -1,4 +1,5 @@
-import { Controller, UseGuards, Get, Post, Body, HttpCode, HttpStatus, Delete, Param, Patch } from '@nestjs/common';
+/* eslint-disable prettier/prettier */
+import { Controller, UseGuards, Get, Post, Body, HttpCode, HttpStatus, Delete, Param, Patch, NotFoundException } from '@nestjs/common';
 import { UserService } from './user.service';
 import { UserDto } from './dto/user.dto';
 import { UpdateDto } from './dto/user.dto';
@@ -23,7 +24,7 @@ export class UserController {
     @HttpCode(HttpStatus.CREATED)
     @Roles(Role.SUPER_ADMIN, Role.OWNER)
     @ApiResponse( {status: 201, description: 'Successfully created'})
-    @ApiBadRequestResponse({status: 400, description: 'Invalid data'})
+    @ApiBadRequestResponse({status: 400, description: 'Invalid Data'})
     @ApiUnauthorizedResponse({ status: 401, description: 'Unauthorized' })
     @ApiBearerAuth()
     async create(
@@ -40,15 +41,15 @@ export class UserController {
     @UseGuards(JwtAuthGuard)
     @HttpCode(HttpStatus.OK)
     @Roles(Role.SUPER_ADMIN, Role.OWNER)
-    @ApiResponse( {status: 200, description: 'This is All users data'})
-    @ApiBadRequestResponse({status: 400, description: 'Something wrong when fetching data'})
+    @ApiResponse( {status: 200, description: 'List of User'})
+    @ApiBadRequestResponse({status: 400, description: 'Bad Request! Something wrong when Fetching Data'})
     @ApiUnauthorizedResponse({ status: 401, description: 'Unauthorized' })
     @ApiBearerAuth()
     async findAll() {
         const result = await this.user_service.findAll();
         return {
             statusCode: HttpStatus.OK,
-            message: 'This is All users data',
+            message: 'List of User',
             data: result,
         };
     }
@@ -56,15 +57,15 @@ export class UserController {
     @Get(':user_id')
     @UseGuards(JwtAuthGuard)
     @HttpCode(HttpStatus.OK)
-    @ApiResponse( {status: 200, description: 'This is user data'})
-    @ApiBadRequestResponse({status: 400, description: 'Something wrong when fetching data'})
+    @ApiResponse( {status: 200, description: 'List of User'})
+    @ApiBadRequestResponse({status: 400, description: 'Bad Request! Something wrong when Fetching Data'})
     @ApiUnauthorizedResponse({ status: 401, description: 'Unauthorized' })
     @ApiBearerAuth()
     async findOne(@Param('user_id') user_id: number) {
         const result = await this.user_service.findOne(+user_id);
         return {
             statusCode: HttpStatus.OK,
-            message: 'This is user data',
+            message: 'List of User',
             data: result,
         };
     }
@@ -74,14 +75,14 @@ export class UserController {
     @HttpCode(HttpStatus.OK)
     @Roles(Role.SUPER_ADMIN, Role.OWNER, Role.STAFF)
     @ApiResponse( {status: 200, description: 'This is updated user data'})
-    @ApiBadRequestResponse({status: 400, description: 'Something wrong when updating data'})
+    @ApiBadRequestResponse({status: 400, description: 'Bad Request! Update Data failed!'})
     @ApiUnauthorizedResponse({ status: 401, description: 'Unauthorized' })
     @ApiBearerAuth()
     async update(@Param('user_id') user_id: number, @Body() update_dto: UpdateDto) {
         const result = await this.user_service.update(+user_id, update_dto);
         return {
             statusCode: HttpStatus.OK,
-            message: 'This is updated user data',
+            message: 'Data Update Success!',
             data: result,
         };
     }
@@ -90,18 +91,21 @@ export class UserController {
     @UseGuards(JwtAuthGuard)
     @HttpCode(HttpStatus.OK)
     @Roles(Role.SUPER_ADMIN, Role.OWNER)
-    @ApiResponse( {status: 204, description: 'This is deleted user data'})
-    @ApiBadRequestResponse({status: 400, description: 'Something wrong when deleting data'})
+    @ApiResponse( {status: 204, description: 'Data Successfully Deleted!'})
+    @ApiBadRequestResponse({status: 400, description: 'Bad Request! Something wrong when deleting Data'})
     @ApiUnauthorizedResponse({ status: 401, description: 'Unauthorized' })
     @ApiBearerAuth()
-    async remove(@Param('user_id') user_id: number) {
-        const result = await this.user_service.remove(+user_id);
+    async softDeleteUser(@Param('user_id') user_id: number) {
+        const user = await this.user_service.softDeleteUser(+user_id);
+
+        if (!user) {
+            throw new NotFoundException ("Data User Not Found!")
+        }
+
         return {
             statusCode: HttpStatus.OK,
-            message: 'This is deleted user data',
-            data: result,
+            message: 'Data Successfully Deleted!',
+            data: user,
         };
     }
-
-
 }

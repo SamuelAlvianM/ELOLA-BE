@@ -1,7 +1,9 @@
+/* eslint-disable prettier/prettier */
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { UpdateDto, UserDto } from './dto/user.dto';
 import * as bcrypt from 'bcrypt';
+import { User } from '@prisma/client';
 
 @Injectable()
 export class UserService {
@@ -37,14 +39,27 @@ export class UserService {
         });
     }
 
-    async findAll() {
-        return this.prisma.user.findMany();
+    async findAll(): Promise<User[]> {
+        return this.prisma.user.findMany({
+            where: {
+                deleted_at: null,
+            }
+        });
     }
 
-    async findOne(user_id: number) {
-        return this.prisma.user.findUnique({
-            where: { user_id: user_id },
+    async findOne(user_id: number): Promise<User> {
+        const user = await this.prisma.user.findFirst({
+            where: {
+                user_id,
+                deleted_at: null,
+            }
         });
+
+        if (!user) {
+            throw new NotFoundException(`User with ID ${user_id} not found or has been deleted.`);
+        }
+
+        return user;
     }
 
     async update(user_id: number, update_dto: UpdateDto) {
@@ -65,13 +80,14 @@ export class UserService {
         return updatedUser
     }
 
-    async remove(user_id: number) {
-        const user = await this.prisma.user.findUnique({ where: { user_id: user_id } });
-
-        if (!user) {
-            throw new NotFoundException('User not found');
-        }
-
-        await this.prisma.user.delete({ where: { user_id: user_id } });
+    async softDeleteUser(user_id: number): Promise<User> {
+        return this.prisma.user.update({
+            where: {
+                user_id
+            },
+            data: {
+                deleted_at: new Date()
+            }
+        })
     }
 }

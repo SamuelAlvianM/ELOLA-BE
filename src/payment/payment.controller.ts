@@ -14,7 +14,6 @@ import { ApiBadRequestResponse, ApiBearerAuth, ApiResponse, ApiTags, ApiUnauthor
 export class PaymentController {
   constructor(private readonly paymentService: PaymentService) {}
 
-  // @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.SUPER_ADMIN, Role.OWNER)
   @Post()
   @HttpCode(HttpStatus.CREATED)
@@ -33,7 +32,6 @@ export class PaymentController {
     }
   }
 
-  // @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.SUPER_ADMIN, Role.OWNER, Role.STAFF)
   @HttpCode(HttpStatus.OK)
   @ApiResponse({status: 200, description: 'Fetch Data Payment Success'})
@@ -41,16 +39,10 @@ export class PaymentController {
   @ApiUnauthorizedResponse({ status: 401, description: 'Unauthorized' })
   @ApiBearerAuth()
   @Get(':id')
-  //Show Payment data by Id including delete payment data
-  // async getPaymentById(@Param('id') id: string) {
-  //   return this.paymentService.getPaymentById(+id);
-  // }
-
   async getPaymentById(@Param('id', ParseIntPipe) id: number): Promise<Payment> {
     return this.paymentService.getPaymentById(id);
   }
 
-  // @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.SUPER_ADMIN, Role.OWNER, Role.STAFF)
   @HttpCode(HttpStatus.OK)
   @ApiResponse({status: 200, description: 'Fetch Data Payment Success'})
@@ -58,15 +50,10 @@ export class PaymentController {
   @ApiUnauthorizedResponse({ status: 401, description: 'Unauthorized' })
   @ApiBearerAuth()
   @Get()
-  // Show All data Inclued Deleted data
-  // async getAllPayments() {
-  //   return this.paymentService.getAllPayments();
-  // }
   async getAllPayments(): Promise<Payment[]>{
     return this.paymentService.getAllPayments();
   }
 
-  // @UseGuards(JwtAuthGuard, RolesGuard)
   @HttpCode(HttpStatus.CREATED)
   @Roles(Role.SUPER_ADMIN, Role.OWNER)
   @ApiResponse( {status: 201, description: 'Update Data Payment Success!'})
@@ -78,13 +65,6 @@ export class PaymentController {
     return this.paymentService.updatePayment(+id, data);
   }
 
-//   @Delete(':id')
-//   async deletePayment(@Param('id') id: string) {
-//     return this.paymentService.deletePayment(+id);
-//   }
-// }
-
-  // @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.SUPER_ADMIN, Role.OWNER)
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiResponse({ status: 201, description: 'Data Payment Successfully Deleted!' })

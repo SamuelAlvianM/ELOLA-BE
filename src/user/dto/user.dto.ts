@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { IsNotEmpty, IsEmail, MinLength, IsOptional, IsEnum } from 'class-validator';
 import { Role } from '@prisma/client';
 export class UserDto {
