@@ -6,8 +6,9 @@ import { JwtAuthGuard } from 'src/utils/guard/jwt.guard';
 import { RolesGuard } from 'src/utils/guard/roles.guard';
 import { Inventory, Role } from '@prisma/client';
 import { Roles } from 'src/utils/decorator/roles.decorator';
-import { ApiBadRequestResponse, ApiBearerAuth, ApiResponse, ApiUnauthorizedResponse } from '@nestjs/swagger';
+import { ApiBadRequestResponse, ApiBearerAuth, ApiResponse, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
 
+@ApiTags('Inventories')
 @Controller('inventory')
 @UseGuards(JwtAuthGuard, RolesGuard)
 export class InventoryController {

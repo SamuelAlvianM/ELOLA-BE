@@ -10,8 +10,9 @@ import { Roles } from 'src/utils/decorator/roles.decorator';
 import { StoreService } from './store.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { Create_Store_Dto, Invite_User_Dto, Update_Store_Dto } from './dto/store.dto';
-import { ApiResponse, ApiBadRequestResponse, ApiUnauthorizedResponse, ApiBearerAuth } from '@nestjs/swagger';
+import { ApiResponse, ApiBadRequestResponse, ApiUnauthorizedResponse, ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Stores')
 @Controller('store')
 @UseGuards(JwtAuthGuard, RolesGuard)
 export class StoreController {

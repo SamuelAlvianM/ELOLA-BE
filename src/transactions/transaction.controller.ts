@@ -11,7 +11,9 @@ import { TransactionService } from './transaction.service';
 import { CreateTransactionDto } from './dto/transaction.dto';
 import { DateRangeDto } from './dto/dateRange.dto';
 import { Order_payment_type } from '@prisma/client';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Transactions')
 @Controller('transactions')
 export class TransactionController {
   constructor(private transactionService: TransactionService) {}

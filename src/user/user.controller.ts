@@ -13,6 +13,7 @@ import {
 import { JwtAuthGuard } from 'src/utils/guard/jwt.guard';
 import { Role } from '@prisma/client';
 
+@ApiTags('Users')
 @Controller('user')
 export class UserController {
     constructor(private user_service: UserService) {}

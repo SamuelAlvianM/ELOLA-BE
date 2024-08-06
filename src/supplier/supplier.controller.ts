@@ -12,7 +12,9 @@ import {
 import { SupplierService } from './supplier.service';
 import { CreateSupplierDto } from './dto/supplier.dto';
 import { Order_type, Order_payment_type } from '@prisma/client';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Suppliers')
 @Controller('suppliers')
 export class SupplierController {
   constructor(private readonly supplierService: SupplierService) {}

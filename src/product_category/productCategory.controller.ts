@@ -5,10 +5,10 @@ import { CreateProductCategoryDto, UpdateProductCategoryDto } from './dto/produc
 import { ProductCategory, Role } from '@prisma/client';
 import { JwtAuthGuard } from 'src/utils/guard/jwt.guard';
 import { RolesGuard } from 'src/utils/guard/roles.guard';
-import { ApiBadRequestResponse, ApiBearerAuth, ApiResponse, ApiUnauthorizedResponse } from '@nestjs/swagger';
+import { ApiBadRequestResponse, ApiBearerAuth, ApiResponse, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
 import { Roles } from 'src/utils/decorator/roles.decorator';
 
-
+@ApiTags('Product Categoriest')
 @Controller('products/product-category')
 @UseGuards(JwtAuthGuard, RolesGuard) //place it here if it applied to every method level
 export class ProductCategoryController {

@@ -6,8 +6,9 @@ import { JwtAuthGuard } from 'src/utils/guard/jwt.guard';
 import { RolesGuard } from 'src/utils/guard/roles.guard';
 import { Roles } from 'src/utils/decorator/roles.decorator';
 import { Payment, Role } from '@prisma/client';
-import { ApiBadRequestResponse, ApiBearerAuth, ApiResponse, ApiUnauthorizedResponse } from '@nestjs/swagger';
+import { ApiBadRequestResponse, ApiBearerAuth, ApiResponse, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
 
+@ApiTags('Payments')
 @Controller('payments')
 @UseGuards(JwtAuthGuard, RolesGuard)
 export class PaymentController {

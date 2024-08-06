@@ -4,8 +4,9 @@ import { JwtAuthGuard } from '../utils/guard/jwt.guard';
 import { User } from '../utils/decorator/user.decorator';
 import { Handle_Open_Close_Dto } from './dto/oc.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { ApiBadRequestResponse, ApiResponse, ApiUnauthorizedResponse } from '@nestjs/swagger';
+import { ApiBadRequestResponse, ApiResponse, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
 
+@ApiTags('Store Open & Close')
 @Controller('open-close')
 @UseGuards(JwtAuthGuard)
 export class OpenCloseController {

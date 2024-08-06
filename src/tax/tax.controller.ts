@@ -7,8 +7,9 @@ import { Roles } from 'src/utils/decorator/roles.decorator';
 import { TaxService } from './tax.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateTaxDto, UpdateTaxDto } from './dto/tax.dto';
-import { ApiResponse, ApiBadRequestResponse, ApiUnauthorizedResponse, ApiBearerAuth } from '@nestjs/swagger';
+import { ApiResponse, ApiBadRequestResponse, ApiUnauthorizedResponse, ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Taxes')
 @Controller('tax')
 @UseGuards(JwtAuthGuard, RolesGuard)
 export class TaxController {

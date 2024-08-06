@@ -4,10 +4,11 @@ import { JwtAuthGuard } from '../utils/guard/jwt.guard';
 import { RolesGuard } from '../utils/guard/roles.guard';
 import { Roles } from '../utils/decorator/roles.decorator';
 import { Role } from '@prisma/client';
-import { ApiBadRequestResponse, ApiResponse, ApiUnauthorizedResponse } from '@nestjs/swagger';
+import { ApiBadRequestResponse, ApiResponse, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
 import { Create_DP_Dto, Update_DP_Dto } from './dto/dp.dto';
 import { CurrentStore, User } from 'src/utils/decorator/user.decorator';
 
+@ApiTags('Driver Partners')
 @Controller('driver-partner')
 export class DriverPartnerController {
     constructor(private service_dp: DriverPartnerService) {}
