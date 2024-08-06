@@ -63,11 +63,25 @@ export class ProductService {
     });
   }
 
-
-
   async create(createProductDto: CreateProductDto) {
+    const { product_price, ...rest } = createProductDto;
+
+    const promo = await this.prisma.promo.findFirst({
+      where: {
+        product_id: rest.product_code
+      },
+      orderBy: {
+        end_date: 'desc'
+      }
+    });
+
+    const final_price = promo ? product_price + promo.promo_value : product_price;
+
     return this.prisma.product.create({
-      data: createProductDto,
+      data: {
+        ...rest,
+        product_price: final_price,
+      }
     });
   }
 
@@ -82,9 +96,24 @@ export class ProductService {
   }
 
   async update(id: number, updateProductDto: UpdateProductDto) {
+    const { product_price, ...rest } = updateProductDto;
+    const promo = await this.prisma.promo.findFirst({
+      where: {
+        product_id: rest.product_code
+      },
+      orderBy: {
+        end_date: 'desc'
+      },
+    });
+
+    const final_price = product_price && promo ? product_price + promo.promo_value : product_price;
+    
     return this.prisma.product.update({
       where: { product_id: id },
-      data: updateProductDto,
+      data: {
+        ...rest,
+        ...(product_price && { product_price: final_price }),
+      },
     });
   }
 

@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { Controller, Post, Param, ParseIntPipe, UseGuards, Body, Req, HttpCode, HttpStatus } from '@nestjs/common';
 import { OpenCloseService } from './open_close.service';
 import { JwtAuthGuard } from '../utils/guard/jwt.guard';

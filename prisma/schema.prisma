@@ -283,6 +283,7 @@ enum Promo_type {
 model Promo {
   promo_id    Int        @id @default(autoincrement())
   product_id  Int
+  promo_name  String
   promo_type  Promo_type
   promo_value Int
   start_date  DateTime   @default(now())
