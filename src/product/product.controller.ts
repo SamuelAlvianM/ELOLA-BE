@@ -44,8 +44,6 @@ export class ProductController {
     return this.productService.remove(+id);
   }
 
-
-  
   @Post(':productId/taxes/:taxId')
   async addTaxToProduct(
     @Param('productId') productId: number,
