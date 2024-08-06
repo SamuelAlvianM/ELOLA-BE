@@ -10,7 +10,7 @@ export class PaymentService {
 
   async createPayment(data: CreatePayment) {
 
-    // Check if the store_id exists
+    // Checking the store_id if it exist in the data
     const store = await this.prisma.store.findUnique({
       where: { store_id: data.store_id },
     });
@@ -28,12 +28,13 @@ export class PaymentService {
     });
   }
 
-  //Show Payment data by Id including delete payment data
-  // async getPaymentById(payment_id: number) {
-  //   return this.prisma.payment.findUnique({
-  //     where: { payment_id },
-  //   });
-  // }
+  async getAllPayments(): Promise<Payment[]> {
+    return this.prisma.payment.findMany({
+      where: {
+        deleted_at: null
+      },
+    })
+  }
 
   async getPaymentById(payment_id: number): Promise<Payment> {
     const payment = await this.prisma.payment.findFirst({
@@ -50,19 +51,6 @@ export class PaymentService {
     return payment;
   }
 
-  //Show all payment including delete data
-  // async getAllPayments() {
-  //   return this.prisma.payment.findMany();
-  // }
-
-  async getAllPayments(): Promise<Payment[]>{
-    return this.prisma.payment.findMany({
-      where: {
-        deleted_at: null
-      },
-    })
-  }
-
   async updatePayment(payment_id: number, data: UpdatePayment) {
     return this.prisma.payment.update({
       where: { payment_id },
@@ -74,13 +62,6 @@ export class PaymentService {
     });
   }
 
-  // async deletePayment(payment_id: number) {
-  //   return this.prisma.payment.delete({
-  //     where: { payment_id },
-  //   });
-  // }
-
-  //Soft Delete for Payments
   async softDeletePayment(payment_id: number): Promise<Payment> {
     return this.prisma.payment.update({
       where: {

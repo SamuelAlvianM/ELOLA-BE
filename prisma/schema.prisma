@@ -212,6 +212,7 @@ model DriverPartner {
 }
 
 enum Payment_type {
+  Cash
   Bank
   EPayment @map("E-Payment")
 }
