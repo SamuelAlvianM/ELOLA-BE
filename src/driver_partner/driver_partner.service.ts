@@ -1,19 +1,26 @@
+/* eslint-disable prettier/prettier */
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { Create_DP_Dto, Update_DP_Dto } from './dto/dp.dto';
+import { DriverPartner } from '@prisma/client';
 
 @Injectable()
 export class DriverPartnerService {
     constructor(private prisma: PrismaService) {}
 
     async findAll_Driver_Partner() {
-        return this.prisma.driverPartner.findMany();
+        return this.prisma.driverPartner.findMany({
+            where: {
+                deleted_at: null,
+            }
+        });
     }
 
     async findOne_Driver_Partner(driver_partner_id: number) {
-        return this.prisma.driverPartner.findUnique({
+        return this.prisma.driverPartner.findFirst({
             where: {
                 driver_partner_id: driver_partner_id,
+                deleted_at: null,
             },
         });
     }
@@ -43,11 +50,14 @@ export class DriverPartnerService {
         });
     }
 
-    async delete_driver_partner(driver_partner_id: number) {
-        return await this.prisma.driverPartner.delete({
-            where: { driver_partner_id },
-        })
+    async delete_driver_partner (driver_partner_id: number): Promise<DriverPartner> {
+        return this.prisma.driverPartner.update({
+            where: {
+                driver_partner_id,
+            },
+            data: {
+                deleted_at: new Date()
+            },
+        });
     }
-
-    
 }
