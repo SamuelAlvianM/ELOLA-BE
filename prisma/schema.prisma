@@ -162,8 +162,8 @@ model Inventory {
   inventory_name   String
   in_storage_date  DateTime  @default(now())
   value_stored     Int
-  value_out        Int
   out_storage_date DateTime  @default(now())
+  value_out        Int
   created_at       DateTime  @default(now())
   updated_at       DateTime  @updatedAt
   deleted_at       DateTime?
