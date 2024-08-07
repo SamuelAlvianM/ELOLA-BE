@@ -7,8 +7,9 @@ export class Create_Store_Dto{
 
     @IsNotEmpty()
     @IsInt()
+    @IsOptional()
     @ApiProperty({example: 1})
-    user_id: number;
+    user_id?: number;
 
     @IsNotEmpty()
     @IsString()
