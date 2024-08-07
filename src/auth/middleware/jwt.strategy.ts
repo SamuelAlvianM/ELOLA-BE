@@ -5,6 +5,7 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
 import { ConfigService } from '@nestjs/config';
 import * as dotenv from 'dotenv';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { User, SuperAdmin } from '@prisma/client';
 
 dotenv.config();
 
@@ -24,11 +25,25 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     }
 
     async validate(payload:any) {
-        const user = await this.prisma.user.findUnique({ where: { user_id: payload.sub }});
+        let user: User | SuperAdmin | null = null;
+
+        if( payload.sub) {
+            user = await this.prisma.user.findUnique({ where: { user_id: payload.sub } });
+        }
+
+        if(!user && payload.pin) {
+            user = await this.prisma.user.findUnique({ where: { pin: payload.pin } });
+        }
 
         if (!user) {
-            throw new UnauthorizedException();
+            user = await this.prisma.superAdmin.findUnique({ where: { super_admin_id: payload.sub }});
         }
+
+        if (!user) {
+            throw new UnauthorizedException('User not found');
+        }
+
+        console.log('JWT Payload:', payload);
         return user;
     }
 }

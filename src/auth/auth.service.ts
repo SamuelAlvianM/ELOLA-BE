@@ -131,18 +131,20 @@ export class AuthService {
 
 
       async loginWithPin(login_pin: LoginStaffDto) {
-        const user = await this.prisma.user.findUnique({ where: {pin: login_pin.pin}});
-
+        const user = await this.prisma.user.findUnique({ where: {pin: login_pin.pin} });
+        
         if(!user) {
             throw new NotFoundException('User not found');
         }
 
-        const payload = { pin: user.pin, email: user.email, user_name: user.user_name};
+        const payload = { sub: user.user_id, pin: user.pin, email: user.email, user_name: user.user_name };
+        const accessToken = this.jwtService.sign(payload);
+
         return {
             data: {
                 user_name: user.user_name,
                 email: user.email,
-                access_token: this.jwtService.sign(payload),
+                access_token: accessToken,
             }
         }
       }

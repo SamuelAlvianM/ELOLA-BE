@@ -21,13 +21,13 @@ export class AuthController {
     constructor(private authService: AuthService) {}
         
     @Post('register')
+    @ApiBearerAuth('JWT')
     @Roles(Role.SUPER_ADMIN, Role.OWNER)
     @UseGuards(JwtAuthGuard, RolesGuard)
     @HttpCode(HttpStatus.CREATED)
     @ApiResponse( {status: 201, description: 'Successfully registered'})
     @ApiBadRequestResponse({status: 400, description: 'Invalid data'})
     @ApiUnauthorizedResponse({ status: 401, description: 'Unauthorized' })
-    @ApiBearerAuth()
     async register(
         @Body() user_dto: UserDto){
         const result = await this.authService.register(user_dto);
@@ -99,7 +99,6 @@ export class AuthController {
     }
 
     @Get('user')
-    @UseGuards(JwtAuthGuard)
     @HttpCode(HttpStatus.OK)
     @ApiResponse( {status: 200, description: 'Successfully logged in'})
     @ApiBadRequestResponse({status: 400, description: 'Invalid data'})
