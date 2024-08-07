@@ -14,6 +14,28 @@ export class PromoService {
     });
   }
 
+  async applyPromoProduct (product_id: number) {
+    const promo = await this.prisma.promo.findFirst({
+      where: {
+        product_id,
+        start_date: {
+          lte: new Date()
+        },
+        end_date: {
+          gte: new Date()
+        },
+      },
+      orderBy: {
+        end_date: 'asc'
+      },
+    });
+
+    if (!promo) {
+      return null;
+    }
+
+  }
+
   async getAllPromos(): Promise<Promo[]>{
     return this.prisma.promo.findMany({
       where: {

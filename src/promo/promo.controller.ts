@@ -30,7 +30,7 @@ export class PromoController {
           data: result
         }
       }
-
+      
   @Roles(Role.SUPER_ADMIN, Role.OWNER, Role.STAFF)
   @HttpCode(HttpStatus.OK)
   @ApiResponse({status: 200, description: 'Fetch Data Promo Success'})

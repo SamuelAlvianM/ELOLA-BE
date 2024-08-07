@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import {
   Controller,
   Get,
@@ -6,12 +7,14 @@ import {
   Param,
   Query,
   ParseEnumPipe,
+  HttpStatus,
+  HttpCode,
 } from '@nestjs/common';
 import { TransactionService } from './transaction.service';
 import { CreateTransactionDto } from './dto/transaction.dto';
 import { DateRangeDto } from './dto/dateRange.dto';
 import { Order_payment_type } from '@prisma/client';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBadRequestResponse, ApiBearerAuth, ApiResponse, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
 
 @ApiTags('Transactions')
 @Controller('transactions')
@@ -19,6 +22,11 @@ export class TransactionController {
   constructor(private transactionService: TransactionService) {}
 
   @Post()
+  @HttpCode(HttpStatus.CREATED)
+  @ApiResponse( {status: 201, description: 'Successfully Created Transaction Data!'})
+  @ApiBadRequestResponse({status: 400, description: 'Invalid data'})
+  @ApiUnauthorizedResponse({ status: 401, description: 'Unauthorized' })
+  @ApiBearerAuth('JWT')
   create(@Body() createTransactionDto: CreateTransactionDto) {
     return this.transactionService.createTransaction(createTransactionDto);
   }
