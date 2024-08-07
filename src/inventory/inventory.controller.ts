@@ -20,7 +20,7 @@ export class InventoryController {
   @ApiResponse( {status: 201, description: 'Inventory Data Successfully Created!'})
   @ApiBadRequestResponse({status: 400, description: 'Invalid Data'})
   @ApiUnauthorizedResponse({ status: 401, description: 'Unauthorized' })
-  @ApiBearerAuth()
+  @ApiBearerAuth('JWT')
   @Post()
   create(@Body() createInventoryDto: CreateInventoryDto) {
     return this.inventoryService.create(createInventoryDto);
@@ -31,7 +31,7 @@ export class InventoryController {
   @ApiResponse({status: 200, description: 'Fetch Data Inventory Success'})
   @ApiBadRequestResponse({status: 400, description: 'Invalid Data'})
   @ApiUnauthorizedResponse({ status: 401, description: 'Unauthorized' })
-  @ApiBearerAuth()
+  @ApiBearerAuth('JWT')
   @Get()
   async getAllInventory(): Promise<Inventory[]> {
     return this.inventoryService.getAllInventory();
@@ -42,7 +42,7 @@ export class InventoryController {
   @ApiResponse({status: 200, description: 'Fetch Data Inventory Success'})
   @ApiBadRequestResponse({status: 400, description: 'Invalid Data'})
   @ApiUnauthorizedResponse({ status: 401, description: 'Unauthorized' })
-  @ApiBearerAuth()
+  @ApiBearerAuth('JWT')
   @Get(':id')
   async getInventoryById(@Param('id', ParseIntPipe) id: number): Promise<Inventory> {
     return this.inventoryService.getInventoryById(id);
@@ -53,7 +53,7 @@ export class InventoryController {
   @ApiResponse( {status: 201, description: 'Update Data Inventory Success!'})
   @ApiBadRequestResponse({status: 400, description: 'Invalid Data!'})
   @ApiUnauthorizedResponse({ status: 401, description: 'Unauthorized' })
-  @ApiBearerAuth()
+  @ApiBearerAuth('JWT')
   @Patch(':id')
   async updateInventory(@Param('id') id: string, @Body() data: UpdateInventoryDto) {
     return this.inventoryService.updateInventory(+id, data);
@@ -63,7 +63,7 @@ export class InventoryController {
   @ApiResponse( {status: 201, description: 'Deleted data Inventory Success!'})
   @ApiBadRequestResponse({status: 404, description: 'Not Found'})
   @ApiUnauthorizedResponse({ status: 401, description: 'Unauthorized' })
-  @ApiBearerAuth()
+  @ApiBearerAuth('JWT')
   @Delete(':id')
   async softDeleteInventory(@Param('id') id: string) {
     const inventory = await this.inventoryService.softDeleteInventory(+id);

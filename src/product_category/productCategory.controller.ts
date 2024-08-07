@@ -10,18 +10,17 @@ import { Roles } from 'src/utils/decorator/roles.decorator';
 
 @ApiTags('Product Categoriest')
 @Controller('products/product-category')
-@UseGuards(JwtAuthGuard, RolesGuard) //place it here if it applied to every method level
+@UseGuards(JwtAuthGuard, RolesGuard)
 export class ProductCategoryController {
   constructor(private readonly productCategoryService: ProductCategoryService) {}
 
-  // @UseGuards(JwtAuthGuard, RolesGuard) placed this if not every method level need the specified guards
   @Roles(Role.SUPER_ADMIN, Role.OWNER)
   @Post()
   @HttpCode(HttpStatus.CREATED)
   @ApiResponse( {status: 201, description: 'Data Category Product Created Success!'})
   @ApiBadRequestResponse({status: 400, description: 'Invalid Data'})
   @ApiUnauthorizedResponse({ status: 401, description: 'Unauthorized' })
-  @ApiBearerAuth()
+  @ApiBearerAuth('JWT')
   create(@Body() createProductCategoryDto: CreateProductCategoryDto) {
     return this.productCategoryService.create(createProductCategoryDto);
   }
@@ -31,7 +30,7 @@ export class ProductCategoryController {
   @ApiResponse({status: 200, description: 'Fetch Data Category Product Success'})
   @ApiBadRequestResponse({status: 400, description: 'Invalid Data'})
   @ApiUnauthorizedResponse({ status: 401, description: 'Unauthorized' })
-  @ApiBearerAuth()
+  @ApiBearerAuth('JWT')
   @Get()
   getAllProductCategory(): Promise<ProductCategory[]> {
     return this.productCategoryService.getAllProductCategory()
@@ -41,7 +40,7 @@ export class ProductCategoryController {
   @ApiResponse({status: 200, description: 'Fetch Data Category Product Success'})
   @ApiBadRequestResponse({status: 400, description: 'Invalid Data'})
   @ApiUnauthorizedResponse({ status: 401, description: 'Unauthorized' })
-  @ApiBearerAuth()
+  @ApiBearerAuth('JWT')
   @Get(':id')
   async getProductCategoryById(@Param('id', ParseIntPipe) id: number): Promise<ProductCategory> {
     return this.productCategoryService.getProductCategoryById(id);
@@ -52,23 +51,18 @@ export class ProductCategoryController {
   @ApiResponse( {status: 201, description: 'Update Data Category Product Success!'})
   @ApiBadRequestResponse({status: 400, description: 'Invalid Data!'})
   @ApiUnauthorizedResponse({ status: 401, description: 'Unauthorized' })
-  @ApiBearerAuth()
+  @ApiBearerAuth('JWT')
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateProductCategoryDto: UpdateProductCategoryDto) {
     return this.productCategoryService.update(+id, updateProductCategoryDto);
   }
-
-  // @Delete(':id')
-  // remove(@Param('id') id: string) {
-  //   return this.productCategoryService.remove(+id);
-  // }
 
   @Roles(Role.SUPER_ADMIN, Role.OWNER)
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiResponse({ status: 201, description: 'Data Category Product Successfully Deleted!' })
   @ApiBadRequestResponse({status: 404, description: 'Not Found'})
   @ApiUnauthorizedResponse({ status: 401, description: 'Unauthorized' })
-  @ApiBearerAuth()
+  @ApiBearerAuth('JWT')
   @Delete(':id')
   async softDeleteProductCategory(@Param('id') id: string) {
     const category = await this.productCategoryService.softDeleteProductCategory(+id);

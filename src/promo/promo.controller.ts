@@ -23,7 +23,7 @@ export class PromoController {
   @ApiResponse( {status: 201, description: 'Promo Data Created Successfully!'})
   @ApiBadRequestResponse({status: 400, description: 'Invalid Data'})
   @ApiUnauthorizedResponse({ status: 401, description: 'Unauthorized' })
-  @ApiBearerAuth()
+  @ApiBearerAuth('JWT')
     async createPromo(@Body() createPromoDto: CreatePromoDto) {
         const result = await this.promoService.createPromo(createPromoDto)
         return {
@@ -31,17 +31,12 @@ export class PromoController {
         }
       }
 
-  // @Get()
-  // findAll() {
-  //   return this.promoService.getAllPromos();
-  // }
-
   @Roles(Role.SUPER_ADMIN, Role.OWNER, Role.STAFF)
   @HttpCode(HttpStatus.OK)
   @ApiResponse({status: 200, description: 'Fetch Data Promo Success'})
   @ApiBadRequestResponse({status: 400, description: 'Invalid Data'})
   @ApiUnauthorizedResponse({ status: 401, description: 'Unauthorized' })
-  @ApiBearerAuth()
+  @ApiBearerAuth('JWT')
   @Get()
   async getAllPromos(): Promise<Promo[]>{
     return this.promoService.getAllPromos();
@@ -52,7 +47,7 @@ export class PromoController {
   @ApiResponse({status: 200, description: 'Fetch Data Promo Success'})
   @ApiBadRequestResponse({status: 400, description: 'Invalid Data'})
   @ApiUnauthorizedResponse({ status: 401, description: 'Unauthorized' })
-  @ApiBearerAuth()
+  @ApiBearerAuth('JWT')
   @Get(':id')
   async getPromoById(@Param('id', ParseIntPipe) id: number): Promise<Promo> {
     return this.promoService.getPromoById(id);
@@ -63,7 +58,7 @@ export class PromoController {
   @ApiResponse({ status: 201, description: 'Data Promo Successfully Deleted!' })
   @ApiBadRequestResponse({status: 404, description: 'Not Found'})
   @ApiUnauthorizedResponse({ status: 401, description: 'Unauthorized' })
-  @ApiBearerAuth()
+  @ApiBearerAuth('JWT')
   @Patch(':id')
   update(@Param('id') id: string, @Body() updatePromoDto: UpdatePromoDto) {
     return this.promoService.updatePromo(+id, updatePromoDto);
@@ -74,7 +69,7 @@ export class PromoController {
   @ApiResponse({ status: 201, description: 'Data Promo Successfully Deleted!' })
   @ApiBadRequestResponse({status: 404, description: 'Not Found'})
   @ApiUnauthorizedResponse({ status: 401, description: 'Unauthorized' })
-  @ApiBearerAuth()
+  @ApiBearerAuth('JWT')
   @Delete(':id')
   async softDeletePromo(@Param('id') id: string) {
     const promos = await this.promoService.softDeletePromo(+id);
