@@ -36,6 +36,15 @@ export class RolesGuard implements CanActivate {
       throw new ForbiddenException('You do not have the required roles');
     }
 
+    // const path = request.route.path;
+    // const method = request.method;
+    // if (user.role === Role.STAFF) {
+    //   if (method === 'POST' && path.includes('/auth/register')) {
+    //     throw new ForbiddenException('Staff cannot create new users');
+    //   }
+    // }
+
+
     return true;
 
   }

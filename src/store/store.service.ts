@@ -59,18 +59,23 @@ export class StoreService {
     }
 
     async findAllStore() {
-        return await this.prisma.store.findMany()
+        return await this.prisma.store.findMany({
+            where: {
+                deleted_at: null
+            }
+        })
     }
 
     async findAllStoreStaff() {
         return await this.prisma.storeStaff.findMany()
     }
 
-
-
     async findOne(store_staff_id: number) {
         return await this.prisma.storeStaff.findUnique({ 
-            where: { store_staff_id: store_staff_id },
+            where: { 
+                store_staff_id: store_staff_id, 
+                deleted_at: null,
+            },
             include: { user: true },
         }); 
     }
@@ -85,8 +90,13 @@ export class StoreService {
 
 
     async delete(store_id: number) {
-        return await this.prisma.store.delete({
-            where: { store_id: store_id },
+        return await this.prisma.store.update({
+            where: { 
+                store_id: store_id,
+            },
+            data: {
+                deleted_at: new Date()
+            }
         });
     }
 
