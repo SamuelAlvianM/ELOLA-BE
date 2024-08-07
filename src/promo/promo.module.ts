@@ -6,6 +6,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 
 @Module({
   controllers: [PromoController],
-  providers: [PromoService, PrismaService]
+  providers: [PromoService, PrismaService],
+  exports: [PromoService]
 })
 export class PromoModule {}

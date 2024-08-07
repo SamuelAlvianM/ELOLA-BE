@@ -138,7 +138,7 @@ model Product {
   store_id            Int
   product_category_id Int
   product_name        String    @unique
-  product_price       Int
+  product_price       BigInt
   cost_of_good_sold   Int
   product_code        Int
   product_image       String?
