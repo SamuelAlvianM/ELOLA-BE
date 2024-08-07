@@ -20,7 +20,7 @@ export class PaymentController {
   @ApiResponse( {status: 201, description: 'Successfully created'})
   @ApiBadRequestResponse({status: 400, description: 'Invalid data'})
   @ApiUnauthorizedResponse({ status: 401, description: 'Unauthorized' })
-  @ApiBearerAuth()
+  @ApiBearerAuth('JWT')
   async createPayment(@Body() data: CreatePayment) {
     try {
       return await this.paymentService.createPayment(data);
@@ -37,7 +37,7 @@ export class PaymentController {
   @ApiResponse({status: 200, description: 'Fetch Data Payment Success'})
   @ApiBadRequestResponse({status: 400, description: 'Invalid Data'})
   @ApiUnauthorizedResponse({ status: 401, description: 'Unauthorized' })
-  @ApiBearerAuth()
+  @ApiBearerAuth('JWT')
   @Get(':id')
   async getPaymentById(@Param('id', ParseIntPipe) id: number): Promise<Payment> {
     return this.paymentService.getPaymentById(id);
@@ -48,7 +48,7 @@ export class PaymentController {
   @ApiResponse({status: 200, description: 'Fetch Data Payment Success'})
   @ApiBadRequestResponse({status: 400, description: 'Invalid Data'})
   @ApiUnauthorizedResponse({ status: 401, description: 'Unauthorized' })
-  @ApiBearerAuth()
+  @ApiBearerAuth('JWT')
   @Get()
   async getAllPayments(): Promise<Payment[]>{
     return this.paymentService.getAllPayments();
@@ -59,7 +59,7 @@ export class PaymentController {
   @ApiResponse( {status: 201, description: 'Update Data Payment Success!'})
   @ApiBadRequestResponse({status: 400, description: 'Invalid Data!'})
   @ApiUnauthorizedResponse({ status: 401, description: 'Unauthorized' })
-  @ApiBearerAuth()
+  @ApiBearerAuth('JWT')
   @Put(':id')
   async updatePayment(@Param('id') id: string, @Body() data: UpdatePayment) {
     return this.paymentService.updatePayment(+id, data);
@@ -70,7 +70,7 @@ export class PaymentController {
   @ApiResponse({ status: 201, description: 'Data Payment Successfully Deleted!' })
   @ApiBadRequestResponse({status: 404, description: 'Not Found'})
   @ApiUnauthorizedResponse({ status: 401, description: 'Unauthorized' })
-  @ApiBearerAuth()
+  @ApiBearerAuth('JWT')
   @Delete(':id')
   async softDeletePayment(@Param('id') id: string) {
     const payment = await this.paymentService.softDeletePayment(+id);
