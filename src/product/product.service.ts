@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateProductDto } from './dto/product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
+import { Product } from '@prisma/client';
 
 @Injectable()
 export class ProductService {
@@ -117,9 +118,10 @@ export class ProductService {
     });
   }
 
-  async remove(id: number) {
-    return this.prisma.product.delete({
-      where: { product_id: id },
+  async remove(product_id: number): Promise<Product> {
+    return this.prisma.product.update({
+      where: { product_id },
+      data: { deleted_at: new Date()}
     });
   }
 }
