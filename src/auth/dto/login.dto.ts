@@ -18,7 +18,7 @@ export class Super_Login {
 export class LoginDto {
     @IsNotEmpty()
     @IsEmail()
-    @ApiProperty({ example: 'your_password' })
+    @ApiProperty({ example: 'samuel@gmail.com' })
     email: string;
 
     @IsNotEmpty()

@@ -10,7 +10,7 @@ import { Create_Store_Dto, Invite_User_Dto, Update_Store_Dto } from './dto/store
 export class StoreService {
     constructor(private prisma: PrismaService) {}
 
-    async create(user_id: number, createStoreDto: Create_Store_Dto) {
+    async createNewStore(user_id: number, createStoreDto: Create_Store_Dto) {
         const store = await this.prisma.store.create({
           data: {
             ...createStoreDto,

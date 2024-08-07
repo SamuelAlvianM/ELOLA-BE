@@ -6,6 +6,11 @@ import { IsNotEmpty, MinLength, IsOptional, IsString, IsInt, IsEmail } from 'cla
 export class Create_Store_Dto{
 
     @IsNotEmpty()
+    @IsInt()
+    @ApiProperty({example: 1})
+    user_id: number;
+
+    @IsNotEmpty()
     @IsString()
     @MinLength(4)
     @ApiProperty({example: "Nama Toko Mu"})

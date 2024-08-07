@@ -6,19 +6,28 @@ const prisma = new PrismaClient();
 async function main() {
 
   // deklarasi akun superadmin
-  const super_admin_email = 'samuelalvian@gmail.com';
-  const super_admin_password = 'superadminsamuel07061999';
-  const hashed_password = await bcrypt.hash(super_admin_password, 10);
+  const super_admins = [{
+    admin_name: 'Samuel',
+    admin_email: 'samuelalvian07@gmail.com',
+    admin_pin: "761999",
+    password: await bcrypt.hash('superadminsamuel', 10),
+  }];
 
   // data akun superadmin
-  await prisma.superAdmin.create({
-    data: {
-        admin_name: 'Samuel Alvian',
-        admin_email: super_admin_email,
-        password: hashed_password,
-        admin_pin: '070699', 
-    },
-  });
+  for (const super_admin of super_admins) {
+    const create_admin_data = await prisma.superAdmin.create({
+        data: super_admin,
+      });
+      await prisma.user.create({
+        data: {
+            user_name: create_admin_data.admin_name,
+            email: create_admin_data.admin_email,
+            password: create_admin_data.password,
+            pin: create_admin_data.admin_pin,
+            role: 'SUPER_ADMIN',
+        },
+      });
+    }
 
   console.log('SuperAdmin account created successfully!');
 }
