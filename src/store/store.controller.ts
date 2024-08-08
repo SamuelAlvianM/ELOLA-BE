@@ -40,7 +40,6 @@ export class StoreController {
     @ApiResponse( {status: 201, description: 'Successfully invited new staff'})
     @ApiBadRequestResponse({status: 400, description: 'Invalid data'})
     @ApiUnauthorizedResponse({ status: 401, description: 'Unauthorized' })
-    @ApiBearerAuth()
     async invite_to_store(
         @User() user: any, 
         @Body('store_id') store_id: number,
@@ -59,7 +58,6 @@ export class StoreController {
     @ApiResponse({status: 200, description: 'Successfully fetched all stores'})
     @ApiBadRequestResponse({status: 400, description: 'Invalid data'})
     @ApiUnauthorizedResponse({ status: 401, description: 'Unauthorized' })
-    @ApiBearerAuth()
     async findAllStore() {
         const result = await this.store_service.findAllStore();
         return {
@@ -74,7 +72,6 @@ export class StoreController {
     @ApiResponse({status: 200, description: 'Successfully fetched all Staffs'})
     @ApiBadRequestResponse({status: 400, description: 'Invalid data'})
     @ApiUnauthorizedResponse({ status: 401, description: 'Unauthorized' })
-    @ApiBearerAuth()
     async findAllStoreStaff() {
         const result = await this.store_service.findAllStoreStaff();
         return {
@@ -89,7 +86,6 @@ export class StoreController {
     @ApiResponse({status: 200, description: 'Successfully fetched Staff'})
     @ApiBadRequestResponse({status: 400, description: 'Invalid data'})
     @ApiUnauthorizedResponse({ status: 401, description: 'Unauthorized' })
-    @ApiBearerAuth()
     async findOne(@Param('store_staff_id') store_staff_id: number) {
         const result = await this.store_service.findOne(+store_staff_id);
         return {
@@ -108,6 +104,7 @@ export class StoreController {
     @ApiBadRequestResponse({status: 400, description: 'Invalid data'})
     @ApiBearerAuth()
     async update(@User() user: any, @Body() update_store: Update_Store_Dto) {
+
         const result = await this.store_service.update(user.user_id, update_store);
         return {
             StatusCode: HttpStatus.OK,
@@ -120,7 +117,6 @@ export class StoreController {
     @ApiResponse({ status: 200, description: 'Successfully deleted store' })
     @ApiUnauthorizedResponse({ status: 401, description: 'Unauthorized' })
     @ApiBadRequestResponse({ status: 400, description: 'Invalid data' })
-    @ApiBearerAuth()
     @Roles(Role.SUPER_ADMIN, Role.OWNER)
     async delete(@Param('store_id') store_id: string) {
         const parsedStoreId = parseInt(store_id, 10);
@@ -140,7 +136,6 @@ export class StoreController {
     @ApiResponse({ status: 200, description: 'Successfully deleted staff' })
     @ApiUnauthorizedResponse({ status: 401, description: 'Unauthorized' })
     @ApiBadRequestResponse({ status: 400, description: 'Invalid data' })
-    @ApiBearerAuth()
     @Roles(Role.SUPER_ADMIN, Role.OWNER)
     async deleteStaff(@Param('store_staff_id') store_staff_id: number) {
       const result = await this.store_service.deleteStaff(store_staff_id);
