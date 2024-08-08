@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, HttpCode, HttpStatus, UseGuards, Patch, Delete, Param} from '@nestjs/common';
+import { Controller, Get, Post, Body, HttpCode, HttpStatus, UseGuards, Patch, Delete, Param, ParseIntPipe} from '@nestjs/common';
 import { Role } from '@prisma/client';
 import { JwtAuthGuard } from 'src/utils/guard/jwt.guard';
 import { RolesGuard } from 'src/utils/guard/roles.guard';
@@ -18,6 +18,7 @@ export class TaxController {
     @Get()
     @Roles(Role.SUPER_ADMIN, Role.OWNER, Role.STAFF)
     @HttpCode(HttpStatus.OK)
+    @ApiBearerAuth('JWT')
     @ApiResponse({status: 200, description: 'Successfully fetched all taxes'})
     @ApiBadRequestResponse({status: 400, description: 'Invalid data'})
     @ApiUnauthorizedResponse({ status: 401, description: 'Unauthorized' })
@@ -34,11 +35,12 @@ export class TaxController {
     @Get(':tax_id')
     @Roles(Role.SUPER_ADMIN, Role.OWNER, Role.STAFF)
     @HttpCode(HttpStatus.OK)
+    @ApiBearerAuth('JWT')
     @ApiResponse({status: 200, description: 'Successfully fetched tax'})
     @ApiBadRequestResponse({status: 400, description: 'Invalid data'})
     @ApiUnauthorizedResponse({ status: 401, description: 'Unauthorized' })
     @ApiBearerAuth()
-    async findOneTax(@Param('tax_id') tax_id: number) {
+    async findOneTax(@Param('tax_id', ParseIntPipe) tax_id: number) {
         const result = await this.tax_service.findOneTax(tax_id);
         return {
             StatusCode: HttpStatus.OK,
@@ -50,6 +52,7 @@ export class TaxController {
     @Post()
     @Roles(Role.SUPER_ADMIN, Role.OWNER)
     @HttpCode(HttpStatus.CREATED)
+    @ApiBearerAuth('JWT')
     @ApiResponse({status: 201, description: 'Successfully created tax'})
     @ApiBadRequestResponse({status: 400, description: 'Invalid data'})
     @ApiUnauthorizedResponse({ status: 401, description: 'Unauthorized' })
@@ -69,8 +72,10 @@ export class TaxController {
     @ApiResponse({status: 200, description: 'Successfully updated tax'})
     @ApiUnauthorizedResponse({status: 401, description: 'Unauthorized'})
     @ApiBadRequestResponse({status: 400, description: 'Invalid data'})
-    @ApiBearerAuth()
-    async updateTax(@Param('tax_id') tax_id: number, @Body() update_tax_data: UpdateTaxDto) {
+    @ApiBearerAuth('JWT')
+    async updateTax(
+        @Param('tax_id', ParseIntPipe) tax_id: number, 
+        @Body() update_tax_data: UpdateTaxDto) {
         const result = await this.tax_service.updateTax(tax_id, update_tax_data);
         return {
             StatusCode: HttpStatus.OK,
@@ -82,11 +87,11 @@ export class TaxController {
     @Delete(':tax_id')
     @Roles(Role.SUPER_ADMIN, Role.OWNER)
     @HttpCode(HttpStatus.OK)
+    @ApiBearerAuth('JWT')
     @ApiResponse({status: 200, description: 'Successfully deleted tax'})
     @ApiUnauthorizedResponse({status: 401, description: 'Unauthorized'})
     @ApiBadRequestResponse({status: 400, description: 'Invalid data'})
-    @ApiBearerAuth()
-    async deleteTax(@Param('tax_id') tax_id: number) {
+    async deleteTax(@Param('tax_id', ParseIntPipe) tax_id: number) {
         const result = await this.tax_service.deleteTax(tax_id);
         return {
             StatusCode: HttpStatus.OK,

@@ -40,11 +40,11 @@ export class DriverPartnerService {
     }
 
     async update_driver_partner(update_driver_partner: Update_DP_Dto, driver_partner_id: number) {
-        const { driver_partner_name, benefit } = update_driver_partner;
+        const { partner_name, benefit } = update_driver_partner;
         return this.prisma.driverPartner.update({
-            where: { driver_partner_id },
+            where: { driver_partner_id: driver_partner_id },
             data: {
-                partner_name: driver_partner_name,
+                partner_name: partner_name,
                 benefit: benefit,
             },
         });
