@@ -6,8 +6,9 @@ import { IsEnum, IsInt, IsOptional, IsDate, IsNotEmpty, IsString } from 'class-v
 export class CreatePromoDto {
   @IsInt()
   @IsNotEmpty()
+  @IsOptional()
   @ApiProperty({example: 1})
-  product_id: number;
+  product_id?: number;
   
   @IsNotEmpty()
   @IsString()

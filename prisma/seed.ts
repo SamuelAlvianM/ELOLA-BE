@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { PrismaClient, Role } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 
@@ -27,6 +28,7 @@ async function main() {
             role: 'SUPER_ADMIN',
         },
       });
+      
     }
 
   console.log('SuperAdmin account created successfully!');
