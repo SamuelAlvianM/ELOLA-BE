@@ -1,5 +1,5 @@
 import { ApiResponseOptions } from "@nestjs/swagger";
-import { UserDto, UpdateDto } from '../dto/user.dto';
+import { UserDto, UpdateDto } from '../../../src/user/dto/user.dto';
 import { HttpStatus } from "@nestjs/common";
 
 export const unauthorized_role_response: ApiResponseOptions = {

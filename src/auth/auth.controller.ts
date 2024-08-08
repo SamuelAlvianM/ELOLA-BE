@@ -1,4 +1,5 @@
 /* eslint-disable prettier/prettier */
+import { bad_request_response, login_response, register_response, unauthorized_response, not_found_response } from './test/auth.swagger';
 import { Controller, Post, Request, Body, UseGuards, Req, HttpCode, HttpStatus, Get } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { UserDto } from '../user/dto/user.dto';
@@ -15,7 +16,6 @@ import {
     ApiBearerAuth,
 } from '@nestjs/swagger';
 
-import { bad_request_response, login_response, register_response, unauthorized_response, not_found_response } from './test/auth.swagger';
 
 @ApiTags('Authentication')
 @Controller('auth')
