@@ -1,4 +1,5 @@
 /* eslint-disable prettier/prettier */
+import { bad_request_response, login_response, register_response, unauthorized_response, not_found_response } from './test/auth.swagger';
 import { Controller, Post, Request, Body, UseGuards, Req, HttpCode, HttpStatus, Get } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { UserDto } from '../user/dto/user.dto';
@@ -15,6 +16,7 @@ import {
     ApiBearerAuth,
 } from '@nestjs/swagger';
 
+
 @ApiTags('Authentication')
 @Controller('auth')
 export class AuthController {
@@ -25,9 +27,10 @@ export class AuthController {
     @Roles(Role.SUPER_ADMIN, Role.OWNER)
     @UseGuards(JwtAuthGuard, RolesGuard)
     @HttpCode(HttpStatus.CREATED)
-    @ApiResponse( {status: 201, description: 'Successfully registered'})
-    @ApiBadRequestResponse({status: 400, description: 'Invalid data'})
-    @ApiUnauthorizedResponse({ status: 401, description: 'Unauthorized' })
+    @ApiResponse(register_response)
+    @ApiResponse(not_found_response)
+    @ApiBadRequestResponse(bad_request_response)
+    @ApiUnauthorizedResponse(unauthorized_response)
     async register(
         @Body() user_dto: UserDto){
         const result = await this.authService.register(user_dto);
@@ -40,25 +43,27 @@ export class AuthController {
 
     @Post('super-login')
     @HttpCode(HttpStatus.OK)
-    @ApiResponse( {status: 200, description: 'Successfully logged in'})
-    @ApiBadRequestResponse({status: 400, description: 'Invalid data'})
-    @ApiUnauthorizedResponse({ status: 401, description: 'Unauthorized' })
+    @ApiResponse(login_response)
+    @ApiResponse(not_found_response)
+    @ApiBadRequestResponse(bad_request_response)
+    @ApiUnauthorizedResponse(unauthorized_response)
     @ApiBearerAuth()
     async login_super_admin(
         @Body() login_super_admin: Super_Login){
         const result = await this.authService.super_login(login_super_admin, login_super_admin.password);
         return {
             statusCode: HttpStatus.OK,
-            message: 'Successfully logged in',
+            message: 'Super Admin Successfully login ',
             data: result,
         };
     }
 
     @Post('login')
     @HttpCode(HttpStatus.OK)
-    @ApiResponse( {status: 200, description: 'Successfully logged in'})
-    @ApiBadRequestResponse({status: 400, description: 'Invalid data'})
-    @ApiUnauthorizedResponse({ status: 401, description: 'Unauthorized' })
+    @ApiResponse(login_response)
+    @ApiResponse(not_found_response)
+    @ApiBadRequestResponse(bad_request_response)
+    @ApiUnauthorizedResponse(unauthorized_response)
     @ApiBearerAuth()
     async login(
         @Body() login_dto: LoginDto){
@@ -72,9 +77,10 @@ export class AuthController {
 
     @Post('login/pin')
     @HttpCode(HttpStatus.OK)
-    @ApiResponse( {status: 200, description: 'Successfully logged in'})
-    @ApiBadRequestResponse({status: 400, description: 'Invalid data'})
-    @ApiUnauthorizedResponse({ status: 401, description: 'Unauthorized' })
+    @ApiResponse(login_response)
+    @ApiResponse(not_found_response)
+    @ApiBadRequestResponse(bad_request_response)
+    @ApiUnauthorizedResponse(unauthorized_response)
     @ApiBearerAuth()
     async loginStaff(
         @Body() pin: LoginStaffDto){
@@ -100,9 +106,9 @@ export class AuthController {
 
     @Get('user')
     @HttpCode(HttpStatus.OK)
-    @ApiResponse( {status: 200, description: 'Successfully logged in'})
-    @ApiBadRequestResponse({status: 400, description: 'Invalid data'})
-    @ApiUnauthorizedResponse({ status: 401, description: 'Unauthorized' })
+    @ApiResponse(not_found_response)
+    @ApiBadRequestResponse(bad_request_response)
+    @ApiUnauthorizedResponse(unauthorized_response)
     @ApiBearerAuth()
     async thisUser(@Req() req:any) {
         return {
