@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import { Controller, Get, Post, Body, Patch, Param, Delete, HttpCode, HttpStatus} from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, HttpCode, HttpStatus, Put} from '@nestjs/common';
 import { ProductService } from './product.service';
 import { CreateProductDto } from './dto/product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
@@ -54,7 +54,7 @@ export class ProductController {
   @ApiBadRequestResponse({status: 400, description: 'Invalid Data!'})
   @ApiUnauthorizedResponse({ status: 401, description: 'Unauthorized' })
   @ApiBearerAuth('JWT')
-  @Patch(':id')
+  @Put(':id')
   update(@Param('id') id: string, @Body() updateProductDto: UpdateProductDto) {
     return this.productService.update(+id, updateProductDto);
   }
@@ -133,5 +133,4 @@ export class ProductController {
   async getProductWithTaxesAndPromos(@Param('productId') productId: number) {
     return this.productService.get_product_taxes_promos(productId);
   }
-
 }

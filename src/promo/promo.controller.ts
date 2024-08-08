@@ -1,9 +1,9 @@
 /* eslint-disable prettier/prettier */
 // src/controller/promo.controller.ts
 
-import { Controller, Get, Post, Body, Param, Patch, Delete, HttpStatus, HttpCode, UseGuards, ParseIntPipe, NotFoundException } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Patch, Delete, HttpStatus, HttpCode, UseGuards, ParseIntPipe, NotFoundException, Put, BadRequestException } from '@nestjs/common';
 import { PromoService } from './promo.service';
-import { CreatePromoDto, UpdatePromoDto } from './dto/promo.dto';
+import { ApplyPromoDto, CreatePromoDto, UpdatePromoDto } from './dto/promo.dto';
 import { Promo, Role } from '@prisma/client';
 import { RolesGuard } from 'src/utils/guard/roles.guard';
 import { Roles } from 'src/utils/decorator/roles.decorator';
@@ -24,12 +24,9 @@ export class PromoController {
   @ApiBadRequestResponse({status: 400, description: 'Invalid Data'})
   @ApiUnauthorizedResponse({ status: 401, description: 'Unauthorized' })
   @ApiBearerAuth('JWT')
-    async createPromo(@Body() createPromoDto: CreatePromoDto) {
-        const result = await this.promoService.createPromo(createPromoDto)
-        return {
-          data: result
-        }
-      }
+    createPromo(@Body() createPromoDto: CreatePromoDto) {
+      return this.promoService.createPromo(createPromoDto)
+    }
       
   @Roles(Role.SUPER_ADMIN, Role.OWNER, Role.STAFF)
   @HttpCode(HttpStatus.OK)
@@ -55,7 +52,7 @@ export class PromoController {
 
   @Roles(Role.SUPER_ADMIN, Role.OWNER)
   @HttpCode(HttpStatus.NO_CONTENT)
-  @ApiResponse({ status: 201, description: 'Data Promo Successfully Deleted!' })
+  @ApiResponse({ status: 201, description: 'Data Promo Successfully Updated!' })
   @ApiBadRequestResponse({status: 404, description: 'Not Found'})
   @ApiUnauthorizedResponse({ status: 401, description: 'Unauthorized' })
   @ApiBearerAuth('JWT')
@@ -63,6 +60,17 @@ export class PromoController {
   update(@Param('id') id: string, @Body() updatePromoDto: UpdatePromoDto) {
     return this.promoService.updatePromo(+id, updatePromoDto);
   }
+
+  // @Roles(Role.SUPER_ADMIN, Role.OWNER)
+  // @HttpCode(HttpStatus.NO_CONTENT)
+  // @ApiResponse({ status: 201, description: 'Data Promo Successfully Updated!' })
+  // @ApiBadRequestResponse({status: 404, description: 'Not Found'})
+  // @ApiUnauthorizedResponse({ status: 401, description: 'Unauthorized' })
+  // @ApiBearerAuth('JWT')
+  // @Put(':id/apply-promo/:product_id')
+  // applyPromoProduct (@Param(':id') promo_id: number, @Param('product_id') product_id: number) {
+  //   return this.promoService.applyPromoProduct(product_id, promo_id)
+  // }
 
   @Roles(Role.SUPER_ADMIN, Role.OWNER)
   @HttpCode(HttpStatus.NO_CONTENT)
@@ -81,5 +89,10 @@ export class PromoController {
       message: "Delete Data Promo Success!",
       data: promos,
     }
+  }
+
+  @Post('apply')
+  applyPromo(@Body() applyPromoDto: ApplyPromoDto) {
+    return this.promoService.applyPromo(applyPromoDto);
   }
 }
