@@ -8,10 +8,26 @@ import { Promo } from '@prisma/client';
 export class PromoService {
   constructor(private prisma: PrismaService) {}
 
+  // async createPromo(createPromoDto: CreatePromoDto) {
+  //   return this.prisma.promo.create({
+  //     data: createPromoDto,
+  //   });
+  // }
+
   async createPromo(createPromoDto: CreatePromoDto) {
-    return this.prisma.promo.create({
-      data: createPromoDto,
+    const { promo_name, promo_type, promo_value, product_id, start_date, end_date } = createPromoDto;
+    const promo = await this.prisma.promo.create({
+      data: {
+        promo_name,
+        promo_type,
+        promo_value,
+        product_id: product_id || null, // Allow null if product_id is not provided
+        start_date: start_date || new Date(),
+        end_date: end_date || new Date(),
+      },
     });
+
+    return promo;
   }
 
   async applyPromoProduct (product_id: number) {

@@ -14,7 +14,6 @@ import { Role } from '@prisma/client';
 export class ProductController {
   constructor(private readonly productService: ProductService) {}
 
-
   @Post()
   @Roles(Role.SUPER_ADMIN, Role.OWNER)
   @HttpCode(HttpStatus.CREATED)

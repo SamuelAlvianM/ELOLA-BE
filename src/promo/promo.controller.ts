@@ -1,7 +1,7 @@
 /* eslint-disable prettier/prettier */
 // src/controller/promo.controller.ts
 
-import { Controller, Get, Post, Body, Param, Patch, Delete, HttpStatus, HttpCode, UseGuards, ParseIntPipe, NotFoundException, Put, BadRequestException } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Patch, Delete, HttpStatus, HttpCode, UseGuards, ParseIntPipe, NotFoundException,} from '@nestjs/common';
 import { PromoService } from './promo.service';
 import { ApplyPromoDto, CreatePromoDto, UpdatePromoDto } from './dto/promo.dto';
 import { Promo, Role } from '@prisma/client';
@@ -91,6 +91,12 @@ export class PromoController {
     }
   }
 
+  @Roles(Role.SUPER_ADMIN, Role.OWNER)
+  @HttpCode(HttpStatus.CREATED)
+  @ApiResponse( {status: 201, description: 'Apply Promo to Product Success!!'})
+  @ApiBadRequestResponse({status: 400, description: 'Invalid Data'})
+  @ApiUnauthorizedResponse({ status: 401, description: 'Unauthorized' })
+  @ApiBearerAuth('JWT')
   @Post('apply')
   applyPromo(@Body() applyPromoDto: ApplyPromoDto) {
     return this.promoService.applyPromo(applyPromoDto);
