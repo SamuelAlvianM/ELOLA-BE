@@ -8,7 +8,7 @@ export class CreatePromoDto {
   @IsNotEmpty()
   @ApiProperty({example: 1})
   product_id: number;
-
+  
   @IsNotEmpty()
   @IsString()
   @ApiProperty({example: "Promo 1"})
@@ -63,4 +63,16 @@ export class UpdatePromoDto {
   @IsDate()
   @ApiProperty({example: "2022-01-01T00:00:00.000Z", description: "will be using calendar system in frontend"})
   end_date?: Date;
+}
+
+export class ApplyPromoDto {
+  @IsInt()
+  @IsNotEmpty()
+  @ApiProperty({example: 1})
+  product_id: number;
+
+  @IsInt()
+  @IsNotEmpty()
+  @ApiProperty({example: 1})
+  promo_id: number;
 }
