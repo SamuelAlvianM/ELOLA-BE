@@ -38,7 +38,7 @@ export class StoreService {
       }
     
     async invite_to_store(owner_id: number, store_id: number, invite_dto: Invite_User_Dto) {
-        const { invited_email, invited_user_id } = invite_dto;
+        const { email, user_id } = invite_dto;
         const store = await this.prisma.store.findUnique({
             where: { store_id: store_id },
             include: { user: true },
@@ -49,11 +49,11 @@ export class StoreService {
         }
 
         const invited_user = await this.prisma.user.findUnique({
-            where: { user_id: invited_user_id, email: invited_email },
+            where: { user_id: user_id, email: email },
         });
 
         if (!invited_user) {
-            throw new Error(`User ${invited_user_id} not found`);
+            throw new Error(`User ${user_id} not found`);
         }
 
         await this.prisma.storeStaff.create({

@@ -1,14 +1,15 @@
 /* eslint-disable prettier/prettier */
+import { unauthorized_role_response, update_pc_bad_request_response, create_product_category_id_bad_request_response, unauthorized_response, get_all_product_categories_response, get_all_product_categories_bad_request_response, create_product_category_response, create_product_category_bad_request_response, get_product_category_by_id_response, update_product_category_response, delete_product_category_response, delete_product_category_bad_request_response} from '../../tests/swagger/product_category.swagger';
 import { Controller, Get, Post, Body, Patch, Param, Delete, NotFoundException, HttpCode, HttpStatus, UseGuards, ParseIntPipe } from '@nestjs/common';
 import { ProductCategoryService } from './productCategory.service';
 import { CreateProductCategoryDto, UpdateProductCategoryDto } from './dto/productCategory.dto';
 import { ProductCategory, Role } from '@prisma/client';
 import { JwtAuthGuard } from 'src/utils/guard/jwt.guard';
 import { RolesGuard } from 'src/utils/guard/roles.guard';
-import { ApiBadRequestResponse, ApiBearerAuth, ApiResponse, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
+import { ApiBadRequestResponse, ApiBearerAuth, ApiOperation, ApiResponse, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
 import { Roles } from 'src/utils/decorator/roles.decorator';
 
-@ApiTags('Product Categoriest')
+@ApiTags('Product Categories')
 @Controller('products/product-category')
 @UseGuards(JwtAuthGuard, RolesGuard)
 export class ProductCategoryController {
@@ -17,51 +18,74 @@ export class ProductCategoryController {
   @Roles(Role.SUPER_ADMIN, Role.OWNER)
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  @ApiResponse( {status: 201, description: 'Data Category Product Created Success!'})
-  @ApiBadRequestResponse({status: 400, description: 'Invalid Data'})
-  @ApiUnauthorizedResponse({ status: 401, description: 'Unauthorized' })
+  @ApiOperation( {summary: 'Create a new product_category'})
+  @ApiResponse(unauthorized_response)
+  @ApiResponse(create_product_category_response)
+  @ApiResponse(create_product_category_bad_request_response)
+  @ApiResponse(unauthorized_role_response)
   @ApiBearerAuth('JWT')
-  create(@Body() createProductCategoryDto: CreateProductCategoryDto) {
-    return this.productCategoryService.create(createProductCategoryDto);
+  async create(@Body() createProductCategoryDto: CreateProductCategoryDto) {
+    const result = await this.productCategoryService.create(createProductCategoryDto);
+    return {
+      statusCode: HttpStatus.CREATED,
+      message: "Data Category Product Created Success!",
+      data: result,
+    }
   }
 
   @Roles(Role.SUPER_ADMIN, Role.OWNER, Role.STAFF)
   @HttpCode(HttpStatus.OK)
-  @ApiResponse({status: 200, description: 'Fetch Data Category Product Success'})
-  @ApiBadRequestResponse({status: 400, description: 'Invalid Data'})
-  @ApiUnauthorizedResponse({ status: 401, description: 'Unauthorized' })
+  @ApiOperation( {summary: 'Get All Product Category'})
+  @ApiResponse(unauthorized_response)
+  @ApiResponse(get_all_product_categories_response)
+  @ApiResponse(get_all_product_categories_bad_request_response)
+  @ApiResponse(unauthorized_role_response)
   @ApiBearerAuth('JWT')
   @Get()
-  getAllProductCategory(): Promise<ProductCategory[]> {
+  async getAllProductCategory(): Promise<ProductCategory[]> {
     return this.productCategoryService.getAllProductCategory()
   }
 
   @HttpCode(HttpStatus.OK)
-  @ApiResponse({status: 200, description: 'Fetch Data Category Product Success'})
-  @ApiBadRequestResponse({status: 400, description: 'Invalid Data'})
-  @ApiUnauthorizedResponse({ status: 401, description: 'Unauthorized' })
+  @ApiOperation( {summary: 'Get products category by id'})
+  @ApiResponse(unauthorized_response)
+  @ApiResponse(get_product_category_by_id_response)
+  @ApiResponse(create_product_category_id_bad_request_response)
+  @ApiResponse(unauthorized_role_response)
   @ApiBearerAuth('JWT')
   @Get(':id')
-  async getProductCategoryById(@Param('id', ParseIntPipe) id: number): Promise<ProductCategory> {
-    return this.productCategoryService.getProductCategoryById(id);
+  async getProductCategoryById(@Param('id', ParseIntPipe) id: number) {
+    const result = await this.productCategoryService.getProductCategoryById(id);
+    return {
+      statusCode: HttpStatus.OK,
+      message: 'Success get Product Category Product by id',
+      data: result
+    };
   }
 
   @HttpCode(HttpStatus.CREATED)
   @Roles(Role.SUPER_ADMIN, Role.OWNER)
-  @ApiResponse( {status: 201, description: 'Update Data Category Product Success!'})
-  @ApiBadRequestResponse({status: 400, description: 'Invalid Data!'})
-  @ApiUnauthorizedResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse(unauthorized_response)
+  @ApiResponse(update_product_category_response)
+  @ApiResponse(update_pc_bad_request_response)
+  @ApiResponse(unauthorized_role_response)
   @ApiBearerAuth('JWT')
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateProductCategoryDto: UpdateProductCategoryDto) {
-    return this.productCategoryService.update(+id, updateProductCategoryDto);
+  async update(@Param('id') id: string, @Body() updateProductCategoryDto: UpdateProductCategoryDto) {
+    const result = await this.productCategoryService.update(+id, updateProductCategoryDto);
+    return {
+      statusCode: HttpStatus.CREATED,
+      message: "Update Data Category Product Success!",
+      data: result,
+    }
   }
 
   @Roles(Role.SUPER_ADMIN, Role.OWNER)
   @HttpCode(HttpStatus.NO_CONTENT)
-  @ApiResponse({ status: 201, description: 'Data Category Product Successfully Deleted!' })
-  @ApiBadRequestResponse({status: 404, description: 'Not Found'})
-  @ApiUnauthorizedResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse(unauthorized_response)
+  @ApiResponse(delete_product_category_response)
+  @ApiResponse(delete_product_category_bad_request_response)
+  @ApiResponse(unauthorized_role_response)
   @ApiBearerAuth('JWT')
   @Delete(':id')
   async softDeleteProductCategory(@Param('id') id: string) {

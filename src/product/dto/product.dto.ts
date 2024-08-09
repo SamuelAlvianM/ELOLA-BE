@@ -32,6 +32,5 @@ export class CreateProductDto {
 
   @IsOptional()
   @IsString()
-  @ApiProperty({example: "OVO"})
   product_image?: string;
 }
