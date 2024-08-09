@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { Injectable } from '@nestjs/common';
 import { CreateTaxDto, UpdateTaxDto } from './dto/tax.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -8,11 +9,13 @@ export class TaxService {
 
 
     async findAllTaxes() {
-        return await this.prisma.tax.findMany();
+        return await this.prisma.tax.findMany({
+            where: {deleted_at: null}
+        });
     }
 
     async findOneTax(tax_id: number) {
-        return await this.prisma.tax.findUnique({where: {tax_id: tax_id}});
+        return await this.prisma.tax.findUnique({where: {tax_id: tax_id, deleted_at: null}});
     }
 
     async createTax(create_tax_data: CreateTaxDto) {
@@ -35,8 +38,9 @@ export class TaxService {
     }
 
     async deleteTax(tax_id: number) {
-        return await this.prisma.tax.delete({ where: { tax_id: tax_id } });
+        return await this.prisma.tax.update({ 
+            where: { tax_id: tax_id },
+            data: {deleted_at: new Date()} 
+        });
     }
-
-
 }
