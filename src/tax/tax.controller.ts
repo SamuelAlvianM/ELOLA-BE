@@ -1,4 +1,7 @@
+
 /* eslint-disable prettier/prettier */
+
+import { unauthorized_role_response, get_all_tax_response, get_tax_by_id_response, update_tax_response, create_tax_response, not_found_response, bad_request_response, unauthorized_response, delete_tax_response } from '../../tests/swagger/tax.swagger';
 import { Controller, Get, Post, Body, HttpCode, HttpStatus, UseGuards, Patch, Delete, Param, ParseIntPipe} from '@nestjs/common';
 import { Role } from '@prisma/client';
 import { JwtAuthGuard } from 'src/utils/guard/jwt.guard';
@@ -8,7 +11,7 @@ import { Roles } from 'src/utils/decorator/roles.decorator';
 import { TaxService } from './tax.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateTaxDto, UpdateTaxDto } from './dto/tax.dto';
-import { ApiResponse, ApiBadRequestResponse, ApiUnauthorizedResponse, ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiResponse, ApiBadRequestResponse, ApiUnauthorizedResponse, ApiBearerAuth, ApiTags, ApiNotFoundResponse } from '@nestjs/swagger';
 
 @ApiTags('Taxes')
 @Controller('tax')
@@ -18,12 +21,12 @@ export class TaxController {
 
     @Get()
     @Roles(Role.SUPER_ADMIN, Role.OWNER, Role.STAFF)
-    @HttpCode(HttpStatus.OK)
     @ApiBearerAuth('JWT')
-    @ApiResponse({status: 200, description: 'Successfully fetched all taxes'})
-    @ApiBadRequestResponse({status: 400, description: 'Invalid data'})
-    @ApiUnauthorizedResponse({ status: 401, description: 'Unauthorized' })
-    @ApiBearerAuth()
+    @ApiResponse(get_all_tax_response)
+    @ApiResponse( unauthorized_role_response )
+    @ApiNotFoundResponse(not_found_response)
+    @ApiBadRequestResponse(bad_request_response)
+    @ApiUnauthorizedResponse(unauthorized_response)
     async findAllTaxes() {
         const result = await this.tax_service.findAllTaxes();
         return {
@@ -35,17 +38,17 @@ export class TaxController {
 
     @Get(':tax_id')
     @Roles(Role.SUPER_ADMIN, Role.OWNER, Role.STAFF)
-    @HttpCode(HttpStatus.OK)
     @ApiBearerAuth('JWT')
-    @ApiResponse({status: 200, description: 'Successfully fetched tax'})
-    @ApiBadRequestResponse({status: 400, description: 'Invalid data'})
-    @ApiUnauthorizedResponse({ status: 401, description: 'Unauthorized' })
-    @ApiBearerAuth()
+    @ApiResponse(get_tax_by_id_response)
+    @ApiResponse( unauthorized_role_response )
+    @ApiNotFoundResponse(not_found_response)
+    @ApiBadRequestResponse(bad_request_response)
+    @ApiUnauthorizedResponse(unauthorized_response)
     async findOneTax(@Param('tax_id', ParseIntPipe) tax_id: number) {
         const result = await this.tax_service.findOneTax(tax_id);
         return {
             StatusCode: HttpStatus.OK,
-            response: 'Successfully fetched tax',
+            response: 'Successfully fetched tax by id',
             data: result,
         };
     }
@@ -54,10 +57,11 @@ export class TaxController {
     @Roles(Role.SUPER_ADMIN, Role.OWNER)
     @HttpCode(HttpStatus.CREATED)
     @ApiBearerAuth('JWT')
-    @ApiResponse({status: 201, description: 'Successfully created tax'})
-    @ApiBadRequestResponse({status: 400, description: 'Invalid data'})
-    @ApiUnauthorizedResponse({ status: 401, description: 'Unauthorized' })
-    @ApiBearerAuth()
+    @ApiResponse(create_tax_response)
+    @ApiResponse( unauthorized_role_response )
+    @ApiNotFoundResponse(not_found_response)
+    @ApiBadRequestResponse(bad_request_response)
+    @ApiUnauthorizedResponse(unauthorized_response)
     async createTax(@Body() create_tax_data: CreateTaxDto) {
         const result = await this.tax_service.createTax(create_tax_data);
         return {
@@ -69,10 +73,11 @@ export class TaxController {
 
     @Patch(':tax_id')
     @Roles(Role.SUPER_ADMIN, Role.OWNER)
-    @HttpCode(HttpStatus.OK)
-    @ApiResponse({status: 200, description: 'Successfully updated tax'})
-    @ApiUnauthorizedResponse({status: 401, description: 'Unauthorized'})
-    @ApiBadRequestResponse({status: 400, description: 'Invalid data'})
+    @ApiResponse(update_tax_response)
+    @ApiResponse( unauthorized_role_response )
+    @ApiNotFoundResponse(not_found_response)
+    @ApiBadRequestResponse(bad_request_response)
+    @ApiUnauthorizedResponse(unauthorized_response)
     @ApiBearerAuth('JWT')
     async updateTax(
         @Param('tax_id', ParseIntPipe) tax_id: number, 
@@ -87,11 +92,12 @@ export class TaxController {
 
     @Delete(':tax_id')
     @Roles(Role.SUPER_ADMIN, Role.OWNER)
-    @HttpCode(HttpStatus.OK)
     @ApiBearerAuth('JWT')
-    @ApiResponse({status: 200, description: 'Successfully deleted tax'})
-    @ApiUnauthorizedResponse({status: 401, description: 'Unauthorized'})
-    @ApiBadRequestResponse({status: 400, description: 'Invalid data'})
+    @ApiResponse(delete_tax_response)
+    @ApiResponse( unauthorized_role_response )
+    @ApiNotFoundResponse(not_found_response)
+    @ApiBadRequestResponse(bad_request_response)
+    @ApiUnauthorizedResponse(unauthorized_response)
     async deleteTax(@Param('tax_id', ParseIntPipe) tax_id: number) {
         const result = await this.tax_service.deleteTax(tax_id);
         return {

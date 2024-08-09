@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import { Controller, Post, Body, HttpCode, HttpStatus, UseGuards, Get, Param, Patch, Delete, BadRequestException} from '@nestjs/common';
+import { Controller, Post, Body, HttpCode, HttpStatus, UseGuards, Get, Param, Patch, Delete, BadRequestException, ParseIntPipe} from '@nestjs/common';
 
 import { Role } from '@prisma/client';
 import { JwtAuthGuard } from 'src/utils/guard/jwt.guard';
@@ -18,15 +18,17 @@ import { ApiResponse, ApiBadRequestResponse, ApiUnauthorizedResponse, ApiBearerA
 export class StoreController {
     constructor(private store_service: StoreService, private prisma: PrismaService) {}
 
-    @Post()
+    @Post(':user_id')
     @HttpCode(HttpStatus.CREATED)
     @Roles(Role.SUPER_ADMIN, Role.OWNER)
     @ApiResponse( {status: 201, description: 'Successfully created'})
     @ApiBadRequestResponse({status: 400, description: 'Invalid data'})
     @ApiUnauthorizedResponse({ status: 401, description: 'Unauthorized' })
-    @ApiBearerAuth()
-    async createNewStore(@User() user: any, @Body() create_store: Create_Store_Dto) {
-        const result = this.store_service.createNewStore(user.user_id, create_store);
+    @ApiBearerAuth('JWT')
+    async createNewStore(
+        @Param('user_id', ParseIntPipe) user_id: number, 
+        @Body() create_store: Create_Store_Dto) {
+        const result = await this.store_service.createNewStore(user_id, create_store);
       return {
           StatusCode: HttpStatus.CREATED,
           response: 'Created new Store',
@@ -40,6 +42,7 @@ export class StoreController {
     @ApiResponse( {status: 201, description: 'Successfully invited new staff'})
     @ApiBadRequestResponse({status: 400, description: 'Invalid data'})
     @ApiUnauthorizedResponse({ status: 401, description: 'Unauthorized' })
+    @ApiBearerAuth('JWT')
     async invite_to_store(
         @User() user: any, 
         @Body('store_id') store_id: number,
@@ -58,6 +61,7 @@ export class StoreController {
     @ApiResponse({status: 200, description: 'Successfully fetched all stores'})
     @ApiBadRequestResponse({status: 400, description: 'Invalid data'})
     @ApiUnauthorizedResponse({ status: 401, description: 'Unauthorized' })
+    @ApiBearerAuth('JWT')
     async findAllStore() {
         const result = await this.store_service.findAllStore();
         return {
@@ -72,6 +76,7 @@ export class StoreController {
     @ApiResponse({status: 200, description: 'Successfully fetched all Staffs'})
     @ApiBadRequestResponse({status: 400, description: 'Invalid data'})
     @ApiUnauthorizedResponse({ status: 401, description: 'Unauthorized' })
+    @ApiBearerAuth('JWT')
     async findAllStoreStaff() {
         const result = await this.store_service.findAllStoreStaff();
         return {
@@ -86,6 +91,7 @@ export class StoreController {
     @ApiResponse({status: 200, description: 'Successfully fetched Staff'})
     @ApiBadRequestResponse({status: 400, description: 'Invalid data'})
     @ApiUnauthorizedResponse({ status: 401, description: 'Unauthorized' })
+    @ApiBearerAuth('JWT')
     async findOne(@Param('store_staff_id') store_staff_id: number) {
         const result = await this.store_service.findOne(+store_staff_id);
         return {
@@ -102,7 +108,7 @@ export class StoreController {
     @ApiResponse({status: 200, description: 'Successfully updated Store'})
     @ApiUnauthorizedResponse({status: 401, description: 'Unauthorized'})
     @ApiBadRequestResponse({status: 400, description: 'Invalid data'})
-    @ApiBearerAuth()
+    @ApiBearerAuth('JWT')
     async update(@User() user: any, @Body() update_store: Update_Store_Dto) {
 
         const result = await this.store_service.update(user.user_id, update_store);
@@ -117,6 +123,7 @@ export class StoreController {
     @ApiResponse({ status: 200, description: 'Successfully deleted store' })
     @ApiUnauthorizedResponse({ status: 401, description: 'Unauthorized' })
     @ApiBadRequestResponse({ status: 400, description: 'Invalid data' })
+    @ApiBearerAuth('JWT')
     @Roles(Role.SUPER_ADMIN, Role.OWNER)
     async delete(@Param('store_id') store_id: string) {
         const parsedStoreId = parseInt(store_id, 10);
@@ -136,8 +143,9 @@ export class StoreController {
     @ApiResponse({ status: 200, description: 'Successfully deleted staff' })
     @ApiUnauthorizedResponse({ status: 401, description: 'Unauthorized' })
     @ApiBadRequestResponse({ status: 400, description: 'Invalid data' })
+    @ApiBearerAuth('JWT')
     @Roles(Role.SUPER_ADMIN, Role.OWNER)
-    async deleteStaff(@Param('store_staff_id') store_staff_id: number) {
+    async deleteStaff(@Param('store_staff_id', ParseIntPipe) store_staff_id: number) {
       const result = await this.store_service.deleteStaff(store_staff_id);
       return {
         StatusCode: HttpStatus.OK,
