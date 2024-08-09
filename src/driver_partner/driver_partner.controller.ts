@@ -11,7 +11,7 @@ import {
     update_dp_response, 
     update_dp_bad_request_response, 
     delete_dp_response, 
-    delete_dp_bad_request_response } from './test/driver_partner.swagger';
+    delete_dp_bad_request_response } from '../../tests/swagger/driver_partner/driver_partner.swagger';
 import { Body, Controller, Delete, Get, HttpCode, HttpStatus, NotFoundException, Param, Patch, Post, UseGuards, ParseIntPipe } from '@nestjs/common';
 import { DriverPartnerService } from './driver_partner.service';
 import { JwtAuthGuard } from '../utils/guard/jwt.guard';

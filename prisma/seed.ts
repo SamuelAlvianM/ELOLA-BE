@@ -8,10 +8,10 @@ async function main() {
 
   // deklarasi akun superadmin
   const super_admins = [{
-    admin_name: 'Samuel',
-    admin_email: 'samuelalvian07@gmail.com',
-    admin_pin: "761999",
-    password: await bcrypt.hash('superadminsamuel', 10),
+    admin_name: 'Samuel Alvian',
+    admin_email: 'samuelalvian0007@gmail.com',
+    admin_pin: "076099",
+    password: await bcrypt.hash('supesradminsamuel', 10),
   }];
 
   // data akun superadmin
@@ -28,11 +28,10 @@ async function main() {
             role: 'SUPER_ADMIN',
         },
       });
-      
     }
-
   console.log('SuperAdmin account created successfully!');
 }
+
 
 main()
   .catch(e => {
