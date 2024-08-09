@@ -1,6 +1,6 @@
 /* eslint-disable prettier/prettier */
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, MinLength, IsOptional, IsString, IsInt, IsEmail } from 'class-validator';
+import { IsNotEmpty, MinLength, IsOptional, IsString, IsInt, IsEmail, IsNumber } from 'class-validator';
 
 
 export class Create_Store_Dto{
@@ -34,14 +34,14 @@ export class Update_Store_Dto {
 
 export class Invite_User_Dto {
 
-    @IsString()
+    @IsNumber()
     @IsOptional()
     @ApiProperty({example: 1})
-    invited_user_id: number;
+    user_id: number;
 
     @IsEmail()
     @IsOptional()
     @ApiProperty({example: "youremail@gmail.com"})
-    invited_email: string;
+    email: string;
     
 }

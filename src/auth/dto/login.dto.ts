@@ -1,12 +1,12 @@
 /* eslint-disable prettier/prettier */
 import { ApiProperty } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
-import { IsNotEmpty, IsEmail } from 'class-validator';
+import { IsNotEmpty, IsEmail, IsString } from 'class-validator';
 
 
 export class Super_Login {
     @IsNotEmpty()
-    @IsEmail()
+    @IsString()
     @ApiProperty({ example: 'Samuel'})
     @Expose()
     admin_name: string;

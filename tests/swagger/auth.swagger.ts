@@ -1,8 +1,8 @@
 /* eslint-disable prettier/prettier */
 import { ApiProperty, ApiResponseOptions } from "@nestjs/swagger";
-import { Super_Login, LoginDto, LoginStaffDto } from '../../../src/auth/dto/login.dto';
+import { Super_Login, LoginDto, LoginStaffDto } from '../../src/auth/dto/login.dto';
 import { HttpStatus } from "@nestjs/common";
-import { UserDto } from '../../../src/user/dto/user.dto';
+import { UserDto } from '../../src/user/dto/user.dto';
 
 // dto - dummy - login response
 
