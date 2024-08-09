@@ -1,17 +1,5 @@
 /* eslint-disable prettier/prettier */
-import { 
-    get_all_dp_bad_request_response, 
-    get_all_dp_response, 
-    unauthorized_response, 
-    unauthorized_role_response, 
-    det_dp_by_id_response, 
-    det_dp_by_id_bad_request_response, 
-    create_dp_response, 
-    create_dp_bad_request_response, 
-    update_dp_response, 
-    update_dp_bad_request_response, 
-    delete_dp_response, 
-    delete_dp_bad_request_response } from '../../tests/swagger/driver_partner/driver_partner.swagger';
+import { get_all_dp_bad_request_response, get_all_dp_response, unauthorized_response, unauthorized_role_response, det_dp_by_id_response, det_dp_by_id_bad_request_response, create_dp_response, create_dp_bad_request_response, update_dp_response, update_dp_bad_request_response, delete_dp_response, delete_dp_bad_request_response } from '../../tests/swagger/driver_partner.swagger';
 import { Body, Controller, Delete, Get, HttpCode, HttpStatus, NotFoundException, Param, Patch, Post, UseGuards, ParseIntPipe } from '@nestjs/common';
 import { DriverPartnerService } from './driver_partner.service';
 import { JwtAuthGuard } from '../utils/guard/jwt.guard';

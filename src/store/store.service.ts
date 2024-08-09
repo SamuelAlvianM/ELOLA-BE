@@ -1,16 +1,24 @@
 /* eslint-disable prettier/prettier */
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { Create_Store_Dto, Invite_User_Dto, Update_Store_Dto } from './dto/store.dto';
+import { Role } from '@prisma/client';
 
 
-// add SERVICE login staff, with pin
-// OWNER must make staff account 1 owner many account staffs
 @Injectable()
 export class StoreService {
     constructor(private prisma: PrismaService) {}
 
     async createNewStore(user_id: number, createStoreDto: Create_Store_Dto) {
+
+        const existingStore = await this.prisma.store.findUnique({
+            where: { store_name: createStoreDto.store_name },
+          });
+      
+          if (existingStore) {
+            throw new ConflictException('Store name already exists');
+          }
+          
         const store = await this.prisma.store.create({
           data: {
             ...createStoreDto,
@@ -22,7 +30,7 @@ export class StoreService {
           data: {
             store_id: store.store_id,
             user_id,
-            role: 'owner',
+            role: Role.OWNER,
           },
         });
     
@@ -101,8 +109,8 @@ export class StoreService {
     }
 
     async deleteStaff(store_staff_id: number) {
-        return await this.prisma.store.delete({
-            where: { store_id: store_staff_id },
+        return await this.prisma.storeStaff.delete({
+            where: { store_staff_id: store_staff_id },
         });
     }
 

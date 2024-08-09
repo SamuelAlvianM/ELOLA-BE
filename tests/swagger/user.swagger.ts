@@ -1,5 +1,5 @@
 import { ApiResponseOptions } from "@nestjs/swagger";
-import { UserDto, UpdateDto } from '../../../src/user/dto/user.dto';
+import { UserDto, UpdateDto } from '../../src/user/dto/user.dto';
 import { HttpStatus } from "@nestjs/common";
 
 export const unauthorized_role_response: ApiResponseOptions = {
@@ -119,7 +119,7 @@ export const bad_request_response: ApiResponseOptions = {
         properties: {
             statusCode: { type: 'number', example: 400 },
             message: { type: 'string', example: 'Bad Request' },
-            error: { type: 'string', example: 'Error' },
+            error: { type: 'string', example: 'Something went wrong, please try again with valid data' },
         },
     },
 };

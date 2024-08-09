@@ -1,6 +1,6 @@
 /* eslint-disable prettier/prettier */
 import { ApiResponseOptions } from "@nestjs/swagger";
-import { Update_DP_Dto, Create_DP_Dto } from '../../../src/driver_partner/dto/dp.dto';
+import { Update_DP_Dto, Create_DP_Dto } from '../../src/driver_partner/dto/dp.dto';
 import { HttpStatus } from "@nestjs/common";
 
 export const unauthorized_role_response: ApiResponseOptions = {
