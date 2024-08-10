@@ -58,7 +58,7 @@ export const create_product_category_response: ApiResponseOptions = {
     properties: {
       statusCode: { type: 'number', example: 201 },
       message: { type: 'string', example: 'Data Category Product Created Success!' },
-      data: { $ref: '#/components/schemas/ProductCategory' },
+      data: { $ref: '#/components/schemas/CreateProductCategoryDto' },
     },
   },
 };
