@@ -180,7 +180,7 @@ model Supplier {
 
   supplier_name    String
   supplier_product String
-  phone_number     Int
+  phone_number     String
   email            String    @unique
   created_at       DateTime  @default(now())
   updated_at       DateTime  @updatedAt
