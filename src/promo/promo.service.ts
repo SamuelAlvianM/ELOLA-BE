@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { ApplyPromoDto, CreatePromoDto, UpdatePromoDto } from './dto/promo.dto';
 import { Promo } from '@prisma/client';
@@ -8,14 +8,14 @@ import { Promo } from '@prisma/client';
 export class PromoService {
   constructor(private prisma: PrismaService) {}
 
-  // async createPromo(createPromoDto: CreatePromoDto) {
-  //   return this.prisma.promo.create({
-  //     data: createPromoDto,
-  //   });
-  // }
 
   async createPromo(createPromoDto: CreatePromoDto) {
     const { promo_name, promo_type, promo_value, product_id, start_date, end_date } = createPromoDto;
+
+    if (end_date && start_date && end_date < start_date) {
+      throw new BadRequestException("End date cannot be before the start date.");
+    }
+    
     const promo = await this.prisma.promo.create({
       data: {
         promo_name,

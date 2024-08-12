@@ -1,7 +1,8 @@
 /* eslint-disable prettier/prettier */
 import { ApiProperty } from '@nestjs/swagger';
 import { Promo_type } from '@prisma/client';
-import { IsEnum, IsInt, IsOptional, IsDate, IsNotEmpty, IsString } from 'class-validator';
+import { Type } from 'class-transformer';
+import { IsEnum, IsInt, IsOptional, IsDate, IsNotEmpty, IsString, MinDate } from 'class-validator';
 
 export class CreatePromoDto {
   @IsInt()
@@ -26,11 +27,14 @@ export class CreatePromoDto {
   @IsDate()
   @IsOptional()
   @ApiProperty({example: "2022-01-01T00:00:00.000Z", description: "will be using calendar system in frontend"})
+  @MinDate(new Date(), { message: "Start date cannot be before today." })
+  @Type(() => Date)
   start_date?: Date;
 
   @IsDate()
   @IsOptional()
   @ApiProperty({example: "2022-01-01T00:00:00.000Z", description: "will be using calendar system in frontend"})
+  @Type(() => Date)
   end_date?: Date;
 }
 
@@ -42,27 +46,30 @@ export class UpdatePromoDto {
 
   @IsOptional()
   @IsString()
-  @ApiProperty({example: "Promo 1"})
+  @ApiProperty({example: "Promo 2"})
   promo_name?: string;
 
   @IsOptional()
   @IsEnum(Promo_type)
-  @ApiProperty({example: "Discount / Sales"})
+  @ApiProperty({example: "Discount"})
   promo_type?: Promo_type;
 
   @IsOptional()
   @IsInt()
-  @ApiProperty({example: 20, description: "Prothis will be added as percentage"})
+  @ApiProperty({example: 20, description: "will be added as percentage / number"})
   promo_value?: number;
 
   @IsOptional()
   @IsDate()
   @ApiProperty({example: "2022-01-01T00:00:00.000Z", description: "will be using calendar system in frontend"})
+  @MinDate(new Date(), { message: "Start date cannot be before today." })
+  @Type(() => Date)
   start_date?: Date;
 
   @IsOptional()
   @IsDate()
   @ApiProperty({example: "2022-01-01T00:00:00.000Z", description: "will be using calendar system in frontend"})
+  @Type(() => Date)
   end_date?: Date;
 }
 
