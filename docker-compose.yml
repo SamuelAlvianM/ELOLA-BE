@@ -3,7 +3,7 @@ version: '3.8'
 
 services:
   app:
-    image: backend3/werent:team3
+    image: samuelalvian/salemate:team3
     build:
       context: .
       dockerfile: Dockerfile

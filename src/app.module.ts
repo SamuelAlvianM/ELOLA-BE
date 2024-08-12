@@ -21,6 +21,7 @@ import { PromoModule } from './promo/promo.module';
 import { ProductCategoryModule } from './product_category/productCategory.module';
 import { InventoryModule } from './inventory/inventory.module';
 import { OpenCloseModule } from './open_close/open_close.module';
+import { JwtStrategy } from './auth/middleware/jwt.strategy';
 
 @Module({
   imports: [
@@ -50,6 +51,6 @@ import { OpenCloseModule } from './open_close/open_close.module';
     OpenCloseModule,
   ],
   controllers: [AppController],
-  providers: [AppService, UserService, PrismaService],
+  providers: [AppService, UserService, PrismaService, JwtStrategy],
 })
 export class AppModule {}
