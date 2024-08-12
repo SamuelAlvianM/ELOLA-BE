@@ -23,4 +23,4 @@ COPY --from=builder /app/package.json ./package.json
 # Set environment variables if needed
 ENV NODE_ENV=production
 
-CMD ["npm", "run", "start:dev"]
+CMD [""node", "dist/src/main.js""]
