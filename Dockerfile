@@ -14,6 +14,8 @@ COPY package*.json ./
 # Install production dependencies.
 RUN npm install
 
+RUN npx prisma generate
+
 # Copy local code to the container image.
 COPY . .
 
