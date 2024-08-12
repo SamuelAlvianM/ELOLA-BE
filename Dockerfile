@@ -1,32 +1,26 @@
-# Use the official Node.js image.
-FROM node:18
-
 # Install dependencies
-# Install Python, g++, make, and other dependencies required by node-gyp
-RUN apt-get update && apt-get install -y python3 g++ make
-
-# Create and change to the app directory.
-WORKDIR /usr/src/app
-
-# Copy application dependency manifests to the container image.
-COPY package*.json ./
-
-# Install production dependencies.
+FROM node:18-alpine AS deps
+WORKDIR /app
+COPY package.json package-lock.json ./
 RUN npm install
 
-RUN npx prisma generate
-
-# Copy local code to the container image.
+# Build the application
+FROM node:18-alpine AS builder
+WORKDIR /app
 COPY . .
-
-# Rebuild bcrypt to ensure native bindings are correctly compiled
-RUN npm rebuild bcrypt --build-from-source
-
-# Build the application.
+COPY --from=deps /app/node_modules ./node_modules
+RUN npx prisma generate
 RUN npm run build
 
-# Run the web service on container startup.
-CMD [ "npm", "run", "start:prod" ]
+# Production image
+FROM node:18-alpine AS runner
+WORKDIR /app
 
-# Expose the port your app runs on
-EXPOSE 3000
+COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/package.json ./package.json
+
+# Set environment variables if needed
+ENV NODE_ENV=production
+
+CMD ["node", "dist/src/main.js"]
