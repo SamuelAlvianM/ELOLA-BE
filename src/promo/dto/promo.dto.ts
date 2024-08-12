@@ -84,3 +84,15 @@ export class ApplyPromoDto {
   @ApiProperty({example: 1})
   promo_id: number;
 }
+
+export class UnapplyPromoDto {
+  @IsInt()
+  @IsNotEmpty()
+  @ApiProperty({ example: 1 })
+  product_id: number;
+
+  @IsInt()
+  @IsNotEmpty()
+  @ApiProperty({ example: 1 })
+  promo_id: number;
+}
