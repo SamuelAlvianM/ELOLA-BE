@@ -1,15 +1,17 @@
+
 version: '3.8'
 
 services:
   app:
+    image: backend3/werent:team3
     build:
       context: .
       dockerfile: Dockerfile
     ports:
-      - '3000:3000'
+      - "3000:3000"
     environment:
-      NODE_ENV: production
-      DATABASE_URL: 'postgresql://postgres:postgres@db:5432/mydatabase' # Update with your actual database credentials
+      DATABASE_URL: ${DATABASE_URL}
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
     depends_on:
       - db
 
@@ -21,7 +23,7 @@ services:
       POSTGRES_PASSWORD: 12345678
       POSTGRES_DB: SaleMate
     ports:
-      - '5432:5000'
+      - '5000:5432'
     volumes:
       - db_data:/var/lib/postgresql/data
 
