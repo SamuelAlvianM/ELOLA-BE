@@ -1,25 +1,30 @@
-# Use the official Node.js image as a parent image
-FROM node:20.11.1-alpine
+# Use the official Node.js image.
+FROM node:18
 
-# Set the working directory in the container
+# Install dependencies
+# Install Python, g++, make, and other dependencies required by node-gyp
+RUN apt-get update && apt-get install -y python3 g++ make
+
+# Create and change to the app directory.
 WORKDIR /usr/src/app
 
-# Copy the package.json and package-lock.json files
+# Copy application dependency manifests to the container image.
 COPY package*.json ./
 
-# Install any needed packages
+# Install production dependencies.
 RUN npm install
 
-# Copy the rest of the application's source code
+# Copy local code to the container image.
 COPY . .
 
+# Rebuild bcrypt to ensure native bindings are correctly compiled
 RUN npm rebuild bcrypt --build-from-source
 
-# Build the app
+# Build the application.
 RUN npm run build
 
-# Make port 3000 available to the world outside this container
-EXPOSE 3000
+# Run the web service on container startup.
+CMD [ "npm", "run", "start:prod" ]
 
-# Run the application
-CMD ["npm", "run", "start:prod"]
+# Expose the port your app runs on
+EXPOSE 3000
