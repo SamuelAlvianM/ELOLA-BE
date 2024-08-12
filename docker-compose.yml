@@ -4,7 +4,7 @@ version: '3.8'
 services:
   app:
     image: samuelalvian/salemate:team3
-    build:
+    build: 
       context: .
       dockerfile: Dockerfile
     ports:

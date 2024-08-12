@@ -1,9 +1,9 @@
 /* eslint-disable prettier/prettier */
-import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
+import { NestFactory } from '@nestjs/core';
+import { ValidationPipe } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import * as dotenv from 'dotenv';
-import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
 
