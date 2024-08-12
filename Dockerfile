@@ -1,21 +1,25 @@
-FROM node:18
+# Use the official Node.js image as a parent image
+FROM node:20.11.1-alpine
 
-RUN apk add --no-cache python3 make g++
-
+# Set the working directory in the container
 WORKDIR /usr/src/app
 
+# Copy the package.json and package-lock.json files
 COPY package*.json ./
 
+# Install any needed packages
 RUN npm install
 
+# Copy the rest of the application's source code
 COPY . .
 
 RUN npm rebuild bcrypt --build-from-source
 
-RUN npm run build 
+# Build the app
+RUN npm run build
 
-RUN ls -l dist
-
+# Make port 3000 available to the world outside this container
 EXPOSE 3000
 
-CMD ["node", "dist/main"]
+# Run the application
+CMD ["npm", "run", "start:prod"]
