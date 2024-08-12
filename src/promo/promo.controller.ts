@@ -6,7 +6,7 @@ import { ApplyPromoDto, CreatePromoDto, UpdatePromoDto } from './dto/promo.dto';
 import { Promo, Role } from '@prisma/client';
 import { RolesGuard } from 'src/utils/guard/roles.guard';
 import { Roles } from 'src/utils/decorator/roles.decorator';
-import { ApiResponse, ApiBadRequestResponse, ApiUnauthorizedResponse, ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiResponse, ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/utils/guard/jwt.guard';
 
 @ApiTags('Promos')
