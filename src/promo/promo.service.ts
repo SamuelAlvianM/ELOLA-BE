@@ -30,28 +30,7 @@ export class PromoService {
     return promo;
   }
 
-  async applyPromoProduct (product_id: number) {
-    const promo = await this.prisma.promo.findFirst({
-      where: {
-        product_id,
-        start_date: {
-          lte: new Date()
-        },
-        end_date: {
-          gte: new Date()
-        },
-      },
-      orderBy: {
-        end_date: 'asc'
-      },
-    });
-
-    if (!promo) {
-      return null;
-    }
-
-  }
-
+  
   async getAllPromos(): Promise<Promo[]>{
     return this.prisma.promo.findMany({
       where: {
@@ -88,61 +67,13 @@ export class PromoService {
   async softDeletePromo(promo_id: number): Promise<Promo> {
     return this.prisma.promo.update({
       where: {
-        promo_id
+        promo_id: promo_id
       },
       data: {
         deleted_at: new Date()
       }
     });
   }
-
-  // async applyPromoToProduct(product_id: number) {
-  //   // Ensure productId is a valid integer
-  // if (typeof product_id !== 'number' || isNaN(product_id) || product_id <= 0) {
-  //   throw new BadRequestException('Invalid product ID');
-  // }
-  //   // Fetch the product
-  //   const product = await this.prisma.product.findUnique({
-  //     where: { product_id: product_id },
-  //   });
-
-  //   if (!product) {
-  //     throw new NotFoundException('Product not found');
-  //   }
-
-  //   // Fetch the active promo for the product
-  //   const promo = await this.prisma.promo.findFirst({
-  //     where: {
-  //       product_id: product_id,
-  //       deleted_at: null,
-  //       start_date: { lte: new Date() },
-  //       end_date: { gte: new Date() },
-  //     },
-  //   });
-
-  //   let discountedPrice = product.product_price;
-
-  //   if (promo) {
-  //     switch (promo.promo_type) {
-  //       case 'Discount':
-  //         discountedPrice = product.product_price * (1 - promo.promo_value / 100); // Percentage Discount
-  //         break;
-  //       case 'Sales':
-  //         discountedPrice = product.product_price - promo.promo_value;
-  //         break;
-  //       default:
-  //         throw new Error('Invalid Promo Type');
-  //     }
-  //   }
-
-  //   discountedPrice = Math.max(discountedPrice, 0)
-
-  //   return {
-  //     product,
-  //     promo,
-  //     discountedPrice: discountedPrice > 0 ? discountedPrice : 0, // Ensure non-negative price
-  //   };
-  // }
 
   async applyPromo(applyPromoDto: ApplyPromoDto) {
     const { product_id, promo_id } = applyPromoDto;
@@ -160,9 +91,80 @@ export class PromoService {
       newPrice = product.product_price - promo.promo_value;
     }
 
-    return this.prisma.product.update({
-      where: { product_id },
+    const discounted_price = await this.prisma.product.update({
+      where: { product_id: product_id },
       data: { product_price: newPrice },
     });
+
+    await this.prisma.productPromo.upsert({
+      where: {
+        product_id_promo_id: {
+          product_id: product_id,
+          promo_id: promo_id,
+        },
+      },
+      update: {},
+      create: {
+        product_id: product_id,
+        promo_id: promo_id,
+      },
+    });
+  
+    // return this.prisma.product.update({
+    //   where: { product_id },
+    //   data: { product_price: newPrice },
+    // });
+
+    return this.prisma.product.findUnique({
+      where: { product_id: product_id },
+      include: {
+        ProductPromo: {
+          include: {
+            promo: true,
+          },
+        },
+      },
+    });
   }
+
+
+  // async getProductWithPromo(productId: number) {
+  //   // Fetch the product along with its associated promos
+  //   const product = await this.prisma.product.findUnique({
+  //     where: { product_id: productId },
+  //     include: {
+  //       ProductPromo: {
+  //         include: {
+  //           promo: true,
+  //         },
+  //       },
+  //     },
+  //   });
+
+  //   if (!product) {
+  //     throw new NotFoundException('Product not found');
+  //   }
+
+  //   // Calculate the final price after applying promo
+  //   const promoAppliedProduct = {
+  //     ...product,
+  //     finalPrice: this.applyPromosToProduct(product),
+  //   };
+
+  //   return promoAppliedProduct;
+  // }
+
+  // private applyPromosToProduct(product: any) {
+  //   let finalPrice = product.product_price;
+
+  //   product.ProductPromo.forEach(({ promo }) => {
+  //     if (promo.promo_type === 'Discount') {
+  //       finalPrice -= (finalPrice * promo.promo_value) / 100;
+  //     } else if (promo.promo_type === 'Sales') {
+  //       finalPrice -= promo.promo_value;
+  //     }
+  //   });
+
+  //   return finalPrice;
+  // }
 }

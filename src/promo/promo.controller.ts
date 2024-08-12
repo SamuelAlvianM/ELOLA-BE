@@ -2,8 +2,8 @@
 import {unauthorized_response, unauthorized_role_response, get_all_promos_response, get_all_promo_bad_request_response, create_promo_response, create_promo_bad_request_response, get_promo_by_id_response, get_promo_by_id_bad_request_response, update_promo_response, update_promo_bad_request_response, apply_promo_response, apply_promo_bad_request_response, delete_promo_response, delete_promo_bad_request_response} from '../../tests/swagger/promo.swagger';
 import { Controller, Get, Post, Body, Param, Patch, Delete, HttpStatus, HttpCode, UseGuards, ParseIntPipe, NotFoundException,} from '@nestjs/common';
 import { PromoService } from './promo.service';
-import { ApplyPromoDto, CreatePromoDto, UpdatePromoDto } from './dto/promo.dto';
-import { Promo, Role } from '@prisma/client';
+import { ApplyPromoDto, CreatePromoDto, UnapplyPromoDto, UpdatePromoDto } from './dto/promo.dto';
+import { Role } from '@prisma/client';
 import { RolesGuard } from 'src/utils/guard/roles.guard';
 import { Roles } from 'src/utils/decorator/roles.decorator';
 import { ApiResponse, ApiBearerAuth, ApiTags } from '@nestjs/swagger';
@@ -115,4 +115,20 @@ export class PromoController {
       data: applied_promos,
     };
   }
+  // @Roles(Role.SUPER_ADMIN, Role.OWNER)
+  // @HttpCode(HttpStatus.CREATED)
+  // @ApiResponse(apply_promo_response)
+  // @ApiResponse(unauthorized_response)
+  // @ApiResponse(unauthorized_role_response)
+  // @ApiResponse(apply_promo_bad_request_response)
+  // @ApiBearerAuth('JWT')
+  // @Get('apply/:productId')
+  // async getApplyPromoToProduct(@Param('productId', ParseIntPipe) productId: number) {
+  //   return this.promoService.getProductWithPromo(productId);
+  // }
+
+  // @Post('unapply')
+  // async unapplyPromo(@Body() unapplyPromoDto: UnapplyPromoDto) {
+  //   return this.promoService.unapplyPromo(unapplyPromoDto);
+  // }
 }
