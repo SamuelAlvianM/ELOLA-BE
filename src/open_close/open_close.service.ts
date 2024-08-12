@@ -1,4 +1,4 @@
-import { Injectable, BadRequestException } from '@nestjs/common';
+import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { Handle_Open_Close_Dto } from './dto/oc.dto';
 import { Update_Store_Dto } from '../store/dto/store.dto';
@@ -60,4 +60,32 @@ export class OpenCloseService {
     }
   }
 
+  async get_all_data_open_close() {
+    try {
+      return await this.prisma.openClose.findMany();
+    } catch (error) {
+      throw new BadRequestException('Error when fetching open/close sessions');
+    }
+  }
+
+  async delete_data_open_close(id: number): Promise<void> {
+    try {
+      const openCloseSession = await this.prisma.openClose.findUnique({
+        where: { open_close_id: id },
+      });
+
+      if (!openCloseSession) {
+        throw new NotFoundException(`Open/close session with ID ${id} not found`);
+      }
+
+      await this.prisma.openClose.delete({
+        where: { open_close_id: id },
+      });
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+      throw new BadRequestException('Error when deleting open/close session');
+    }
+  }
 }
