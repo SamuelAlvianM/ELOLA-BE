@@ -22,6 +22,9 @@ import { ProductCategoryModule } from './product_category/productCategory.module
 import { InventoryModule } from './inventory/inventory.module';
 import { OpenCloseModule } from './open_close/open_close.module';
 import { JwtStrategy } from './auth/middleware/jwt.strategy';
+import * as dotenv from 'dotenv';
+
+dotenv.config();
 
 @Module({
   imports: [
