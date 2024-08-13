@@ -9,7 +9,7 @@ services:
     ports:
       - "3000:3000"
     environment:
-      DATABASE_URL: postgresql://postgres:SIuRMOlquUxLWNCpUVmtqDhVHnQOsJuq@db:5432/railway
+      DATABASE_URL: postgresql://postgres:pkYBhndFhQhiKNXwqgDtkmiweJUNMUiL@viaduct.proxy.rlwy.net:27020/railway
       JWT_SECRET_KEY: ${JWT_SECRET_KEY}
     depends_on:
       - db
@@ -19,10 +19,10 @@ services:
     restart: always
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: 12345678
-      POSTGRES_DB: SaleMate
+      POSTGRES_PASSWORD: pkYBhndFhQhiKNXwqgDtkmiweJUNMUiL
+      POSTGRES_DB: railway
     ports:
-      - '51327:5432'
+      - '5432:5432'
     volumes:
       - db_data:/var/lib/postgresql/data
 
