@@ -9,6 +9,8 @@ FROM node:18-alpine AS builder
 WORKDIR /app
 COPY . . 
 COPY --from=deps /app/node_modules ./node_modules
+ENV NODE_ENV=production
+ENV DATABASE_URL=postgresql://postgres:SIuRMOlquUxLWNCpUVmtqDhVHnQOsJuq@viaduct.proxy.rlwy.net:51327/railway
 RUN npx prisma generate
 RUN npm run build
 
@@ -23,5 +25,7 @@ COPY --from=builder /app/package.json ./package.json
 
 # Set environment variables if needed
 ENV NODE_ENV=production
+ENV DATABASE_URL=postgresql://postgres:SIuRMOlquUxLWNCpUVmtqDhVHnQOsJuq@viaduct.proxy.rlwy.net:51327/railway
+
 
 CMD ["node", "dist/src/main.js"]
