@@ -23,7 +23,7 @@ services:
       POSTGRES_PASSWORD: 12345678
       POSTGRES_DB: SaleMate
     ports:
-      - '5000:5432'
+      - '51327:5432'
     volumes:
       - db_data:/var/lib/postgresql/data
 
