@@ -296,7 +296,7 @@ model ProductPromo {
   product Product @relation(fields: [product_id], references: [product_id])
   promo   Promo   @relation(fields: [promo_id], references: [promo_id])
 
-  // @@id([product_id, promo_id]) 
+  @@unique([product_id, promo_id]) 
 }
 
 model ProductTax {

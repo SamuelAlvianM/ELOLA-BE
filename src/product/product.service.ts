@@ -59,7 +59,10 @@ export class ProductService {
   async remove_promo_product(product_id: number, promo_id: number) {
     return this.prisma.productPromo.delete({
       where: {
-        product_id_promo_id: { product_id: product_id, promo_id: promo_id},
+        product_id_promo_id: {
+          product_id: product_id,
+          promo_id: promo_id,
+        },
       },
     });
   }

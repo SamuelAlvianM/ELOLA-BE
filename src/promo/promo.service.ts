@@ -96,6 +96,11 @@ export class PromoService {
       data: { product_price: newPrice },
     });
 
+    await this.prisma.product.update({
+      where: { product_id: product_id },
+      data: { product_price: newPrice },
+    });
+
     await this.prisma.productPromo.upsert({
       where: {
         product_id_promo_id: {
@@ -109,11 +114,7 @@ export class PromoService {
         promo_id: promo_id,
       },
     });
-  
-    // return this.prisma.product.update({
-    //   where: { product_id },
-    //   data: { product_price: newPrice },
-    // });
+
 
     return this.prisma.product.findUnique({
       where: { product_id: product_id },
