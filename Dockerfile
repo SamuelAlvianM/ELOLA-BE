@@ -22,6 +22,7 @@ COPY --from=builder /app/package.json ./package.json
 
 
 # Set environment variables if needed
+ENV DATABASE_URL=postgresql://postgres:SIuRMOlquUxLWNCpUVmtqDhVHnQOsJuq@viaduct.proxy.rlwy.net:51327/railway
 ENV NODE_ENV=production
 
 
