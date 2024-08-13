@@ -20,8 +20,8 @@ services:
     restart: always
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: 12345678
-      POSTGRES_DB: SaleMate
+      POSTGRES_PASSWORD: SIuRMOlquUxLWNCpUVmtqDhVHnQOsJuq
+      POSTGRES_DB: railway
     ports:
       - '51327:5432'
     volumes:
