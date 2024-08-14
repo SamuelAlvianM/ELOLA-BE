@@ -1,13 +1,8 @@
-<<<<<<< HEAD
-# Milestone-2-BE-POS
-We created a RESTFUL API for Inventory management - Point of Sales for local bussiness. We want to help more local bussiness to grow and easily manage their assets. 
+# SaleMate - RESTful API for Inventory Management and Point of Sales (POS)
 =======
 <p align="center">
   <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
 </p>
-
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
 
   <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
     <p align="center">
