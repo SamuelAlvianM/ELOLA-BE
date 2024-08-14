@@ -94,15 +94,13 @@ $ npm run test:cov
 ```
 
 ## Documentation
+<h2 align="center"> PostgreSQL ERD</h2><img src="https://github.com/SamuelAlvianM/SaleMate-BE/blob/main/src/assets/SaleMate%20ERD.jpg?raw=true">
 
-[PostgreSQL ERD] <img src="https://github.com/SamuelAlvianM/SaleMate-BE/blob/main/src/assets/SaleMate%20ERD.jpg?raw=true">
+<h2 align="center"> Railway Production</h2><img src="https://github.com/SamuelAlvianM/SaleMate-BE/blob/main/src/assets/Railway%20Production.jpg?raw=true">
 
-[Railway Production] <img src="https://github.com/SamuelAlvianM/SaleMate-BE/blob/main/src/assets/Railway%20Production.jpg?raw=true">
-
-[Swagger Documentation] <img src="https://github.com/SamuelAlvianM/SaleMate-BE/blob/main/src/assets/API%20Documentation.png?raw=true">
+<h2 align="center"> Swagger API Documentation</h2><img src="https://github.com/SamuelAlvianM/SaleMate-BE/blob/main/src/assets/API%20Documentation.png?raw=true">
 
 ## API Documentation Reference : [SaleMate API Collection](http://localhost:3000/api)
-
 
 ## Deployment Link
 
