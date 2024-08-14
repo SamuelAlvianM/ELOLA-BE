@@ -1,37 +1,74 @@
 # SaleMate - RESTful API for Inventory Management and Point of Sales (POS)
-=======
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+Welcome to SaleMate, a RESTful API designed to empower local businesses by providing comprehensive Inventory Management and Point of Sales (POS) solutions. Our mission is to support local businesses in growing and managing their assets with ease, while also enhancing their online presence, automating marketing efforts, and offering customer relationship management (CRM) tools tailored specifically to their needs.
 
-## Description
+## Overview 
+SaleMate is more than just an inventory management system. It's a comprehensive solution tailored specifically for local businesses, focusing on:
+- Inventory Management: Easily track, manage, and update your inventory in real-time.
+- Point of Sales (POS): Streamline sales transactions, making it simple to manage orders, payments, and customer interactions.
+- Online Presence: Boost your business’s visibility with features that help you establish and manage an online presence.
+- Marketing Automation: Automate marketing tasks to reach more customers and grow your business effortlessly.
+- Customer Relationship Management (CRM): Build and maintain strong relationships with your customers, tailored to their needs.
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## Technologies Used:
+1. Node.js with Nest.js Framework: Server-side JavaScript runtime.
+2. Express.js: Web framework for building RESTful APIs.
+3. Prisma: ORM for managing database operations.
+4. PostgreSQL: Relational database for data storage.
+5. JWT: JSON Web Tokens for authentication.
+6. Docker: Containerization for easy deployment.
+7. API Documentation: Swagger
 
 ## Installation
-
+1. Clone the repository
+```bash
+git clone https://github.com/SamuelAlvianM/SaleMate-BE.git
+```
+2. Install Project Dependencies
 ```bash
 $ npm install
 ```
 
-## Running the app
+3. Set up Prisma
+
+    a. Install the Prisma CLI as a development dependency:
+```bash
+$ npm install -D prisma
+```
+
+ b. Initialize Prisma inside your Project:
+```bash
+$ npx prisma init
+```
+
+4. Set up the Database: configure your database setting in the `.env` file
+
+    a. Localhost:
+```bash
+DATABASE_URL=postgresql://user:password@host:port/database
+JWT_SECRET_KEY="YOUR-JWT-SECRET-KEY"
+```
+
+b. Deployment Link:
+```bash
+DATABASE_URL="postgresql://postgres:pkYBhndFhQhiKNXwqgDtkmiweJUNMUiL@viaduct.proxy.rlwy.net:27020/railway"
+JWT_SECRET_KEY="YOUR-JWT-SECRET-KEY"
+```
+
+5. Prisma Schema
+ - Migrate the database
+```bash
+$ npx prisma migrate dev --name init
+```
+ - Generate the database
+ ```bash
+ $ npx prisma generate
+ ```
+
+
+## Usage/Examples
+
+### Running the App:
 
 ```bash
 # development
@@ -44,8 +81,7 @@ $ npm run start:dev
 $ npm run start:prod
 ```
 
-## Test
-
+### Test
 ```bash
 # unit tests
 $ npm run test
@@ -57,17 +93,22 @@ $ npm run test:e2e
 $ npm run test:cov
 ```
 
-## Support
+## Documentation
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+[PostgreSQL ERD] <img src="https://github.com/SamuelAlvianM/SaleMate-BE/blob/main/src/assets/SaleMate%20ERD.jpg?raw=true">
 
-## Stay in touch
+[Railway Production] <img src="https://github.com/SamuelAlvianM/SaleMate-BE/blob/main/src/assets/Railway%20Production.jpg?raw=true">
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+[Swagger Documentation] <img src="https://github.com/SamuelAlvianM/SaleMate-BE/blob/main/src/assets/API%20Documentation.png?raw=true">
 
-## License
+## API Documentation Reference : [SaleMate API Collection](http://localhost:3000/api)
 
-Nest is [MIT licensed](LICENSE).
->>>>>>> samfeature
+
+## Deployment Link
+
+To deploy this project run:
+
+```bash
+  http://salemate-be-production.up.railway.app
+```
+
