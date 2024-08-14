@@ -19,6 +19,36 @@ SaleMate is more than just an inventory management system. It's a comprehensive 
 6. Docker: Containerization for easy deployment.
 7. API Documentation: Swagger
 
+## Folder Structure
+ ```
+ |-- SaleMate-BE/
+ |   ├── prisma/                   # Prisma ORM Configuration & Migrations scripts for managing the database.
+ |   ├── src/                      # Source Code Directory
+ |       └── assets                # Documentation files (e.g., screenshot images)
+ |       └── authentication/       # components & services related to user authentication & authorization mechanisms.
+ |       └── driver_partner/       # Components related to manages functionalities and logic related to driver partners.
+ |       └── inventory/            # Components related for managing inventory features.
+ |       └── open_close/           # Components related to handles functionalities related to when stores are operational.
+ |       └── payment/              # Components related to managing payment processing.
+ |       └── prisma/               # Prisma ORM configurations specific to src.
+ |       └── product/              # Components related to Product pages.
+ |       └── product_category/     # Components related to Product Category.
+ |       └── promo/                # Components and functionalities related to manages promotional offers.
+ |       └── store/                # Components related to managing stores details.
+ |       └── supplier/             # Components related to manages supplier-related functionalities.
+ |       └── tax/                  # Components related to Handles tax-related functionalities (calculate tax, etc).
+ |       └── transaction/          # Components related to manages transactions within the system.
+ |       └── user/                 # Components related for managing users (User Profile).
+ |       └── utils/                # Houses utility functions and helper methods used throughout the application.
+ |       └── app.controller.ts     # Controller logic for handling HTTP requests
+ |       └── app.module.ts         # NestJS module where components are imported
+ |       └── app.service.ts        # Service layer for business logic
+ |       └── main.ts               # Bootstrap file, entry point of the application
+ |       └── tests/                # Contains test files to ensure that the application components work correctly.
+ |-- README.md                     # Readme file containing project documentation
+ |-- example.env                   # Example environment variables file
+```
+
 ## Installation
 1. Clone the repository
 ```bash
