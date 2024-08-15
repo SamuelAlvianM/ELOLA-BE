@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import {open_close_schema, unauthorized_response, unauthorized_role_response, get_all_open_close_sessions_response, get_open_close_session_by_id_response, create_open_close_session_response, update_open_close_session_response, delete_open_close_session_response, bad_request_response} from ' ../../tests/swagger/open_close.swagger';
+import {open_close_schema, unauthorized_response, unauthorized_role_response, get_all_open_close_sessions_response, get_open_close_session_by_id_response, create_open_close_session_response, update_open_close_session_response, delete_open_close_session_response, bad_request_response} from '../../tests/swagger/open_close.swagger';
 import { Controller, Post, Param, ParseIntPipe, UseGuards, Body, Req, HttpCode, HttpStatus, Delete, BadRequestException, Get } from '@nestjs/common';
 import { OpenCloseService } from './open_close.service';
 import { JwtAuthGuard } from '../utils/guard/jwt.guard';
