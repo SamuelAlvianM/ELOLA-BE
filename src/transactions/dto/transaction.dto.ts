@@ -37,10 +37,6 @@ export class CreateTransactionDto {
   service: number;
 
   @IsNumber()
-  @ApiProperty({example: 20})
-  tax: number;
-
-  @IsNumber()
   @ApiProperty({example: 10})
   discount: number;
 
@@ -57,7 +53,7 @@ export class CreateTransactionDto {
   c_o_g_s: number;
 
   @IsEnum(Order_payment_type)
-  @ApiProperty({example: "Cash / Bank / Transfer"})
+  @ApiProperty({example: "Cash / Bank_Transfer / EPayment"})
   payment_type: Order_payment_type;
 
   @IsInt()
