@@ -5,11 +5,12 @@ import { ApiProperty } from "@nestjs/swagger";
 import { Expose } from "class-transformer";
 
 export class CreatePayment {
+    @IsOptional()
     @IsInt()
     @IsNotEmpty()
     @ApiProperty({example: 1})
     @Expose()
-    store_id: number;
+    store_id?: number;
     
     @IsString()
     @IsNotEmpty()

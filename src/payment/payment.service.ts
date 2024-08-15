@@ -8,24 +8,18 @@ import { Payment } from '@prisma/client';
 export class PaymentService {
   constructor(private prisma: PrismaService) {}
 
-  async createPayment(data: CreatePayment) {
+  async createPayment(createPaymentDto: CreatePayment) {
+    const { store_id, payment_name, payment_type } = createPaymentDto;
 
-    // Checking the store_id if it exist in the data
-    const store = await this.prisma.store.findUnique({
-      where: { store_id: data.store_id },
-    });
-
-    if (!store) {
-      throw new NotFoundException(`Store with ID ${data.store_id} not found`);
-    }
-
-    return this.prisma.payment.create({
+    const payment = await this.prisma.payment.create({
       data: {
-        store_id: data.store_id,
-        payment_name: data.payment_name,
-        payment_type: data.payment_type,
+        store_id: store_id || null,  //Store_id can be null (or optional)
+        payment_name,
+        payment_type,
       },
     });
+
+    return payment;
   }
 
   async getAllPayments(): Promise<Payment[]> {
