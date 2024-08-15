@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { ApiResponseOptions } from "@nestjs/swagger";
 import { CreateTaxDto, UpdateTaxDto } from '../../src/tax/dto/tax.dto';
 

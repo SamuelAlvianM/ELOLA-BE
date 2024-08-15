@@ -127,45 +127,4 @@ export class PromoService {
       },
     });
   }
-
-
-  // async getProductWithPromo(productId: number) {
-  //   // Fetch the product along with its associated promos
-  //   const product = await this.prisma.product.findUnique({
-  //     where: { product_id: productId },
-  //     include: {
-  //       ProductPromo: {
-  //         include: {
-  //           promo: true,
-  //         },
-  //       },
-  //     },
-  //   });
-
-  //   if (!product) {
-  //     throw new NotFoundException('Product not found');
-  //   }
-
-  //   // Calculate the final price after applying promo
-  //   const promoAppliedProduct = {
-  //     ...product,
-  //     finalPrice: this.applyPromosToProduct(product),
-  //   };
-
-  //   return promoAppliedProduct;
-  // }
-
-  // private applyPromosToProduct(product: any) {
-  //   let finalPrice = product.product_price;
-
-  //   product.ProductPromo.forEach(({ promo }) => {
-  //     if (promo.promo_type === 'Discount') {
-  //       finalPrice -= (finalPrice * promo.promo_value) / 100;
-  //     } else if (promo.promo_type === 'Sales') {
-  //       finalPrice -= promo.promo_value;
-  //     }
-  //   });
-
-  //   return finalPrice;
-  // }
 }
