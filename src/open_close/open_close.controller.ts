@@ -63,7 +63,7 @@ export class OpenCloseController {
   }
 
   @Get()
-  @ApiOperation({ summary: 'Get all open/close sessions' })
+  @ApiOperation({ summary: 'Get all open/close session' })
   @ApiResponse(get_all_open_close_sessions_response)
   @ApiResponse(bad_request_response('Error when fetching all open/close sessions'))
   @ApiResponse(unauthorized_response)
