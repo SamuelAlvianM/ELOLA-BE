@@ -12,4 +12,5 @@ export class Handle_Open_Close_Dto {
     required: false,
   })
   is_cashier_open?: boolean;
+
 }

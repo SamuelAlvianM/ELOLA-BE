@@ -6,7 +6,7 @@ import { JwtAuthGuard } from '../utils/guard/jwt.guard';
 import { User } from '../utils/decorator/user.decorator';
 import { Handle_Open_Close_Dto } from './dto/oc.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { ApiBadRequestResponse, ApiOperation, ApiResponse, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
+import { ApiBadRequestResponse, ApiBearerAuth, ApiOperation, ApiResponse, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
 
 @ApiTags('Store Open & Close')
 @Controller('open-close')
@@ -22,8 +22,9 @@ export class OpenCloseController {
   @ApiResponse(bad_request_response('fetching all open/close sessions'))
   @ApiResponse(unauthorized_response)
   @ApiResponse(unauthorized_role_response)
+  @ApiBearerAuth('JWT')
   async open_cashier(
-    @Param('store_id') store_id: number,
+    @Param('store_id', ParseIntPipe) store_id: number,
     @Body() open_dto: Handle_Open_Close_Dto,
     @User() user: any,
   ) {
@@ -45,8 +46,9 @@ export class OpenCloseController {
   @ApiResponse(bad_request_response('creating open/close session'))
   @ApiResponse(unauthorized_response)
   @ApiResponse(unauthorized_role_response)
+  @ApiBearerAuth('JWT')
   async close_cashier(
-    @Param('store_id') store_id: number,
+    @Param('store_id', ParseIntPipe) store_id: number,
     @Body() close_dto: Handle_Open_Close_Dto,
     @User() user: any,
   ) {
@@ -66,6 +68,7 @@ export class OpenCloseController {
   @ApiResponse(bad_request_response('Error when fetching all open/close sessions'))
   @ApiResponse(unauthorized_response)
   @ApiResponse(unauthorized_role_response)
+  @ApiBearerAuth('JWT')
   async getAllOpenCloseSessions(): Promise<{ status_code: number; message: string; data: Handle_Open_Close_Dto[] }> {
     try {
       const result = await this.oc_service.get_all_data_open_close();
@@ -85,6 +88,7 @@ export class OpenCloseController {
   @ApiResponse(bad_request_response('deleting open/close session'))
   @ApiResponse(unauthorized_response)
   @ApiResponse(unauthorized_role_response)
+  @ApiBearerAuth('JWT')
   async deleteOpenCloseSession(@Param('id') id: number): Promise<{ status_code: number; message: string }> {
     try {
       await this.oc_service.delete_data_open_close(+id);
