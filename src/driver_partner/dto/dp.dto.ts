@@ -4,12 +4,6 @@ import { IsString, IsInt, IsNotEmpty, IsOptional } from 'class-validator';
 
 export class Create_DP_Dto {
 
-    @IsNotEmpty()
-    @IsInt()
-    @ApiProperty({example: 1})
-    @Expose()
-    store_id: number;
-
     @IsString()
     @IsNotEmpty()
     @ApiProperty({example: 'Gojek'})
