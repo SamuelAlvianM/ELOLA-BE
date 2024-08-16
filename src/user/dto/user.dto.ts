@@ -6,7 +6,7 @@ import { Expose } from 'class-transformer';
 export class UserDto {
 
     @IsNotEmpty()
-    @ApiProperty({example: "Sam"})
+    @ApiProperty({example: "Samuel"})
     @Expose()
     user_name: string;
 
@@ -22,9 +22,9 @@ export class UserDto {
     password: string;
 
     @IsNotEmpty()
-    @ApiProperty({example: "USER / STAFF/ OWNER"})
+    @ApiProperty({example: "STAFF / OWNER"})
     @Expose()
-    @IsEnum(Role, { message: 'role must be one of the following: admin, user, superadmin' })
+    @IsEnum(Role, { message: 'role must be one of the following: STAFF, OWNER' })
     role: Role;
 }
 
