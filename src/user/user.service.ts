@@ -55,12 +55,42 @@ export class UserService {
         });
     }
 
-    async findAll(): Promise<User[]> {
-        return this.prisma.user.findMany({
-            where: {
-                deleted_at: null,
-            }
-        });
+    // async findAll(): Promise<User[]> {
+    //     return this.prisma.user.findMany({
+    //         where: {
+    //             deleted_at: null,
+    //         }
+    //     });
+    // }
+
+    async findAllUser(page: number, limit: number) {
+      const maxLimit = 100;
+      const normalLimit = Math.min(limit, maxLimit)
+      const skip = (page - 1) * normalLimit;
+      const [users, totalCount] = await this.prisma.$transaction([
+        this.prisma.user.findMany({
+          where: {
+            deleted_at: null,
+          },
+          skip: skip,
+          take: normalLimit,
+        }),
+        this.prisma.user.count({
+          where: {
+            deleted_at: null,
+          },
+        }),
+      ]);
+  
+      return {
+        data: users,
+        meta: {
+          "Current Page": page,
+          "Items per Page": normalLimit,
+          "Total Pages": Math.ceil(totalCount / limit),
+          "Total Items": totalCount,
+        },
+      };
     }
 
     async findOne(user_id: number): Promise<User> {

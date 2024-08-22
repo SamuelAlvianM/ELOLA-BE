@@ -59,6 +59,7 @@ export class PaymentController {
   async findAll(@Query('page') page: number, @Query('limit') limit: number) {
     return this.paymentService.getAllPayments(page, limit);
   }
+  
   @HttpCode(HttpStatus.CREATED)
   @Roles(Role.SUPER_ADMIN, Role.OWNER)
   @ApiResponse( update_Payment_response)

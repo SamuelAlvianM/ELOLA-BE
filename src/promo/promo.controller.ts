@@ -1,12 +1,12 @@
 /* eslint-disable prettier/prettier */
 import {unauthorized_response, unauthorized_role_response, get_all_promos_response, get_all_promo_bad_request_response, create_promo_response, create_promo_bad_request_response, get_promo_by_id_response, get_promo_by_id_bad_request_response, update_promo_response, update_promo_bad_request_response, apply_promo_response, apply_promo_bad_request_response, delete_promo_response, delete_promo_bad_request_response} from '../../tests/swagger/promo.swagger';
-import { Controller, Get, Post, Body, Param, Patch, Delete, HttpStatus, HttpCode, UseGuards, ParseIntPipe, NotFoundException,} from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Patch, Delete, HttpStatus, HttpCode, UseGuards, ParseIntPipe, NotFoundException, Query,} from '@nestjs/common';
 import { PromoService } from './promo.service';
 import { ApplyPromoDto, CreatePromoDto, UpdatePromoDto } from './dto/promo.dto';
 import { Role } from '@prisma/client';
 import { RolesGuard } from 'src/utils/guard/roles.guard';
 import { Roles } from 'src/utils/decorator/roles.decorator';
-import { ApiResponse, ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiResponse, ApiBearerAuth, ApiTags, ApiQuery } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/utils/guard/jwt.guard';
 
 @ApiTags('Promos')
@@ -39,14 +39,17 @@ export class PromoController {
   @ApiResponse(unauthorized_role_response)
   @ApiResponse(get_all_promo_bad_request_response)
   @ApiBearerAuth('JWT')
+  @ApiQuery({ name: 'page', required: false, type: Number, description: 'Page number', example: 1 })
+  @ApiQuery({ name: 'limit', required: false, type: Number, description: 'Number of items per page', example: 10 })
   @Get()
-  async getAllPromos() {
-    const promos = await this.promoService.getAllPromos();
-    return {
-      message: 'Fetch Data Promo Success',
-      data: promos,
-    };
-  }
+    async getAllPromos(@Query('page') page: number, @Query('limit') limit: number) {
+        const promos = await this.promoService.getAllPromos(page, limit);
+        return {
+            StatusCode: HttpStatus.OK,
+            response: 'Fetch Data Promo Success',
+            data: promos,
+        };
+    }
 
   @Roles(Role.SUPER_ADMIN, Role.OWNER, Role.STAFF)
   @HttpCode(HttpStatus.OK)

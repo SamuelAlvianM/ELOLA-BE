@@ -1,12 +1,13 @@
 /* eslint-disable prettier/prettier */
 import { unauthorized_response, unauthorized_role_response, bad_request_response, not_found_response, create_user_response, get_all_users_response, get_user_by_id_response, update_user_response, delete_user_response } from '../../tests/swagger/user.swagger';
-import { Controller, UseGuards, Get, Post, Body, HttpCode, HttpStatus, Delete, Param, Patch, NotFoundException } from '@nestjs/common';
+import { Controller, UseGuards, Get, Post, Body, HttpCode, HttpStatus, Delete, Param, Patch, NotFoundException, Query } from '@nestjs/common';
 import { UserService } from './user.service';
 import { UserDto } from './dto/user.dto';
 import { UpdateDto } from './dto/user.dto';
 import { Roles } from '../utils/decorator/roles.decorator';
 import {
     ApiTags,
+    ApiQuery,
     ApiResponse,
     ApiUnauthorizedResponse,
     ApiBadRequestResponse,
@@ -52,14 +53,11 @@ export class UserController {
     @ApiNotFoundResponse(not_found_response)
     @ApiBadRequestResponse(bad_request_response)
     @ApiUnauthorizedResponse(unauthorized_response)
-    async findAll() {
-        const result = await this.user_service.findAll();
-        return {
-            statusCode: HttpStatus.OK,
-            message: 'Successfully retrieved all data users',
-            data: result,
-        };
-    }
+    @ApiQuery({ name: 'page', required: false, type: Number, description: 'Page number', example: 1 })
+    @ApiQuery({ name: 'limit', required: false, type: Number, description: 'Number of items per page', example: 10 })
+    async findAll(@Query('page') page: number, @Query('limit') limit: number) {
+        return this.user_service.findAllUser(page, limit);
+      }
 
     @Get(':user_id')
     @UseGuards(JwtAuthGuard)

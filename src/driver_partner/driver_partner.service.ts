@@ -8,13 +8,43 @@ import { DriverPartner } from '@prisma/client';
 export class DriverPartnerService {
     constructor(private prisma: PrismaService) {}
 
-    async findAll_Driver_Partner() {
-        return this.prisma.driverPartner.findMany({
+    // async findAll_Driver_Partner() {
+    //     return this.prisma.driverPartner.findMany({
+    //         where: {
+    //             deleted_at: null,
+    //         }
+    //     });
+    // }
+
+    async findAll_Driver_Partner(page: number, limit: number) {
+        const maxLimit = 100;
+        const normalLimit = Math.min(limit, maxLimit)
+        const skip = (page - 1) * normalLimit;
+        const [drivers, totalCount] = await this.prisma.$transaction([
+          this.prisma.driverPartner.findMany({
             where: {
-                deleted_at: null,
-            }
-        });
-    }
+              deleted_at: null,
+            },
+            skip: skip,
+            take: normalLimit,
+          }),
+          this.prisma.driverPartner.count({
+            where: {
+              deleted_at: null,
+            },
+          }),
+        ]);
+    
+        return {
+          data: drivers,
+          meta: {
+            "Current Page": page,
+            "Items per Page": normalLimit,
+            "Total Pages": Math.ceil(totalCount / limit),
+            "Total Items": totalCount,
+          },
+        };
+      }
 
     async findOne_Driver_Partner(driver_partner_id: number) {
         return this.prisma.driverPartner.findFirst({
