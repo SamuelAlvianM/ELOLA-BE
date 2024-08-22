@@ -1,12 +1,12 @@
 /* eslint-disable prettier/prettier */
 import { get_all_dp_bad_request_response, get_all_dp_response, unauthorized_response, unauthorized_role_response, det_dp_by_id_response, det_dp_by_id_bad_request_response, create_dp_response, create_dp_bad_request_response, update_dp_response, update_dp_bad_request_response, delete_dp_response, delete_dp_bad_request_response } from '../../tests/swagger/driver_partner.swagger';
-import { Body, Controller, Delete, Get, HttpCode, HttpStatus, NotFoundException, Param, Patch, Post, UseGuards, ParseIntPipe } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, HttpStatus, NotFoundException, Param, Patch, Post, UseGuards, ParseIntPipe, Query } from '@nestjs/common';
 import { DriverPartnerService } from './driver_partner.service';
 import { JwtAuthGuard } from '../utils/guard/jwt.guard';
 import { RolesGuard } from '../utils/guard/roles.guard';
 import { Roles } from '../utils/decorator/roles.decorator';
 import { Role } from '@prisma/client';
-import { ApiBadRequestResponse, ApiResponse, ApiTags, ApiUnauthorizedResponse, ApiBearerAuth } from '@nestjs/swagger';
+import { ApiBadRequestResponse, ApiResponse, ApiTags, ApiUnauthorizedResponse, ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
 import { Create_DP_Dto, Update_DP_Dto } from './dto/dp.dto';
 import { CurrentStore, User } from 'src/utils/decorator/user.decorator';
 
@@ -23,13 +23,14 @@ export class DriverPartnerController {
     @ApiResponse( unauthorized_role_response )
     @ApiUnauthorizedResponse(unauthorized_response)
     @ApiBadRequestResponse(get_all_dp_bad_request_response)
-    async getDriver_Partners() {
-        const result = await this.service_dp.findAll_Driver_Partner();
-
+    @ApiQuery({ name: 'page', required: false, type: Number, description: 'Page number', example: 1 })
+    @ApiQuery({ name: 'limit', required: false, type: Number, description: 'Number of items per page', example: 10 })
+    async getDriver_Partners(@Query('page') page: number, @Query('limit') limit: number) {
+        const drivers = await this.service_dp.findAll_Driver_Partner(page, limit);
         return {
             StatusCode: HttpStatus.OK,
             response: 'Successfully fetched all driver partners',
-            data: result,
+            data: drivers,
         }
     }
 

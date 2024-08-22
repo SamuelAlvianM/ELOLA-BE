@@ -17,12 +17,42 @@ export class InventoryService {
     });
   }
 
-  async getAllInventory(): Promise<Inventory[]> {
-    return this.prisma.inventory.findMany({
-      where: {
-        deleted_at: null
-      }
-    })
+  // async getAllInventory(): Promise<Inventory[]> {
+  //   return this.prisma.inventory.findMany({
+  //     where: {
+  //       deleted_at: null
+  //     }
+  //   })
+  // }
+
+  async getAllInvetory(page: number, limit: number) {
+    const maxLimit = 100;
+    const normalLimit = Math.min(limit, maxLimit)
+    const skip = (page - 1) * normalLimit;
+    const [inventories, totalCount] = await this.prisma.$transaction([
+      this.prisma.inventory.findMany({
+        where: {
+          deleted_at: null,
+        },
+        skip: skip,
+        take: normalLimit,
+      }),
+      this.prisma.inventory.count({
+        where: {
+          deleted_at: null,
+        },
+      }),
+    ]);
+
+    return {
+      data: inventories,
+      meta: {
+        "Current Page": page,
+        "Items per Page": normalLimit,
+        "Total Pages": Math.ceil(totalCount / limit),
+        "Total Items": totalCount,
+      },
+    };
   }
 
   async getInventoryById(inventory_id: number): Promise<Inventory> {

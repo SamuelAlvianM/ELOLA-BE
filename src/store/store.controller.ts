@@ -1,6 +1,6 @@
 /* eslint-disable prettier/prettier */
 import { unauthorized_response, get_staff_bad_request_response, delete_store_staff_bad_request_response, delete_store_staff_response, get_staff_response, unauthorized_role_response, create_store_bad_request_response, create_store_response, get_all_stores_bad_request_response, get_all_stores_response, get_store_by_id_bad_request_response, get_store_by_id_response, update_store_response, update_store_bad_request_response, delete_store_response, delete_store_bad_request_response, invite_user_response, invite_user_bad_request_response} from '../../tests/swagger/store.swagger'
-import { Controller, Post, Body, HttpCode, HttpStatus, UseGuards, Get, Param, Patch, Delete, BadRequestException, ParseIntPipe} from '@nestjs/common';
+import { Controller, Post, Body, HttpCode, HttpStatus, UseGuards, Get, Param, Patch, Delete, BadRequestException, ParseIntPipe, Query} from '@nestjs/common';
 
 import { Role } from '@prisma/client';
 import { JwtAuthGuard } from 'src/utils/guard/jwt.guard';
@@ -11,7 +11,7 @@ import { Roles } from 'src/utils/decorator/roles.decorator';
 import { StoreService } from './store.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { Create_Store_Dto, Invite_User_Dto, Update_Store_Dto } from './dto/store.dto';
-import { ApiResponse, ApiBadRequestResponse, ApiUnauthorizedResponse, ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiResponse, ApiBadRequestResponse, ApiUnauthorizedResponse, ApiBearerAuth, ApiTags, ApiQuery } from '@nestjs/swagger';
 
 @ApiTags('Stores')
 @Controller('store')
@@ -66,14 +66,11 @@ export class StoreController {
     @ApiBadRequestResponse(get_all_stores_bad_request_response)
     @ApiUnauthorizedResponse(unauthorized_response)
     @ApiBearerAuth('JWT')
-    async findAllStore() {
-        const result = await this.store_service.findAllStore();
-        return {
-            StatusCode: HttpStatus.OK,
-            response: 'Successfully fetched all stores',
-            data: result,
-        };
-    }
+    @ApiQuery({ name: 'page', required: false, type: Number, description: 'Page number', example: 1 })
+    @ApiQuery({ name: 'limit', required: false, type: Number, description: 'Number of items per page', example: 10 })
+    async findAllStore(@Query('page') page: number, @Query('limit') limit: number) {
+        return this.store_service.findAllStore(page, limit);
+      }
 
     @Get('staff')
     @HttpCode(HttpStatus.OK)
@@ -82,8 +79,10 @@ export class StoreController {
     @ApiBadRequestResponse(get_staff_bad_request_response)
     @ApiUnauthorizedResponse(unauthorized_response)
     @ApiBearerAuth('JWT')
-    async findAllStoreStaff() {
-        const result = await this.store_service.findAllStoreStaff();
+    @ApiQuery({ name: 'page', required: false, type: Number, description: 'Page number', example: 1 })
+    @ApiQuery({ name: 'limit', required: false, type: Number, description: 'Number of items per page', example: 10 })
+    async findAllStoreStaff(@Query('page') page: number, @Query('limit') limit: number) {
+        const result = await this.store_service.findAllStoreStaff(page, limit);
         return {
             StatusCode: HttpStatus.OK,
             response: 'Successfully fetched all Staffs',

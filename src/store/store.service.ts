@@ -66,17 +66,77 @@ export class StoreService {
         return {message: 'Invited user done successfully' };
     }
 
-    async findAllStore() {
-        return await this.prisma.store.findMany({
-            where: {
-                deleted_at: null
-            }
-        })
-    }
+    // async findAllStore() {
+    //     return await this.prisma.store.findMany({
+    //         where: {
+    //             deleted_at: null
+    //         }
+    //     })
+    // }
 
-    async findAllStoreStaff() {
-        return await this.prisma.storeStaff.findMany()
-    }
+    async findAllStore(page: number, limit: number) {
+        const maxLimit = 100;
+        const normalLimit = Math.min(limit, maxLimit)
+        const skip = (page - 1) * normalLimit;
+        const [stores, totalCount] = await this.prisma.$transaction([
+          this.prisma.store.findMany({
+            where: {
+              deleted_at: null,
+            },
+            skip: skip,
+            take: normalLimit,
+          }),
+          this.prisma.store.count({
+            where: {
+              deleted_at: null,
+            },
+          }),
+        ]);
+    
+        return {
+          data: stores,
+          meta: {
+            "Current Page": page,
+            "Items per Page": normalLimit,
+            "Total Pages": Math.ceil(totalCount / limit),
+            "Total Items": totalCount,
+          },
+        };
+      }
+
+    // async findAllStoreStaff() {
+    //     return await this.prisma.storeStaff.findMany()
+    // }
+
+    async findAllStoreStaff(page: number, limit: number) {
+        const maxLimit = 100;
+        const normalLimit = Math.min(limit, maxLimit)
+        const skip = (page - 1) * normalLimit;
+        const [storeStaff, totalCount] = await this.prisma.$transaction([
+          this.prisma.storeStaff.findMany({
+            where: {
+              deleted_at: null,
+            },
+            skip: skip,
+            take: normalLimit,
+          }),
+          this.prisma.storeStaff.count({
+            where: {
+              deleted_at: null,
+            },
+          }),
+        ]);
+    
+        return {
+          data: storeStaff,
+          meta: {
+            "Current Page": page,
+            "Items per Page": normalLimit,
+            "Total Pages": Math.ceil(totalCount / limit),
+            "Total Items": totalCount,
+          },
+        };
+      }
 
     async findOne(store_staff_id: number) {
         return await this.prisma.storeStaff.findUnique({ 
