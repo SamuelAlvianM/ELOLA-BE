@@ -1,7 +1,7 @@
 /* eslint-disable prettier/prettier */
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { CreatePayment, UpdatePayment } from './dto/payment.dto';
+import { CreatePayment, UpdatePayment, } from './dto/payment.dto';
 import { Payment } from '@prisma/client';
 
 @Injectable()
@@ -22,12 +22,44 @@ export class PaymentService {
     return payment;
   }
 
-  async getAllPayments(): Promise<Payment[]> {
-    return this.prisma.payment.findMany({
-      where: {
-        deleted_at: null
+  // async getAllPayments(): Promise<Payment[]> {
+  //   return this.prisma.payment.findMany({
+  //     where: {
+  //       deleted_at: null
+  //     },
+  //   })
+  // }
+
+
+
+  async getAllPayments(page: number, limit: number) {
+    const maxLimit = 100;
+    const normalLimit = Math.min(limit, maxLimit)
+    const skip = (page - 1) * normalLimit;
+    const [payments, totalCount] = await this.prisma.$transaction([
+      this.prisma.payment.findMany({
+        where: {
+          deleted_at: null,
+        },
+        skip: skip,
+        take: normalLimit,
+      }),
+      this.prisma.payment.count({
+        where: {
+          deleted_at: null,
+        },
+      }),
+    ]);
+
+    return {
+      data: payments,
+      meta: {
+        "Current Page": page,
+        "Items per Page": normalLimit,
+        "Total Pages": Math.ceil(totalCount / limit),
+        "Total Items": totalCount,
       },
-    })
+    };
   }
 
   async getPaymentById(payment_id: number): Promise<Payment> {

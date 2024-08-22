@@ -1,13 +1,13 @@
 /* eslint-disable prettier/prettier */
 import { unauthorized_response, unauthorized_role_response, get_Payment_by_id_bad_request_response, get_Payment_by_id_response, get_all_payments_bad_request_response, get_all_payments_response, create_Payment_bad_request_response, create_Payment_response, update_Payment_bad_request_response, update_Payment_response, delete_Payment_bad_request_response, delete_Payment_response } from '../../tests/swagger/payment.swagger';
-import { Controller, Get, Post, Put, Delete, Body, Param, NotFoundException, UseGuards, HttpCode, HttpStatus, ParseIntPipe, Patch } from '@nestjs/common';
+import { Controller, Get, Post, Delete, Body, Param, NotFoundException, UseGuards, HttpCode, HttpStatus, ParseIntPipe, Patch, Query } from '@nestjs/common';
 import { PaymentService } from './payment.service';
 import {CreatePayment, UpdatePayment } from './dto/payment.dto';
 import { JwtAuthGuard } from 'src/utils/guard/jwt.guard';
 import { RolesGuard } from 'src/utils/guard/roles.guard';
 import { Roles } from 'src/utils/decorator/roles.decorator';
 import { Payment, Role } from '@prisma/client';
-import { ApiBadRequestResponse, ApiBearerAuth, ApiResponse, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
+import { ApiBadRequestResponse, ApiBearerAuth, ApiQuery, ApiResponse, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
 
 @ApiTags('Payments')
 @Controller('payments')
@@ -37,7 +37,7 @@ export class PaymentController {
   @Roles(Role.SUPER_ADMIN, Role.OWNER, Role.STAFF)
   @HttpCode(HttpStatus.OK)
   @ApiResponse( unauthorized_response )
-  @ApiResponse( get_all_payments_response)
+  @ApiResponse( get_Payment_by_id_response)
   @ApiBadRequestResponse(get_all_payments_bad_request_response)
   @ApiUnauthorizedResponse(unauthorized_role_response)
   @ApiBearerAuth('JWT')
@@ -53,11 +53,12 @@ export class PaymentController {
   @ApiBadRequestResponse(get_Payment_by_id_bad_request_response)
   @ApiUnauthorizedResponse(unauthorized_role_response)
   @ApiBearerAuth('JWT')
+  @ApiQuery({ name: 'page', required: false, type: Number, description: 'Page number', example: 1 })
+  @ApiQuery({ name: 'limit', required: false, type: Number, description: 'Number of items per page', example: 10 })
   @Get()
-  async getAllPayments(): Promise<Payment[]>{
-    return this.paymentService.getAllPayments();
+  async findAll(@Query('page') page: number, @Query('limit') limit: number) {
+    return this.paymentService.getAllPayments(page, limit);
   }
-
   @HttpCode(HttpStatus.CREATED)
   @Roles(Role.SUPER_ADMIN, Role.OWNER)
   @ApiResponse( update_Payment_response)
