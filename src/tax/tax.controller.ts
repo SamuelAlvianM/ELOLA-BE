@@ -2,7 +2,7 @@
 /* eslint-disable prettier/prettier */
 
 import { unauthorized_role_response, get_all_tax_response, get_tax_by_id_response, update_tax_response, create_tax_response, not_found_response, bad_request_response, unauthorized_response, delete_tax_response } from '../../tests/swagger/tax.swagger';
-import { Controller, Get, Post, Body, HttpCode, HttpStatus, UseGuards, Patch, Delete, Param, ParseIntPipe} from '@nestjs/common';
+import { Controller, Get, Post, Body, HttpCode, HttpStatus, UseGuards, Patch, Delete, Param, ParseIntPipe, Query} from '@nestjs/common';
 import { Role } from '@prisma/client';
 import { JwtAuthGuard } from 'src/utils/guard/jwt.guard';
 import { RolesGuard } from 'src/utils/guard/roles.guard';
@@ -11,7 +11,7 @@ import { Roles } from 'src/utils/decorator/roles.decorator';
 import { TaxService } from './tax.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateTaxDto, UpdateTaxDto } from './dto/tax.dto';
-import { ApiResponse, ApiBadRequestResponse, ApiUnauthorizedResponse, ApiBearerAuth, ApiTags, ApiNotFoundResponse } from '@nestjs/swagger';
+import { ApiResponse, ApiBadRequestResponse, ApiUnauthorizedResponse, ApiBearerAuth, ApiTags, ApiNotFoundResponse, ApiQuery } from '@nestjs/swagger';
 
 @ApiTags('Taxes')
 @Controller('tax')
@@ -27,8 +27,10 @@ export class TaxController {
     @ApiNotFoundResponse(not_found_response)
     @ApiBadRequestResponse(bad_request_response)
     @ApiUnauthorizedResponse(unauthorized_response)
-    async findAllTaxes() {
-        const result = await this.tax_service.findAllTaxes();
+    @ApiQuery({ name: 'page', required: false, type: Number, description: 'Page number', example: 1 })
+    @ApiQuery({ name: 'limit', required: false, type: Number, description: 'Number of items per page', example: 10 })
+    async findAllTaxes(@Query('page') page: number, @Query('limit') limit: number) {
+        const result = await this.tax_service.findAllTaxes(page, limit);
         return {
             StatusCode: HttpStatus.OK,
             response: 'Successfully fetched all taxes',
