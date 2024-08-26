@@ -1,12 +1,12 @@
 /* eslint-disable prettier/prettier */
 import { create_product_response, create_product_bad_request_response, get_all_products_response, get_all_products_bad_request_response, get_product_by_id_response, get_product_by_id_bad_request_response, update_product_response, update_product_bad_request_response, delete_product_response, delete_product_bad_request_response, add_tax_to_product_response, add_tax_to_product_bad_request_response, remove_tax_from_product_response, remove_tax_from_product_bad_request_response, add_promo_to_product_response, add_promo_to_product_bad_request_response, remove_promo_from_product_response, remove_promo_from_product_bad_request_response, get_product_with_taxes_promos_response, get_product_with_taxes_promos_bad_request_response, forbidden_role_response, unauthorized_response} from '../../tests/swagger/product.swagger';
-import { Controller, Get, Post, Body, Patch, Param, Delete, HttpCode, HttpStatus, Put, UseGuards} from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, HttpCode, HttpStatus, Put, UseGuards, Query} from '@nestjs/common';
 import { ProductService } from './product.service';
 import { CreateProductDto } from './dto/product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { RolesGuard } from 'src/utils/guard/roles.guard';
 import { Roles } from 'src/utils/decorator/roles.decorator';
-import { ApiResponse, ApiBadRequestResponse, ApiUnauthorizedResponse, ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiResponse, ApiBadRequestResponse, ApiUnauthorizedResponse, ApiBearerAuth, ApiTags, ApiQuery } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/utils/guard/jwt.guard';
 import { Role } from '@prisma/client';
 import { create_promo_response, delete_promo_bad_request_response, delete_promo_response } from 'tests/swagger/promo.swagger';
@@ -36,11 +36,13 @@ export class ProductController {
   @ApiResponse( forbidden_role_response )
   @ApiResponse( unauthorized_response)
   @ApiBearerAuth('JWT')
+  @ApiQuery({ name: 'page', required: false, type: Number, description: 'Page number', example: 1 })
+  @ApiQuery({ name: 'limit', required: false, type: Number, description: 'Number of items per page', example: 10 })
   @Get()
-  findAll() {
-    return this.productService.findAll();
+  findAll(@Query('page') page: number, @Query('limit') limit: number) {
+    return this.productService.findAll(page, limit);
   }
-
+  
   @Roles(Role.SUPER_ADMIN, Role.OWNER, Role.STAFF)
   @HttpCode(HttpStatus.OK)
   @ApiResponse( get_product_by_id_response)

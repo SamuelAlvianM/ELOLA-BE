@@ -22,10 +22,40 @@ export class SupplierService {
     });
   }
   
-  async getAllSuppliers() {
-    return this.prisma.supplier.findMany({
-      where: { deleted_at: null },
-    });
+  // async getAllSuppliers() {
+  //   return this.prisma.supplier.findMany({
+  //     where: { deleted_at: null },
+  //   });
+  // }
+
+  async getAllSuppliers(page: number, limit: number) {
+    const maxLimit = 100;
+    const normalLimit = Math.min(limit, maxLimit)
+    const skip = (page - 1) * normalLimit;
+    const [suppliers, totalCount] = await this.prisma.$transaction([
+      this.prisma.supplier.findMany({
+        where: {
+          deleted_at: null,
+        },
+        skip: skip,
+        take: normalLimit,
+      }),
+      this.prisma.supplier.count({
+        where: {
+          deleted_at: null,
+        },
+      }),
+    ]);
+
+    return {
+      data: suppliers,
+      meta: {
+        "Current Page": page,
+        "Items per Page": normalLimit,
+        "Total Pages": Math.ceil(totalCount / limit),
+        "Total Items": totalCount,
+      },
+    };
   }
 
   async findBySupplierId(supplier_id: number) {

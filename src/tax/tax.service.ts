@@ -8,11 +8,41 @@ export class TaxService {
     constructor(private prisma: PrismaService) {}
 
 
-    async findAllTaxes() {
-        return await this.prisma.tax.findMany({
-            where: {deleted_at: null}
-        });
-    }
+    // async findAllTaxes() {
+    //     return await this.prisma.tax.findMany({
+    //         where: {deleted_at: null}
+    //     });
+    // }
+
+    async findAllTaxes(page: number, limit: number) {
+        const maxLimit = 100;
+        const normalLimit = Math.min(limit, maxLimit)
+        const skip = (page - 1) * normalLimit;
+        const [taxes, totalCount] = await this.prisma.$transaction([
+          this.prisma.tax.findMany({
+            where: {
+              deleted_at: null,
+            },
+            skip: skip,
+            take: normalLimit,
+          }),
+          this.prisma.tax.count({
+            where: {
+              deleted_at: null,
+            },
+          }),
+        ]);
+    
+        return {
+          data: taxes,
+          meta: {
+            "Current Page": page,
+            "Items per Page": normalLimit,
+            "Total Pages": Math.ceil(totalCount / limit),
+            "Total Items": totalCount,
+          },
+        };
+      }
 
     async findOneTax(tax_id: number) {
         return await this.prisma.tax.findUnique({where: {tax_id: tax_id, deleted_at: null}});

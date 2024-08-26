@@ -36,15 +36,6 @@ export class ProductService {
     });
   }
 
-  async add_promo_product(product_id: number, promo_id: number) {
-    return this.prisma.productPromo.create({
-      data: {
-        product_id: product_id,
-        promo_id: promo_id,
-      },
-    });
-  }
-
   async remove_tax_product(product_id: number, tax_id: number) {
     return this.prisma.productTax.delete({
       where: {
@@ -56,28 +47,48 @@ export class ProductService {
     });
   }
 
-  async remove_promo_product(product_id: number, promo_id: number) {
-    return this.prisma.productPromo.delete({
-      where: {
-        product_id_promo_id: {
-          product_id: product_id,
-          promo_id: promo_id,
-        },
-      },
-    });
-  }
-
   async create(data: CreateProductDto) {
     return this.prisma.product.create({
       data,
     })
   }
-  async findAll() {
-    return this.prisma.product.findMany({
-      where: {
-        deleted_at: null,
-      }
-    });
+  
+  // async findAll() {
+  //   return this.prisma.product.findMany({
+  //     where: {
+  //       deleted_at: null,
+  //     }
+  //   });
+  // }
+
+  async findAll(page: number, limit: number) {
+    const maxLimit = 100;
+    const normalLimit = Math.min(limit, maxLimit)
+    const skip = (page - 1) * normalLimit;
+    const [products, totalCount] = await this.prisma.$transaction([
+      this.prisma.product.findMany({
+        where: {
+          deleted_at: null,
+        },
+        skip: skip,
+        take: normalLimit,
+      }),
+      this.prisma.product.count({
+        where: {
+          deleted_at: null,
+        },
+      }),
+    ]);
+
+    return {
+      data: products,
+      meta: {
+        "Current Page": page,
+        "Items per Page": normalLimit,
+        "Total Pages": Math.ceil(totalCount / limit),
+        "Total Items": totalCount,
+      },
+    };
   }
 
   async findOne(product_id: number) {

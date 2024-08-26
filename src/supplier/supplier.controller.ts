@@ -4,7 +4,7 @@ import { Controller, Get, Post, Body, Param, Query, ParseEnumPipe, Delete, UseGu
 import { SupplierService } from './supplier.service';
 import { CreateSupplierDto, UpdateSupplierDto } from './dto/supplier.dto';
 import {Role } from '@prisma/client';
-import { ApiBadRequestResponse, ApiBearerAuth, ApiResponse, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
+import { ApiBadRequestResponse, ApiBearerAuth, ApiResponse, ApiTags, ApiUnauthorizedResponse, ApiQuery } from '@nestjs/swagger';
 import { Roles } from 'src/utils/decorator/roles.decorator';
 import { RolesGuard } from 'src/utils/guard/roles.guard';
 import { JwtAuthGuard } from 'src/utils/guard/jwt.guard';
@@ -41,8 +41,10 @@ export class SupplierController {
   @ApiBadRequestResponse(get_all_suppliers_bad_request_response)
   @ApiUnauthorizedResponse(unauthorized_response)
   @ApiBearerAuth('JWT')
-  async getAllSuppliers() {
-    const get_all_suppliers = await this.supplierService.getAllSuppliers();
+  @ApiQuery({ name: 'page', required: false, type: Number, description: 'Page number', example: 1 })
+  @ApiQuery({ name: 'limit', required: false, type: Number, description: 'Number of items per page', example: 10 })
+  async getAllSuppliers(@Query('page') page: number, @Query('limit') limit: number) {
+    const get_all_suppliers = await this.supplierService.getAllSuppliers(page, limit);
     return {
       status: HttpStatus.OK,
       message: 'Supplier data fetched successfully',

@@ -1,12 +1,12 @@
 /* eslint-disable prettier/prettier */
 import { unauthorized_role_response, update_pc_bad_request_response, create_product_category_id_bad_request_response, unauthorized_response, get_all_product_categories_response, get_all_product_categories_bad_request_response, create_product_category_response, create_product_category_bad_request_response, get_product_category_by_id_response, update_product_category_response, delete_product_category_response, delete_product_category_bad_request_response} from '../../tests/swagger/product_category.swagger';
-import { Controller, Get, Post, Body, Patch, Param, Delete, NotFoundException, HttpCode, HttpStatus, UseGuards, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, NotFoundException, HttpCode, HttpStatus, UseGuards, ParseIntPipe, Query } from '@nestjs/common';
 import { ProductCategoryService } from './productCategory.service';
 import { CreateProductCategoryDto, UpdateProductCategoryDto } from './dto/productCategory.dto';
 import { ProductCategory, Role } from '@prisma/client';
 import { JwtAuthGuard } from 'src/utils/guard/jwt.guard';
 import { RolesGuard } from 'src/utils/guard/roles.guard';
-import { ApiBadRequestResponse, ApiBearerAuth, ApiOperation, ApiResponse, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
+import { ApiBadRequestResponse, ApiBearerAuth, ApiOperation, ApiQuery, ApiResponse, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
 import { Roles } from 'src/utils/decorator/roles.decorator';
 
 @ApiTags('Product Categories')
@@ -41,9 +41,11 @@ export class ProductCategoryController {
   @ApiResponse(get_all_product_categories_bad_request_response)
   @ApiResponse(unauthorized_role_response)
   @ApiBearerAuth('JWT')
+  @ApiQuery({ name: 'page', required: false, type: Number, description: 'Page number', example: 1 })
+  @ApiQuery({ name: 'limit', required: false, type: Number, description: 'Number of items per page', example: 10 })
   @Get()
-  async getAllProductCategory(): Promise<ProductCategory[]> {
-    return this.productCategoryService.getAllProductCategory()
+  async getAllProductCategory(@Query('page') page: number, @Query('limit') limit: number){
+    return this.productCategoryService.getAllProductCategory(page, limit)
   }
 
   @HttpCode(HttpStatus.OK)
