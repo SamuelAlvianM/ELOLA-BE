@@ -1,6 +1,7 @@
 /* eslint-disable prettier/prettier */
 import { ApiResponseOptions } from '@nestjs/swagger';
 import { HttpStatus } from '@nestjs/common';
+import { CreatePayment, UpdatePayment } from '../../src/Payment/dto/Payment.dto';
 
 // Unauthorized role response
 export const unauthorized_role_response: ApiResponseOptions = {

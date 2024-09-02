@@ -107,35 +107,35 @@ export class ProductController {
   ) {
     return this.productService.remove_tax_product(productId, taxId);
   }
-  @Roles(Role.SUPER_ADMIN, Role.OWNER)
-  @HttpCode(HttpStatus.CREATED)
-  @ApiResponse( add_promo_to_product_response)
-  @ApiResponse( add_promo_to_product_bad_request_response)
-  @ApiResponse( forbidden_role_response )
-  @ApiResponse( unauthorized_response)
-  @ApiBearerAuth('JWT')
-  @Post(':productId/promos/:promoId')
-  async addPromoToProduct(
-    @Param('productId') productId: number,
-    @Param('promoId') promoId: number,
-  ) {
-    return this.productService.add_promo_product(productId, promoId);
-  }
+  // @Roles(Role.SUPER_ADMIN, Role.OWNER)
+  // @HttpCode(HttpStatus.CREATED)
+  // @ApiResponse( add_promo_to_product_response)
+  // @ApiResponse( add_promo_to_product_bad_request_response)
+  // @ApiResponse( forbidden_role_response )
+  // @ApiResponse( unauthorized_response)
+  // @ApiBearerAuth('JWT')
+  // @Post(':productId/promos/:promoId')
+  // async addPromoToProduct(
+  //   @Param('productId') productId: number,
+  //   @Param('promoId') promoId: number,
+  // ) {
+  //   return this.productService.add_promo_product(productId, promoId);
+  // }
   
-  @Roles(Role.SUPER_ADMIN, Role.OWNER)
-  @HttpCode(HttpStatus.NO_CONTENT)
-  @ApiResponse( remove_promo_from_product_response)
-  @ApiResponse( remove_promo_from_product_bad_request_response)
-  @ApiResponse( forbidden_role_response )
-  @ApiResponse( unauthorized_response)
-  @ApiBearerAuth('JWT')
-  @Delete(':productId/promos/:promoId')
-  async removePromoFromProduct(
-    @Param('productId') productId: number,
-    @Param('promoId') promoId: number,
-  ) {
-    return this.productService.remove_promo_product(productId, promoId);
-  }
+  // @Roles(Role.SUPER_ADMIN, Role.OWNER)
+  // @HttpCode(HttpStatus.NO_CONTENT)
+  // @ApiResponse( remove_promo_from_product_response)
+  // @ApiResponse( remove_promo_from_product_bad_request_response)
+  // @ApiResponse( forbidden_role_response )
+  // @ApiResponse( unauthorized_response)
+  // @ApiBearerAuth('JWT')
+  // @Delete(':productId/promos/:promoId')
+  // async removePromoFromProduct(
+  //   @Param('productId') productId: number,
+  //   @Param('promoId') promoId: number,
+  // ) {
+  //   return this.productService.remove_promo_product(productId, promoId);
+  // }
   @Roles(Role.SUPER_ADMIN, Role.OWNER, Role.STAFF)
   @HttpCode(HttpStatus.OK)
   @ApiResponse( get_product_by_id_response)

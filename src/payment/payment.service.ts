@@ -22,15 +22,6 @@ export class PaymentService {
     return payment;
   }
 
-  // async getAllPayments(): Promise<Payment[]> {
-  //   return this.prisma.payment.findMany({
-  //     where: {
-  //       deleted_at: null
-  //     },
-  //   })
-  // }
-
-
 
   async getAllPayments(page: number, limit: number) {
     const maxLimit = 100;

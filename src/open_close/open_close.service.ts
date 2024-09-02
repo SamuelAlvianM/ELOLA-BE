@@ -24,15 +24,15 @@ export class OpenCloseService {
     });
   }
 
-  private async close_cashier(user_id: number, store_id: number, open_close: any) {
+  private async close_cashier(user_id: number, order_id: number, open_close: any) {
     // Jika tidak ada sesi terbuka atau kasir tidak terbuka
     if (!open_close || !open_close.is_cashier_open) {
       throw new BadRequestException('Cashier is not open. There is no open session to close.');
     }
 
-    const transactions_count = await this.prisma.transaction.count({
+    const transactions_count = await this.prisma.savedOrder.count({
       where: {
-        store_id,
+        order_id,
         created_at: {
           gte: open_close.open_date, // lebih besar dan sama dengan = gte
           lte: new Date() // lebih kecil dan sama dengan = lte
