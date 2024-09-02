@@ -91,8 +91,6 @@ export class PromoService {
     });
   }
 
-  // misal dia mau nambah promo, harga product awal - promo = harga promo berlangsung 
-  // misal dia mau ubah value, nanti di update nya masukin algo buat brubah nominal harga
 
   async softDeletePromo(promo_id: number): Promise<Promo> {
     return this.prisma.promo.update({

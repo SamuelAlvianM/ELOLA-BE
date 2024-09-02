@@ -14,13 +14,13 @@ import { StoreModule } from './store/store.module';
 import { PaymentModule } from './payment/payment.module';
 import { ProductModule } from './product/product.module';
 import { SupplierModule } from './supplier/supplier.module';
-import { TransactionModule } from './transactions/transaction.module';
 import { TaxModule } from './tax/tax.module';
 import { DriverPartnerModule } from './driver_partner/driver_partner.module';
 import { PromoModule } from './promo/promo.module';
 import { ProductCategoryModule } from './product_category/productCategory.module';
 import { InventoryModule } from './inventory/inventory.module';
 import { OpenCloseModule } from './open_close/open_close.module';
+import { OrderModule } from './order/order.module';
 import { JwtStrategy } from './auth/middleware/jwt.strategy';
 import * as dotenv from 'dotenv';
 
@@ -41,7 +41,6 @@ dotenv.config();
     PaymentModule,
     ProductModule,
     SupplierModule,
-    TransactionModule,
     OpenCloseModule,
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.register({
@@ -52,6 +51,7 @@ dotenv.config();
     TaxModule,
     DriverPartnerModule,
     OpenCloseModule,
+    OrderModule
   ],
   controllers: [AppController],
   providers: [AppService, UserService, PrismaService, JwtStrategy],

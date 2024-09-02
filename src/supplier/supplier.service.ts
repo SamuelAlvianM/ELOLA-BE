@@ -22,11 +22,6 @@ export class SupplierService {
     });
   }
   
-  // async getAllSuppliers() {
-  //   return this.prisma.supplier.findMany({
-  //     where: { deleted_at: null },
-  //   });
-  // }
 
   async getAllSuppliers(page: number, limit: number) {
     const maxLimit = 100;
