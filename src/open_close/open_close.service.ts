@@ -20,8 +20,6 @@ export class OpenCloseService {
     });
   }
 
-
-
   private async open_cashier(user_id: number, store_id: number, open_close: Handle_Open_Close_Dto) {
     if (open_close && open_close.is_cashier_open) {
         throw new BadRequestException('Cashier is already open');
