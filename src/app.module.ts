@@ -20,7 +20,7 @@ import { PromoModule } from './promo/promo.module';
 import { ProductCategoryModule } from './product_category/productCategory.module';
 import { InventoryModule } from './inventory/inventory.module';
 import { OpenCloseModule } from './open_close/open_close.module';
-import { OrderModule } from './order/order.module';
+import { TransactionModule } from './transactions/transaction.module';
 import { JwtStrategy } from './auth/middleware/jwt.strategy';
 import * as dotenv from 'dotenv';
 
@@ -51,7 +51,7 @@ dotenv.config();
     TaxModule,
     DriverPartnerModule,
     OpenCloseModule,
-    OrderModule
+    TransactionModule
   ],
   controllers: [AppController],
   providers: [AppService, UserService, PrismaService, JwtStrategy],
