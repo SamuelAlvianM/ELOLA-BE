@@ -17,6 +17,7 @@ export class InventoryService {
     });
   }
 
+
   async getAllInvetory(page: number, limit: number) {
     const maxLimit = 100;
     const normalLimit = Math.min(limit, maxLimit)

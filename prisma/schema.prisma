@@ -33,7 +33,7 @@ model User {
   user_opening OpenClose[]   @relation("user_open")
   store        Store[]
   store_staff  StoreStaff[]
-  transactions Transaction[]
+  order        Order[]
 }
 
 model Store {
@@ -54,12 +54,12 @@ model Store {
   user               User                 @relation(fields: [user_id], references: [user_id])
   store_staff        StoreStaff[]
   StoreSupplier      StoreSupplier[]
-  transactions       Transaction[]
+  order              Order[]
 }
 
 model OpenClose {
   open_close_id   Int       @id @default(autoincrement())
-  user_id         Int       
+  user_id         Int
   store_id        Int
   is_cashier_open Boolean   @default(false)
   open_date       DateTime? @default(now())
@@ -70,6 +70,7 @@ model OpenClose {
   created_at      DateTime  @default(now())
   updated_at      DateTime  @updatedAt
   deleted_at      DateTime?
+
   user_closed     User?     @relation("user_closed", fields: [close_by], references: [user_id])
   user_opened     User?     @relation("user_open", fields: [open_by], references: [user_id])
   store           Store     @relation(fields: [store_id], references: [store_id])
@@ -90,7 +91,7 @@ model Tax {
   ProductTax          ProductTax[]
   SupplierTax         SupplierTax[]
   Supplier            Supplier?     @relation(fields: [supplierSupplier_id], references: [supplier_id])
-  Transaction         Transaction[]
+  items               Items[]
 }
 
 model ProductCategory {
@@ -119,7 +120,8 @@ model Product {
   stores              Store          @relation(fields: [store_id], references: [store_id])
   ProductPromo        ProductPromo[]
   ProductTax          ProductTax[]
-  transaction         Transaction[]
+  items               Items[]
+
 }
 
 model Inventory {
@@ -166,7 +168,7 @@ model DriverPartner {
   deleted_at         DateTime?
   stores             Store                @relation(fields: [store_id], references: [store_id])
   DriverPartnerStore DriverPartnerStore[]
-  orders             Transaction[]
+  order              Order[]
 
   @@unique([store_id, partner_name])
 }
@@ -295,6 +297,88 @@ model StoreStaff {
   user           User      @relation(fields: [user_id], references: [user_id])
 }
 
+
+model Order {
+  order_id          Int @id @default(autoincrement())
+  store_id          Int
+  user_id           Int
+  driver_partner_id Int?
+  order_type        Order_type
+  customer_name     String
+  wa_number         String?
+  
+  saved_order       SavedOrder[]
+  transaction       Transaction[]
+  item              Items[]
+
+  created_at   DateTime       @default(now())
+  updated_at   DateTime       @updatedAt
+  deleted_at   DateTime?
+
+  user        User @relation(fields: [user_id], references: [user_id])
+  store       Store @relation(fields: [store_id], references: [store_id])
+  partner     DriverPartner? @relation(fields: [driver_partner_id], references: [driver_partner_id])
+}
+
+model Items {
+
+  item_id       Int @id @default(autoincrement())
+  order_id      Int
+  product_id    Int
+  quantity      Int
+  sub_total     Int
+  tax_id        Int
+
+  created_at    DateTime       @default(now())
+  updated_at    DateTime       @updatedAt
+  deleted_at    DateTime?
+
+  saved_order   SavedOrder[]
+  transaction   Transaction[]
+
+  product       Product        @relation(fields: [product_id], references: [product_id])
+  order         Order          @relation(fields: [order_id], references: [order_id])
+  tax           Tax            @relation(fields: [tax_id], references: [tax_id])
+
+}
+
+model Transaction {
+  transaction_id  Int @id @default(autoincrement())
+  order_id        Int
+  item_id         Int
+  grand_total     BigInt?
+  payment_type    Order_payment_type
+  amount_paid     BigInt?
+  change          BigInt?
+
+  created_at     DateTime       @default(now())
+  updated_at     DateTime       @updatedAt
+  deleted_at     DateTime?
+
+  saved_order    SavedOrder[]
+
+  order          Order          @relation(fields: [order_id], references: [order_id])
+  item           Items          @relation(fields: [item_id], references: [item_id])
+
+}
+
+model SavedOrder {
+  saved_order_id    Int          @id @default(autoincrement())
+  order_id          Int
+  item_id           Int?
+  transaction_id    Int?
+  status            String       @default("NOT PAID")
+
+  created_at        DateTime     @default(now())
+  updated_at        DateTime     @updatedAt
+  deleted_at        DateTime?
+
+  order             Order        @relation(fields: [order_id], references: [order_id])
+  items             Items?       @relation(fields: [item_id], references: [item_id])
+  transaction       Transaction? @relation(fields: [transaction_id], references: [transaction_id])
+}
+
+
 enum Role {
   SUPER_ADMIN
   OWNER
@@ -320,7 +404,7 @@ enum Order_type {
 enum Order_payment_type {
   Cash
   Bank_Transfer
-  EPayment      @map("E-Payment")
+  E_Payment     @map("E-Payment")
 }
 
 enum Promo_type {
