@@ -1,6 +1,6 @@
 import { ApiResponseOptions } from '@nestjs/swagger';
 import { HttpStatus } from '@nestjs/common';
-import { CreateProductCategoryDto, UpdateProductCategoryDto } from '../../src/product_category/dto/productCategory.dto';
+import { CreateProductCategoryDto } from '../../src/product_category/dto/productCategory.dto';
 
 // Unauthorized role response
 export const unauthorized_role_response: ApiResponseOptions = {

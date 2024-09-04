@@ -7,6 +7,21 @@ import { Update_Store_Dto } from '../store/dto/store.dto';
 export class OpenCloseService {
   constructor(private readonly prisma: PrismaService) {}
 
+
+  async getOpenSessionForStore(store_id: number) {
+    return this.prisma.openClose.findFirst({
+      where: {
+        store_id,
+        is_cashier_open: true,
+      },
+      orderBy: {
+        open_date: 'desc',
+      },
+    });
+  }
+
+
+
   private async open_cashier(user_id: number, store_id: number, open_close: Handle_Open_Close_Dto) {
     if (open_close && open_close.is_cashier_open) {
         throw new BadRequestException('Cashier is already open');
@@ -23,6 +38,7 @@ export class OpenCloseService {
         },
     });
   }
+  
 
   private async close_cashier(user_id: number, store_id: number, open_close: any) {
     // Jika tidak ada sesi terbuka atau kasir tidak terbuka

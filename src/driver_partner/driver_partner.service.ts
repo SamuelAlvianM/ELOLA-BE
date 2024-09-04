@@ -7,15 +7,7 @@ import { DriverPartner } from '@prisma/client';
 @Injectable()
 export class DriverPartnerService {
     constructor(private prisma: PrismaService) {}
-
-    // async findAll_Driver_Partner() {
-    //     return this.prisma.driverPartner.findMany({
-    //         where: {
-    //             deleted_at: null,
-    //         }
-    //     });
-    // }
-
+    
     async findAll_Driver_Partner(page: number, limit: number) {
         const maxLimit = 100;
         const normalLimit = Math.min(limit, maxLimit)

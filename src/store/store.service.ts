@@ -66,14 +66,6 @@ export class StoreService {
         return {message: 'Invited user done successfully' };
     }
 
-    // async findAllStore() {
-    //     return await this.prisma.store.findMany({
-    //         where: {
-    //             deleted_at: null
-    //         }
-    //     })
-    // }
-
     async findAllStore(page: number, limit: number) {
         const maxLimit = 100;
         const normalLimit = Math.min(limit, maxLimit)
@@ -103,10 +95,6 @@ export class StoreService {
           },
         };
       }
-
-    // async findAllStoreStaff() {
-    //     return await this.prisma.storeStaff.findMany()
-    // }
 
     async findAllStoreStaff(page: number, limit: number) {
         const maxLimit = 100;

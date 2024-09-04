@@ -21,12 +21,6 @@ export class SupplierService {
       data: {...supplier_dto},
     });
   }
-  
-  // async getAllSuppliers() {
-  //   return this.prisma.supplier.findMany({
-  //     where: { deleted_at: null },
-  //   });
-  // }
 
   async getAllSuppliers(page: number, limit: number) {
     const maxLimit = 100;

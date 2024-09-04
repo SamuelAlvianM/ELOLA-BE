@@ -21,7 +21,7 @@ export class PromoService {
         promo_name,
         promo_type,
         promo_value,
-        product_id: product_id || null, // Allow null if product_id is not provided
+        product_id: product_id || null, 
         start_date: start_date || new Date(),
         end_date: end_date || new Date(),
       },
@@ -29,15 +29,6 @@ export class PromoService {
 
     return promo;
   }
-
-  
-  // async getAllPromos(): Promise<Promo[]>{
-  //   return this.prisma.promo.findMany({
-  //     where: {
-  //       deleted_at: null
-  //     },
-  //   })
-  // }
 
   async getAllPromos(page: number, limit: number) {
     const maxLimit = 100;
@@ -90,9 +81,6 @@ export class PromoService {
       data,
     });
   }
-
-  // misal dia mau nambah promo, harga product awal - promo = harga promo berlangsung 
-  // misal dia mau ubah value, nanti di update nya masukin algo buat brubah nominal harga
 
   async softDeletePromo(promo_id: number): Promise<Promo> {
     return this.prisma.promo.update({

@@ -1,6 +1,5 @@
 /* eslint-disable prettier/prettier */
 import { ApiResponseOptions } from "@nestjs/swagger";
-import { CreateTaxDto, UpdateTaxDto } from '../../src/tax/dto/tax.dto';
 
 export const unauthorized_role_response: ApiResponseOptions = {
     status: 403,

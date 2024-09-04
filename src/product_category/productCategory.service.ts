@@ -13,14 +13,6 @@ export class ProductCategoryService {
       data,
     });
   }
-  
-  // async getAllProductCategory(): Promise<ProductCategory[]> {
-  //   return this.prisma.productCategory.findMany({
-  //     where: {
-  //       deleted_at: null
-  //     },
-  //   })
-  // }
 
   async getAllProductCategory(page: number, limit: number) {
     const maxLimit = 100;

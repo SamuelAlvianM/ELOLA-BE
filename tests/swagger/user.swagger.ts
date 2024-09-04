@@ -1,7 +1,5 @@
 /* eslint-disable prettier/prettier */
 import { ApiResponseOptions } from "@nestjs/swagger";
-import { UserDto, UpdateDto } from '../../src/user/dto/user.dto';
-import { HttpStatus } from "@nestjs/common";
 
 export const unauthorized_role_response: ApiResponseOptions = {
     status: 403,

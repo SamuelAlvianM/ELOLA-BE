@@ -1,62 +1,98 @@
-import { IsInt, IsNumber, IsString, IsEnum, isString } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsOptional, IsString, IsEnum } from 'class-validator';
 import { Order_type, Order_payment_type } from '@prisma/client';
-import { IsDateString } from 'class-validator';
-import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateTransactionDto {
-  @IsInt()
-  @ApiProperty({example: 1})
+  @IsNotEmpty()
+  @IsNumber()
   store_id: number;
 
-  @IsInt()
-  @ApiProperty({example: 1})
-  user_id: number;
-
+  @IsNotEmpty()
   @IsEnum(Order_type)
-  @ApiProperty({example: "Retail / Take Away"})
   order_type: Order_type;
 
-  @IsString()
-  @ApiProperty({example: "Gojek"})
-  driver_partner: string;
-
-  @IsString()
-  @ApiProperty({example: "V-60"})
-  product_name: string;
-
-  @IsString()
-  @ApiProperty({example: "PPN"})
-  tax_name: string;
-
+  @IsNotEmpty()
   @IsNumber()
-  @ApiProperty({example: 10000})
-  sub_total: number;
+  product_id: number;
 
+  @IsNotEmpty()
   @IsNumber()
-  @ApiProperty({example: 20})
-  service: number;
+  quantity: number;
 
-  @IsNumber()
-  @ApiProperty({example: 10})
-  discount: number;
-
-  @IsInt()
-  @ApiProperty({example: 14000})
-  rounding: number;
-
-  @IsInt()
-  @ApiProperty({example: 14000})
-  grand_total: number;
-
-  @IsNumber()
-  @ApiProperty({example: 6000})
-  c_o_g_s: number;
-
+  @IsNotEmpty()
   @IsEnum(Order_payment_type)
-  @ApiProperty({example: "Cash / Bank_Transfer / EPayment"})
   payment_type: Order_payment_type;
 
-  @IsInt()
-  @ApiProperty({example: 0})
-  change: number;
+  @IsOptional()
+  @IsString()
+  receipt_number?: string;
+
+  @IsNotEmpty()
+  @IsNumber()
+  sub_total: number;
+
+  @IsNotEmpty()
+  @IsNumber()
+  tax_id: number;
+
+  @IsNotEmpty()
+  @IsNumber()
+  grand_total: number;
+
+  @IsOptional()
+  @IsString()
+  customer_name?: string;
+
+  @IsOptional()
+  @IsString()
+  whatsapp_number?: string;
+
+  @IsOptional()
+  @IsNumber()
+  change?: number;
+}
+
+export class UpdateTransactionDto {
+  @IsOptional()
+  @IsEnum(Order_type)
+  order_type?: Order_type;
+
+  @IsOptional()
+  @IsNumber()
+  product_id?: number;
+
+  @IsOptional()
+  @IsNumber()
+  quantity?: number;
+
+  @IsOptional()
+  @IsEnum(Order_payment_type)
+  payment_type?: Order_payment_type;
+
+  @IsOptional()
+  @IsString()
+  receipt_number?: string;
+
+  @IsOptional()
+  @IsNumber()
+  sub_total?: number;
+
+  @IsOptional()
+  @IsNumber()
+  tax_id?: number;
+
+  @IsOptional()
+  @IsNumber()
+  grand_total?: number;
+
+  @IsOptional()
+  @IsString()
+  customer_name?: string;
+
+  @IsOptional()
+  @IsString()
+  whatsapp_number?: string;
+
+  @IsOptional()
+  @IsNumber()
+  change?: number;
 }

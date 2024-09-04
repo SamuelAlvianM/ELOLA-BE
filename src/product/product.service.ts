@@ -52,14 +52,6 @@ export class ProductService {
       data,
     })
   }
-  
-  // async findAll() {
-  //   return this.prisma.product.findMany({
-  //     where: {
-  //       deleted_at: null,
-  //     }
-  //   });
-  // }
 
   async findAll(page: number, limit: number) {
     const maxLimit = 100;

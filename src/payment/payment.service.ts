@@ -13,7 +13,7 @@ export class PaymentService {
 
     const payment = await this.prisma.payment.create({
       data: {
-        store_id: store_id || null,  //Store_id can be null (or optional)
+        store_id: store_id || null, 
         payment_name,
         payment_type,
       },
@@ -21,15 +21,6 @@ export class PaymentService {
 
     return payment;
   }
-
-  // async getAllPayments(): Promise<Payment[]> {
-  //   return this.prisma.payment.findMany({
-  //     where: {
-  //       deleted_at: null
-  //     },
-  //   })
-  // }
-
 
 
   async getAllPayments(page: number, limit: number) {

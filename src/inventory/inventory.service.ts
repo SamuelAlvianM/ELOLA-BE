@@ -17,14 +17,6 @@ export class InventoryService {
     });
   }
 
-  // async getAllInventory(): Promise<Inventory[]> {
-  //   return this.prisma.inventory.findMany({
-  //     where: {
-  //       deleted_at: null
-  //     }
-  //   })
-  // }
-
   async getAllInvetory(page: number, limit: number) {
     const maxLimit = 100;
     const normalLimit = Math.min(limit, maxLimit)

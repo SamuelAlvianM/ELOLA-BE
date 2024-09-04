@@ -1,6 +1,5 @@
 import { ApiResponseOptions } from "@nestjs/swagger";
 import { HttpStatus } from "@nestjs/common";
-import { CreateSupplierDto, UpdateSupplierDto } from '../../src/supplier/dto/supplier.dto';
 
 // Unauthorized role response
 export const unauthorized_role_response: ApiResponseOptions = {

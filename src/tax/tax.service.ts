@@ -7,13 +7,6 @@ import { PrismaService } from 'src/prisma/prisma.service';
 export class TaxService {
     constructor(private prisma: PrismaService) {}
 
-
-    // async findAllTaxes() {
-    //     return await this.prisma.tax.findMany({
-    //         where: {deleted_at: null}
-    //     });
-    // }
-
     async findAllTaxes(page: number, limit: number) {
         const maxLimit = 100;
         const normalLimit = Math.min(limit, maxLimit)

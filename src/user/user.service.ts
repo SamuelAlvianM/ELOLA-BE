@@ -55,14 +55,6 @@ export class UserService {
         });
     }
 
-    // async findAll(): Promise<User[]> {
-    //     return this.prisma.user.findMany({
-    //         where: {
-    //             deleted_at: null,
-    //         }
-    //     });
-    // }
-
     async findAllUser(page: number, limit: number) {
       const maxLimit = 100;
       const normalLimit = Math.min(limit, maxLimit)
