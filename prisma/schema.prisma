@@ -33,7 +33,7 @@ model User {
   user_opening OpenClose[]   @relation("user_open")
   store        Store[]
   store_staff  StoreStaff[]
-  order        Order[]
+  transaction        Transaction[]
 }
 
 model Store {
@@ -54,7 +54,7 @@ model Store {
   user               User                 @relation(fields: [user_id], references: [user_id])
   store_staff        StoreStaff[]
   StoreSupplier      StoreSupplier[]
-  order              Order[]
+  transaction              Transaction[]
 }
 
 model OpenClose {
@@ -91,7 +91,7 @@ model Tax {
   ProductTax          ProductTax[]
   SupplierTax         SupplierTax[]
   Supplier            Supplier?     @relation(fields: [supplierSupplier_id], references: [supplier_id])
-  items               Items[]
+  transaction         Transaction[]
 }
 
 model ProductCategory {
@@ -120,7 +120,7 @@ model Product {
   stores              Store          @relation(fields: [store_id], references: [store_id])
   ProductPromo        ProductPromo[]
   ProductTax          ProductTax[]
-  items               Items[]
+  transaction         Transaction[]
 
 }
 
@@ -168,7 +168,7 @@ model DriverPartner {
   deleted_at         DateTime?
   stores             Store                @relation(fields: [store_id], references: [store_id])
   DriverPartnerStore DriverPartnerStore[]
-  order              Order[]
+  transaction              Transaction[]
 
   @@unique([store_id, partner_name])
 }
@@ -210,6 +210,7 @@ model Transaction {
   store            Store              @relation(fields: [store_id], references: [store_id])
   taxes            Tax                @relation(fields: [tax_id], references: [tax_id])
   user             User               @relation(fields: [user_id], references: [user_id])
+  saved_order      SavedOrder[]
 
   @@unique([store_id, user_id, driver_partner])
 }
@@ -297,84 +298,16 @@ model StoreStaff {
   user           User      @relation(fields: [user_id], references: [user_id])
 }
 
-
-model Order {
-  order_id          Int @id @default(autoincrement())
-  store_id          Int
-  user_id           Int
-  driver_partner_id Int?
-  order_type        Order_type
-  customer_name     String
-  wa_number         String?
-  
-  saved_order       SavedOrder[]
-  transaction       Transaction[]
-  item              Items[]
-
-  created_at   DateTime       @default(now())
-  updated_at   DateTime       @updatedAt
-  deleted_at   DateTime?
-
-  user        User @relation(fields: [user_id], references: [user_id])
-  store       Store @relation(fields: [store_id], references: [store_id])
-  partner     DriverPartner? @relation(fields: [driver_partner_id], references: [driver_partner_id])
-}
-
-model Items {
-
-  item_id       Int @id @default(autoincrement())
-  order_id      Int
-  product_id    Int
-  quantity      Int
-  sub_total     Int
-  tax_id        Int
-
-  created_at    DateTime       @default(now())
-  updated_at    DateTime       @updatedAt
-  deleted_at    DateTime?
-
-  saved_order   SavedOrder[]
-  transaction   Transaction[]
-
-  product       Product        @relation(fields: [product_id], references: [product_id])
-  order         Order          @relation(fields: [order_id], references: [order_id])
-  tax           Tax            @relation(fields: [tax_id], references: [tax_id])
-
-}
-
-model Transaction {
-  transaction_id  Int @id @default(autoincrement())
-  order_id        Int
-  item_id         Int
-  grand_total     BigInt?
-  payment_type    Order_payment_type
-  amount_paid     BigInt?
-  change          BigInt?
-
-  created_at     DateTime       @default(now())
-  updated_at     DateTime       @updatedAt
-  deleted_at     DateTime?
-
-  saved_order    SavedOrder[]
-
-  order          Order          @relation(fields: [order_id], references: [order_id])
-  item           Items          @relation(fields: [item_id], references: [item_id])
-
-}
-
 model SavedOrder {
   saved_order_id    Int          @id @default(autoincrement())
-  order_id          Int
-  item_id           Int?
   transaction_id    Int?
-  status            String       @default("NOT PAID")
+  is_done           Boolean?      @default(false)
+  status            String       
 
   created_at        DateTime     @default(now())
   updated_at        DateTime     @updatedAt
   deleted_at        DateTime?
 
-  order             Order        @relation(fields: [order_id], references: [order_id])
-  items             Items?       @relation(fields: [item_id], references: [item_id])
   transaction       Transaction? @relation(fields: [transaction_id], references: [transaction_id])
 }
 

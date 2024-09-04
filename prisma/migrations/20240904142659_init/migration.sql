@@ -5,10 +5,10 @@ CREATE TYPE "Role" AS ENUM ('SUPER_ADMIN', 'OWNER', 'STAFF');
 CREATE TYPE "Tax_type" AS ENUM ('Service', 'VAT');
 
 -- CreateEnum
-CREATE TYPE "Payment_type" AS ENUM ('Bank', 'E-Payment', 'Cash');
+CREATE TYPE "Payment_type" AS ENUM ('Transfer', 'EPayment', 'Cash');
 
 -- CreateEnum
-CREATE TYPE "Order_type" AS ENUM ('Retail', 'Take_away');
+CREATE TYPE "Order_type" AS ENUM ('Order', 'TakeAway');
 
 -- CreateEnum
 CREATE TYPE "Order_payment_type" AS ENUM ('Cash', 'Bank_Transfer', 'E-Payment');
@@ -178,6 +178,30 @@ CREATE TABLE "Payment" (
 );
 
 -- CreateTable
+CREATE TABLE "Transaction" (
+    "transaction_id" SERIAL NOT NULL,
+    "store_id" INTEGER NOT NULL,
+    "user_id" INTEGER NOT NULL,
+    "product_id" INTEGER NOT NULL,
+    "tax_id" INTEGER NOT NULL,
+    "order_type" "Order_type" NOT NULL,
+    "driver_partner" TEXT,
+    "receipt_number" TEXT NOT NULL,
+    "quantity" INTEGER NOT NULL,
+    "sub_total" DOUBLE PRECISION NOT NULL,
+    "grand_total" DOUBLE PRECISION NOT NULL,
+    "payment_type" "Order_payment_type" NOT NULL,
+    "change" INTEGER NOT NULL,
+    "customer_name" TEXT NOT NULL,
+    "whatsapp_number" TEXT NOT NULL,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL,
+    "deleted_at" TIMESTAMP(3),
+
+    CONSTRAINT "Transaction_pkey" PRIMARY KEY ("transaction_id")
+);
+
+-- CreateTable
 CREATE TABLE "Promo" (
     "promo_id" SERIAL NOT NULL,
     "product_id" INTEGER,
@@ -257,31 +281,16 @@ CREATE TABLE "StoreStaff" (
 );
 
 -- CreateTable
-CREATE TABLE "Transaction" (
-    "transaction_id" TEXT NOT NULL,
-    "store_id" INTEGER,
-    "user_id" INTEGER,
-    "order_type" "Order_type" NOT NULL,
-    "driver_partner" TEXT,
-    "receipt_number" SERIAL NOT NULL,
-    "sub_total" DOUBLE PRECISION,
-    "rounding" INTEGER,
-    "grand_total" INTEGER,
-    "payment_type" "Order_payment_type",
-    "change" INTEGER,
+CREATE TABLE "SavedOrder" (
+    "saved_order_id" SERIAL NOT NULL,
+    "transaction_id" INTEGER,
+    "is_done" BOOLEAN DEFAULT false,
+    "status" TEXT NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
     "deleted_at" TIMESTAMP(3),
-    "amount_paid" BIGINT,
-    "customer_name" TEXT,
-    "is_tax_included" BOOLEAN DEFAULT true,
-    "product_id" INTEGER,
-    "promo_id" INTEGER,
-    "tax_id" INTEGER,
-    "tax_name" TEXT,
-    "wa_number" TEXT,
 
-    CONSTRAINT "Transaction_pkey" PRIMARY KEY ("transaction_id")
+    CONSTRAINT "SavedOrder_pkey" PRIMARY KEY ("saved_order_id")
 );
 
 -- CreateIndex
@@ -333,16 +342,16 @@ CREATE UNIQUE INDEX "DriverPartner_partner_name_key" ON "DriverPartner"("partner
 CREATE UNIQUE INDEX "DriverPartner_store_id_partner_name_key" ON "DriverPartner"("store_id", "partner_name");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "Transaction_receipt_number_key" ON "Transaction"("receipt_number");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Transaction_store_id_user_id_driver_partner_key" ON "Transaction"("store_id", "user_id", "driver_partner");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "ProductPromo_product_id_promo_id_key" ON "ProductPromo"("product_id", "promo_id");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "ProductTax_product_id_tax_id_key" ON "ProductTax"("product_id", "tax_id");
-
--- CreateIndex
-CREATE UNIQUE INDEX "Transaction_receipt_number_key" ON "Transaction"("receipt_number");
-
--- CreateIndex
-CREATE UNIQUE INDEX "Transaction_store_id_user_id_driver_partner_receipt_number_key" ON "Transaction"("store_id", "user_id", "driver_partner", "receipt_number");
 
 -- AddForeignKey
 ALTER TABLE "Store" ADD CONSTRAINT "Store_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "User"("user_id") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -376,6 +385,21 @@ ALTER TABLE "DriverPartner" ADD CONSTRAINT "DriverPartner_store_id_fkey" FOREIGN
 
 -- AddForeignKey
 ALTER TABLE "Payment" ADD CONSTRAINT "Payment_store_id_fkey" FOREIGN KEY ("store_id") REFERENCES "Store"("store_id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Transaction" ADD CONSTRAINT "Transaction_driver_partner_fkey" FOREIGN KEY ("driver_partner") REFERENCES "DriverPartner"("partner_name") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Transaction" ADD CONSTRAINT "Transaction_product_id_fkey" FOREIGN KEY ("product_id") REFERENCES "Product"("product_id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Transaction" ADD CONSTRAINT "Transaction_store_id_fkey" FOREIGN KEY ("store_id") REFERENCES "Store"("store_id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Transaction" ADD CONSTRAINT "Transaction_tax_id_fkey" FOREIGN KEY ("tax_id") REFERENCES "Tax"("tax_id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Transaction" ADD CONSTRAINT "Transaction_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "User"("user_id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "ProductPromo" ADD CONSTRAINT "ProductPromo_product_id_fkey" FOREIGN KEY ("product_id") REFERENCES "Product"("product_id") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -420,19 +444,4 @@ ALTER TABLE "StoreStaff" ADD CONSTRAINT "StoreStaff_store_id_fkey" FOREIGN KEY (
 ALTER TABLE "StoreStaff" ADD CONSTRAINT "StoreStaff_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "User"("user_id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Transaction" ADD CONSTRAINT "Transaction_driver_partner_fkey" FOREIGN KEY ("driver_partner") REFERENCES "DriverPartner"("partner_name") ON DELETE SET NULL ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "Transaction" ADD CONSTRAINT "Transaction_product_id_fkey" FOREIGN KEY ("product_id") REFERENCES "Product"("product_id") ON DELETE SET NULL ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "Transaction" ADD CONSTRAINT "Transaction_promo_id_fkey" FOREIGN KEY ("promo_id") REFERENCES "Promo"("promo_id") ON DELETE SET NULL ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "Transaction" ADD CONSTRAINT "Transaction_store_id_fkey" FOREIGN KEY ("store_id") REFERENCES "Store"("store_id") ON DELETE SET NULL ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "Transaction" ADD CONSTRAINT "Transaction_tax_id_fkey" FOREIGN KEY ("tax_id") REFERENCES "Tax"("tax_id") ON DELETE SET NULL ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "Transaction" ADD CONSTRAINT "Transaction_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "User"("user_id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "SavedOrder" ADD CONSTRAINT "SavedOrder_transaction_id_fkey" FOREIGN KEY ("transaction_id") REFERENCES "Transaction"("transaction_id") ON DELETE SET NULL ON UPDATE CASCADE;
