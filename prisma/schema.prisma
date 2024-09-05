@@ -102,6 +102,7 @@ model ProductCategory {
   updated_at          DateTime  @updatedAt
   deleted_at          DateTime?
   store               Store     @relation(fields: [store_id], references: [store_id])
+  product             Product[]
 }
 
 model Product {
@@ -117,6 +118,7 @@ model Product {
   updated_at          DateTime       @updatedAt
   deleted_at          DateTime?
   inventories         Inventory[]
+  product_category    ProductCategory @relation(fields: [product_category_id], references: [product_category_id])
   stores              Store          @relation(fields: [store_id], references: [store_id])
   ProductPromo        ProductPromo[]
   ProductTax          ProductTax[]

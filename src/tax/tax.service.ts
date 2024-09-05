@@ -38,10 +38,28 @@ export class TaxService {
       }
 
     async findOneTax(tax_id: number) {
-        return await this.prisma.tax.findUnique({where: {tax_id: tax_id, deleted_at: null}});
+        return await this.prisma.tax.findUnique({
+          where: {
+            tax_id: tax_id, 
+            deleted_at: null
+          },
+        });
     }
 
     async createTax(create_tax_data: CreateTaxDto) {
+
+        if(create_tax_data.tax_status) {
+          await this.prisma.tax.updateMany({
+            where: {
+              deleted_at: null,
+              tax_status: true,
+            },
+            data: {
+              tax_status: false,
+            },
+          });
+        }
+
         const data_tax = await this.prisma.tax.create({
             data: {
                 ...create_tax_data,
@@ -51,12 +69,26 @@ export class TaxService {
     }
 
     async updateTax(tax_id: number,update_tax_data: UpdateTaxDto) {
-        const updated_data = await this.prisma.tax.update({
-            where: {tax_id: tax_id},
-            data: {
-                ...update_tax_data,
-            }
+
+      if(update_tax_data.tax_status) {
+        await this.prisma.tax.updateMany({
+          where: {
+            deleted_at: null,
+            tax_id: { not: tax_id },
+            tax_status: true,
+          },
+          data: {
+            tax_status: false,
+          },
         });
+      }
+      
+      const updated_data = await this.prisma.tax.update({
+        where: {tax_id: tax_id},
+        data: {
+            ...update_tax_data,
+        }
+    });
         return updated_data;
     }
 

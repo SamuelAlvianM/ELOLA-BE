@@ -53,22 +53,40 @@ export class ProductService {
     })
   }
 
-  async findAll(page: number, limit: number) {
+  async findAll(page: number, limit: number, category?: string, product_name?: string) {
     const maxLimit = 100;
     const normalLimit = Math.min(limit, maxLimit)
     const skip = (page - 1) * normalLimit;
+
+    const condition: any = {
+      deleted_at: null,
+    };
+
+    if(category) {
+      condition.product_category = {
+        category_name: category,
+      };
+    }
+
+    if(product_name) {
+      condition.product_name = {
+        contains: product_name,
+        mode: 'insensitive',
+      };
+    }
+
+
     const [products, totalCount] = await this.prisma.$transaction([
       this.prisma.product.findMany({
-        where: {
-          deleted_at: null,
-        },
+        where: condition,
         skip: skip,
         take: normalLimit,
+        include: {
+          product_category: true,
+        },
       }),
       this.prisma.product.count({
-        where: {
-          deleted_at: null,
-        },
+        where: condition,
       }),
     ]);
 
