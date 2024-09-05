@@ -142,11 +142,9 @@ export class AuthService {
         const accessToken = this.jwtService.sign(payload);
 
         return {
-            data: {
-                user_name: user.user_name,
-                email: user.email,
-                access_token: accessToken,
-            }
+            user_name: user.user_name,
+            email: user.email,
+            access_token: accessToken,
         }
       }
     }
