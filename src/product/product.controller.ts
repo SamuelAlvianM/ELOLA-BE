@@ -50,14 +50,13 @@ export class ProductController {
   @ApiResponse( forbidden_role_response )
   @ApiResponse( unauthorized_response)
   @ApiBearerAuth('JWT')
-  @ApiQuery({ name: 'page', required: false, type: Number, description: 'Page number', example: 1 })
-  @ApiQuery({ name: 'limit', required: false, type: Number, description: 'Number of items per page', example: 10 })
   @Get('all')
-  find_all_products() {
+  async ind_all_products() {
+    const find_products = await this.productService.find_all_products();
     return {
       status: HttpStatus.OK,
       response: "All Products fetched successfully!",
-      data: this.productService.find_all_products()
+      data: find_products
     };
   }
   
