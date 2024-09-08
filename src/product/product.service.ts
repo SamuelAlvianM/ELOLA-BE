@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateProductDto } from './dto/product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
@@ -10,7 +10,7 @@ export class ProductService {
   constructor(private prisma: PrismaService,) {}
 
   async get_product_taxes_promos( product_id: number) {
-    return this.prisma.product.findUnique({
+    const product = await this.prisma.product.findUnique({
       where: { product_id: product_id },
       include: {
         ProductTax: {
@@ -25,6 +25,21 @@ export class ProductService {
         },
       },
     });
+
+    if (!product) {
+      throw new NotFoundException('Product not found');
+    }
+    
+    const isPromoIncluded = product.ProductPromo.length > 0;
+    const isTaxIncluded = product.ProductTax.length > 0;
+  
+    return {
+      product,
+      alerts: {
+        promoIncluded: isPromoIncluded ? 'This product is under a promo' : 'No active promo for this product',
+        taxIncluded: isTaxIncluded ? 'This product has tax applied' : 'No tax applied to this product',
+      },
+    };
   }
 
   async add_tax_product(product_id: number, tax_id: number) {
@@ -47,14 +62,14 @@ export class ProductService {
     });
   }
 
-  async create(data: CreateProductDto) {
+  async create_product(data: CreateProductDto) {
     return this.prisma.product.create({
       data,
     })
   }
 
-  async findAll(page: number, limit: number, category?: string, product_name?: string) {
-    const maxLimit = 100;
+  async get_product_by_page(page: number, limit: number, category?: string, product_name?: string) {
+    const maxLimit = 10;
     const normalLimit = Math.min(limit, maxLimit)
     const skip = (page - 1) * normalLimit;
 
@@ -74,7 +89,6 @@ export class ProductService {
         mode: 'insensitive',
       };
     }
-
 
     const [products, totalCount] = await this.prisma.$transaction([
       this.prisma.product.findMany({
@@ -99,6 +113,14 @@ export class ProductService {
         "Total Items": totalCount,
       },
     };
+  }
+  
+  async find_all_products() {
+    return this.prisma.product.findMany({
+      where: {
+        deleted_at: null,
+      },
+    });
   }
 
   async findOne(product_id: number) {

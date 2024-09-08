@@ -8,7 +8,7 @@ export class TaxService {
     constructor(private prisma: PrismaService) {}
 
     async findAllTaxes(page: number, limit: number) {
-        const maxLimit = 100;
+        const maxLimit = 10;
         const normalLimit = Math.min(limit, maxLimit)
         const skip = (page - 1) * normalLimit;
         const [taxes, totalCount] = await this.prisma.$transaction([

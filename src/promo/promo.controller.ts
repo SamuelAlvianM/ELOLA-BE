@@ -118,4 +118,17 @@ export class PromoController {
       data: applied_promos,
     };
   }
+
+  @Post(':promo_id/apply-global')
+  async apply_promo_global(
+    @Param('promo_id', ParseIntPipe) promo_id: number,
+  ) {
+    const result = await this.promoService.applyPromoGlobal(promo_id);
+    return {
+      status: HttpStatus.OK,
+      message: 'success apply promo to all product, please check your price now',
+      data: result,
+
+    }
+  }
 }
