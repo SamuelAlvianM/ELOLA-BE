@@ -26,7 +26,7 @@ export class ProductController {
   @ApiResponse( unauthorized_response)
   @ApiBearerAuth('JWT')
   create(@Body() createProductDto: CreateProductDto) {
-    return this.productService.create(createProductDto);
+    return this.productService.create_product(createProductDto);
   }
 
   @Roles(Role.SUPER_ADMIN, Role.OWNER, Role.STAFF)
@@ -38,9 +38,27 @@ export class ProductController {
   @ApiBearerAuth('JWT')
   @ApiQuery({ name: 'page', required: false, type: Number, description: 'Page number', example: 1 })
   @ApiQuery({ name: 'limit', required: false, type: Number, description: 'Number of items per page', example: 10 })
-  @Get()
-  findAll(@Query('page') page: number, @Query('limit') limit: number) {
-    return this.productService.findAll(page, limit);
+  @Get('pages')
+  find_product_by_page(@Query('page') page: number, @Query('limit') limit: number) {
+    return this.productService.get_product_by_page(page, limit);
+  }
+
+  @Roles(Role.SUPER_ADMIN, Role.OWNER, Role.STAFF)
+  @HttpCode(HttpStatus.OK)
+  @ApiResponse( get_all_products_response)
+  @ApiResponse( get_all_products_bad_request_response)
+  @ApiResponse( forbidden_role_response )
+  @ApiResponse( unauthorized_response)
+  @ApiBearerAuth('JWT')
+  @ApiQuery({ name: 'page', required: false, type: Number, description: 'Page number', example: 1 })
+  @ApiQuery({ name: 'limit', required: false, type: Number, description: 'Number of items per page', example: 10 })
+  @Get('all')
+  find_all_products() {
+    return {
+      status: HttpStatus.OK,
+      response: "All Products fetched successfully!",
+      data: this.productService.find_all_products()
+    };
   }
   
   @Roles(Role.SUPER_ADMIN, Role.OWNER, Role.STAFF)

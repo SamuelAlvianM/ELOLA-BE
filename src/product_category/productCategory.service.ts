@@ -15,7 +15,7 @@ export class ProductCategoryService {
   }
 
   async getAllProductCategory(page: number, limit: number) {
-    const maxLimit = 100;
+    const maxLimit = 10;
     const normalLimit = Math.min(limit, maxLimit)
     const skip = (page - 1) * normalLimit;
     const [productCategories, totalCount] = await this.prisma.$transaction([
@@ -50,11 +50,15 @@ export class ProductCategoryService {
         product_category_id: product_category_id,
         deleted_at: null
       },
+      include: {
+        product: true,
+      },
     });
     
     if (!category) {
       throw new NotFoundException(`Category Product with ID ${product_category_id} not found or has been deleted.`);
     }
+    
     
     return category;
   }

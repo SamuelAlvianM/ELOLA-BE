@@ -31,7 +31,7 @@ export class PromoService {
   }
 
   async getAllPromos(page: number, limit: number) {
-    const maxLimit = 100;
+    const maxLimit = 10;
     const normalLimit = Math.min(limit, maxLimit)
     const skip = (page - 1) * normalLimit;
     const [promos, totalCount] = await this.prisma.$transaction([
@@ -92,6 +92,50 @@ export class PromoService {
       }
     });
   }
+
+  async applyPromoGlobal(promo_id: number) {
+    const promo_global = await this.prisma.promo.findUnique({
+      where: { promo_id },
+    });
+
+    if(!promo_global) {
+      throw new NotFoundException('Promo not found');
+    }
+
+    const products = await this.prisma.product.findMany ({
+      where: { deleted_at: null },
+    });
+
+    for (const product of products) {
+      let new_price;
+      if (promo_global.promo_type === 'Discount') {
+        new_price = product.product_price - (product.product_price * promo_global.promo_value) / 100;
+      } else {
+        new_price = product.product_price - promo_global.promo_value;
+      }
+
+      await this.prisma.product.update({
+        where: { product_id: product.product_id },
+        data: { product_price: new_price },
+      });
+
+      await this.prisma.productPromo.upsert({
+        where: {
+          product_id_promo_id: {
+            product_id: product.product_id,
+            promo_id: promo_global.promo_id,
+          },
+        },
+        update: {},
+        create: {
+          product_id: product.product_id,
+          promo_id: promo_global.promo_id,
+        },
+      });
+    }
+
+    return { message: 'Promo applied to all products successfully' };
+}
 
   async applyPromo(applyPromoDto: ApplyPromoDto) {
     const { product_id, promo_id } = applyPromoDto;

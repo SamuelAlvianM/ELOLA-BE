@@ -97,7 +97,7 @@ export class StoreService {
       }
 
     async findAllStoreStaff(page: number, limit: number) {
-        const maxLimit = 100;
+        const maxLimit = 10;
         const normalLimit = Math.min(limit, maxLimit)
         const skip = (page - 1) * normalLimit;
         const [storeStaff, totalCount] = await this.prisma.$transaction([
