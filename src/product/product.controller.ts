@@ -55,7 +55,7 @@ export class ProductController {
     const find_products = await this.productService.find_all_products();
     return {
       status: HttpStatus.OK,
-      response: "All Products fetched successfully!",
+      response: "All Products fetched successfully",
       data: find_products
     };
   }

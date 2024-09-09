@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import { ConflictException, Injectable } from '@nestjs/common';
+import { ConflictException, HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { Create_Store_Dto, Invite_User_Dto, Update_Store_Dto } from './dto/store.dto';
 import { Role } from '@prisma/client';
@@ -116,7 +116,7 @@ export class StoreService {
         ]);
     
         return {
-          data: storeStaff,
+          storeStaff,
           meta: {
             "Current Page": page,
             "Items per Page": normalLimit,
