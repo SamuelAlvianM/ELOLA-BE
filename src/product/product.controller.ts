@@ -105,8 +105,8 @@ export class ProductController {
   @ApiBearerAuth('JWT')
   @Post(':productId/taxes/:taxId')
   async addTaxToProduct(
-    @Param('productId') productId: number,
-    @Param('taxId') taxId: number,
+    @Param('productId') productId: string,
+    @Param('taxId') taxId: string,
   ) {
     return this.productService.add_tax_product(productId, taxId);
   }

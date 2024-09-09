@@ -42,11 +42,11 @@ export class ProductService {
     };
   }
 
-  async add_tax_product(product_id: number, tax_id: number) {
+  async add_tax_product(product_id: string, tax_id: string) {
     return this.prisma.productTax.create({
       data: {
-        product_id: product_id,
-        tax_id: tax_id,
+        product_id: parseInt(product_id),  // Convert to integer
+        tax_id: parseInt(tax_id)
       },
     });
   }
