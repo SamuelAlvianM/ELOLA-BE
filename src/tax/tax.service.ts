@@ -27,11 +27,11 @@ export class TaxService {
         ]);
     
         return {
-          data: taxes,
+          taxes,
           meta: {
             "Current Page": page,
             "Items per Page": normalLimit,
-            "Total Pages": Math.ceil(totalCount / limit),
+            "Total Pages": Math.ceil(totalCount / normalLimit),
             "Total Items": totalCount,
           },
         };
