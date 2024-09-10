@@ -35,7 +35,7 @@ export class UserController {
     @ApiUnauthorizedResponse(unauthorized_response)
     async create(
         @Body() user_dto: UserDto){
-        const result = await this.user_service.create(user_dto);
+        const result = await this.user_service.createNewUser(user_dto);
         return {
             statusCode: HttpStatus.CREATED,
             message: 'Successfully created new User',
@@ -88,7 +88,7 @@ export class UserController {
     @ApiBadRequestResponse(bad_request_response)
     @ApiUnauthorizedResponse(unauthorized_response)
     async update(@Param('user_id') user_id: number, @Body() update_dto: UpdateDto) {
-        const result = await this.user_service.update(+user_id, update_dto);
+        const result = await this.user_service.updateUserData(+user_id, update_dto);
         return {
             statusCode: HttpStatus.OK,
             message: 'Data Update Success!',
