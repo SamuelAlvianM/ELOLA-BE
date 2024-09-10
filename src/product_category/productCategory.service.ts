@@ -8,9 +8,15 @@ import { ProductCategory } from '@prisma/client';
 export class ProductCategoryService {
   constructor(private prisma: PrismaService) {}
 
-  async create(data: CreateProductCategoryDto) {
+  async createNewCategory(data: CreateProductCategoryDto, store_id: number) {
     return this.prisma.productCategory.create({
-      data,
+      data: {
+        ...data,
+        store: {
+          connect: {store_id: store_id},
+        },
+      },
+
     });
   }
 
@@ -64,10 +70,12 @@ export class ProductCategoryService {
   }
 
 
-  async update(product_category_id: number, data: UpdateProductCategoryDto) {
+  async updateCategory(product_category_id: number, update_dto: UpdateProductCategoryDto) {
     return this.prisma.productCategory.update({
       where: { product_category_id: product_category_id },
-      data,
+      data: {
+        category_name: update_dto.category_name,
+      },
     });
   }
 

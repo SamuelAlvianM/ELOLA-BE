@@ -22,8 +22,11 @@ export class TransactionController {
   @ApiResponse({ status: HttpStatus.FORBIDDEN, description: 'Forbidden' })
   @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Bad request' })
   @ApiBearerAuth('JWT')
-  async createTransaction(@Body() createTransactionDto: CreateTransactionDto) {
-    const transaction = await this.transactionService.createTransaction(createTransactionDto);
+  async createTransaction(
+    @Body() createTransactionDto: CreateTransactionDto,
+    @Param('store_id', ParseIntPipe) store_id: number,
+  ) {
+    const transaction = await this.transactionService.createTransaction(createTransactionDto, store_id);
     return {
       message: 'Transaction created successfully!',
       data: transaction,

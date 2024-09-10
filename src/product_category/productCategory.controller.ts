@@ -24,8 +24,11 @@ export class ProductCategoryController {
   @ApiResponse(create_product_category_bad_request_response)
   @ApiResponse(unauthorized_role_response)
   @ApiBearerAuth('JWT')
-  async create(@Body() createProductCategoryDto: CreateProductCategoryDto) {
-    const result = await this.productCategoryService.create(createProductCategoryDto);
+  async createNewCategory(
+    @Body() createProductCategoryDto: CreateProductCategoryDto,
+    @Query('storeId', ParseIntPipe) storeId: number,
+  ) {
+    const result = await this.productCategoryService.createNewCategory(createProductCategoryDto, storeId);
     return {
       statusCode: HttpStatus.CREATED,
       message: "Data Category Product Created Success!",
@@ -72,9 +75,12 @@ export class ProductCategoryController {
   @ApiResponse(update_pc_bad_request_response)
   @ApiResponse(unauthorized_role_response)
   @ApiBearerAuth('JWT')
-  @Patch(':id')
-  async update(@Param('id') id: string, @Body() updateProductCategoryDto: UpdateProductCategoryDto) {
-    const result = await this.productCategoryService.update(+id, updateProductCategoryDto);
+  @Patch()
+  async updateCategory(
+    @Query('category_id', ParseIntPipe) category_id: number,
+    @Body() updateProductCategoryDto: UpdateProductCategoryDto,
+  ) {
+    const result = await this.productCategoryService.updateCategory(category_id, updateProductCategoryDto);
     return {
       statusCode: HttpStatus.CREATED,
       message: "Update Data Category Product Success!",

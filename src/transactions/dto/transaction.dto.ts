@@ -1,29 +1,31 @@
 import { IsNotEmpty, IsNumber, IsOptional, IsString, IsEnum } from 'class-validator';
 import { Order_type, Order_payment_type } from '@prisma/client';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateTransactionDto {
-  @IsNotEmpty()
-  @IsNumber()
-  store_id: number;
-
+  
   @IsNotEmpty()
   @IsEnum(Order_type)
+  @ApiProperty({example: 'TakeAway | Order'})
   order_type: Order_type;
 
   @IsNotEmpty()
   @IsNumber()
+  @ApiProperty({example: 1})
   product_id: number;
 
   @IsNotEmpty()
   @IsNumber()
+  @ApiProperty({example: 2})
   quantity: number;
 
   @IsNotEmpty()
   @IsEnum(Order_payment_type)
+  @ApiProperty({example: 'Cash | Transfer | E_Payment'})
   payment_type: Order_payment_type;
 
-  @IsOptional()
   @IsString()
+  @ApiProperty({example: 'DI0001'})
   receipt_number?: string;
 
   @IsNotEmpty()
