@@ -61,10 +61,16 @@ export class UserService {
           },
           skip: skip,
           take: normalLimit,
+          include: {
+            store: true,
+            store_staff: true,
+            transaction: true,
+          },
         }),
         this.prisma.user.count({
           where: {
             deleted_at: null,
+
           },
         }),
       ]);
@@ -85,7 +91,12 @@ export class UserService {
             where: {
                 user_id,
                 deleted_at: null,
-            }
+            },
+            include: {
+              store: true,
+              store_staff: true,
+              transaction: true,
+            },
         });
 
         if (!user) {
