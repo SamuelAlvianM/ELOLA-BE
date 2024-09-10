@@ -78,7 +78,7 @@ export class ProductCategoryController {
   @Patch()
   async updateCategory(
     @Query('category_id', ParseIntPipe) category_id: number,
-    @Body() updateProductCategoryDto: UpdateProductCategoryDto,
+    @Body() updateProductCategoryDto: UpdateProductCategoryDto, 
   ) {
     const result = await this.productCategoryService.updateCategory(category_id, updateProductCategoryDto);
     return {

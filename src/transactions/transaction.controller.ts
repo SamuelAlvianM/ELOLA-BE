@@ -24,7 +24,7 @@ export class TransactionController {
   @ApiBearerAuth('JWT')
   async createTransaction(
     @Body() createTransactionDto: CreateTransactionDto,
-    @Param('store_id', ParseIntPipe) store_id: number,
+    @Query('store_id', ParseIntPipe) store_id: number,
   ) {
     const transaction = await this.transactionService.createTransaction(createTransactionDto, store_id);
     return {
@@ -76,7 +76,7 @@ export class TransactionController {
   @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Bad request' })
   @ApiBearerAuth('JWT')
   @Patch(':transaction_id')
-  async updateTransaction(@Param('transaction_id', ParseIntPipe) transaction_id: number, @Body() updateTransactionDto: UpdateTransactionDto) {
+  async updateTransaction(@Query('transaction_id', ParseIntPipe) transaction_id: number, @Body() updateTransactionDto: UpdateTransactionDto) {
     const updatedTransaction = await this.transactionService.updateTransaction(transaction_id, updateTransactionDto);
     return {
       message: 'Transaction updated successfully!',
@@ -92,7 +92,7 @@ export class TransactionController {
   @ApiResponse({ status: HttpStatus.NOT_FOUND, description: 'Transaction not found' })
   @ApiBearerAuth('JWT')
   @Delete(':transaction_id')
-  async deleteTransaction(@Param('transaction_id', ParseIntPipe) transaction_id: number) {
+  async deleteTransaction(@Query('transaction_id', ParseIntPipe) transaction_id: number) {
     const transaction = await this.transactionService.deleteTransaction(transaction_id);
     return {
       statusCode: HttpStatus.NO_CONTENT,

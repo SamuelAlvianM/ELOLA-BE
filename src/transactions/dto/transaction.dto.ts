@@ -23,11 +23,7 @@ export class CreateTransactionDto {
   @IsEnum(Order_payment_type)
   @ApiProperty({example: 'Cash | Transfer | E_Payment'})
   payment_type: Order_payment_type;
-
-  @IsString()
-  @ApiProperty({example: 'DI0001'})
-  receipt_number?: string;
-
+  
   @IsNotEmpty()
   @IsNumber()
   sub_total: number;
