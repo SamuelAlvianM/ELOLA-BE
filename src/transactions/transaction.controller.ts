@@ -25,8 +25,10 @@ export class TransactionController {
   async createTransaction(
     @Body() createTransactionDto: CreateTransactionDto,
     @Query('store_id', ParseIntPipe) store_id: number,
+    @Query('user_id', ParseIntPipe) user_id: number,
   ) {
-    const transaction = await this.transactionService.createTransaction(createTransactionDto, store_id);
+    console.log(store_id, user_id);
+    const transaction = await this.transactionService.createTransaction(createTransactionDto, store_id, user_id);
     return {
       message: 'Transaction created successfully!',
       data: transaction,

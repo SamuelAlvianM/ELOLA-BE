@@ -1,25 +1,26 @@
 import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateTransactionDto, UpdateTransactionDto } from './dto/transaction.dto';
-import { OpenCloseService } from '../open_close/open_close.service';
+import { UserService } from '../user/user.service';
 
 @Injectable()
 export class TransactionService {
   constructor(
     private readonly prisma: PrismaService,
-    private readonly openCloseService: OpenCloseService,
+    private readonly userService: UserService,
   ) {}
 
-  async createTransaction(createTransactionDto: CreateTransactionDto, store_id: number) {
-    const { order_type, product_id, quantity, payment_type, customer_name, whatsapp_number, sub_total, tax_id, grand_total, change } = createTransactionDto;
+  async createTransaction(createTransactionDto: CreateTransactionDto, store_id: number, user_id: number) {
+    const { order_type, product_id, quantity, payment_type, customer_name, whatsapp_number, sub_total, grand_total, change } = createTransactionDto;
 
     // Check if the cashier is open and get the user ID from the open session
-    const openClose = await this.openCloseService.getOpenSessionForStore(store_id);
-    if (!openClose || !openClose.is_cashier_open) {
-      throw new BadRequestException('No open cashier session found for this store.');
-    }
+    // const openClose = await this.openCloseService.getOpenSessionForStore(store_id);
+    // if (!openClose || !openClose.is_cashier_open) {
+    //   throw new BadRequestException('No open cashier session found for this store.');
+    // }
 
-    const user_id = openClose.user_id;
+    const current_user = await this.userService.getCurrentUser(user_id);
+    const current_user_id = current_user.user_id;
 
     // Generate receipt number
     const receipt_prefix = order_type === 'Order' ? 'DI' : 'TA';
@@ -32,11 +33,21 @@ export class TransactionService {
       ? `${receipt_prefix}${(parseInt(lastTransaction.receipt_number.substring(2)) + 1).toString().padStart(4, '0')}`
       : `${receipt_prefix}0001`;
 
+      const active_tax = await this.prisma.tax.findFirst({
+        where: { tax_status: true },
+      })
+
+      if(!active_tax ) {
+        throw new BadRequestException('No active tax found.');
+      }
+
+      const tax_id = active_tax.tax_id;
+
     // Create the transaction
     const transaction = await this.prisma.transaction.create({
       data: {
         store_id,
-        user_id,
+        user_id: current_user_id,
         order_type,
         receipt_number,
         sub_total,

@@ -24,9 +24,7 @@ import { HttpStatus, BadRequestException, NotFoundException } from '@nestjs/comm
     else if (!create_dto.sub_total) {
       throw new BadRequestException(errorResponse(HttpStatus.BAD_REQUEST, `Sub total is required`));
     }
-    else if (!create_dto.tax_id) {
-      throw new BadRequestException(errorResponse(HttpStatus.BAD_REQUEST, `Tax ID is required`));
-    }
+ 
     else if (!create_dto.grand_total) {
       throw new BadRequestException(errorResponse(HttpStatus.BAD_REQUEST, `Grand total is required`));
     }
@@ -48,9 +46,7 @@ import { HttpStatus, BadRequestException, NotFoundException } from '@nestjs/comm
     else if (!create_dto.sub_total) {
       throw new BadRequestException(errorResponse(HttpStatus.BAD_REQUEST, `Sub total is required`));
     }
-    else if (!create_dto.tax_id) {
-      throw new BadRequestException(errorResponse(HttpStatus.BAD_REQUEST, `Tax ID is required`));
-    }
+ 
     else if (!create_dto.grand_total) {
       throw new BadRequestException(errorResponse(HttpStatus.BAD_REQUEST, `Grand total is required`));
     }
