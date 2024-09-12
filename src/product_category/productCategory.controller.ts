@@ -3,10 +3,10 @@ import { unauthorized_role_response, update_pc_bad_request_response, create_prod
 import { Controller, Get, Post, Body, Patch, Param, Delete, NotFoundException, HttpCode, HttpStatus, UseGuards, ParseIntPipe, Query } from '@nestjs/common';
 import { ProductCategoryService } from './productCategory.service';
 import { CreateProductCategoryDto, UpdateProductCategoryDto } from './dto/productCategory.dto';
-import { ProductCategory, Role } from '@prisma/client';
+import {  Role } from '@prisma/client';
 import { JwtAuthGuard } from 'src/utils/guard/jwt.guard';
 import { RolesGuard } from 'src/utils/guard/roles.guard';
-import { ApiBadRequestResponse, ApiBearerAuth, ApiOperation, ApiQuery, ApiResponse, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiQuery, ApiResponse, ApiTags} from '@nestjs/swagger';
 import { Roles } from 'src/utils/decorator/roles.decorator';
 
 @ApiTags('Product Categories')
@@ -46,9 +46,24 @@ export class ProductCategoryController {
   @ApiBearerAuth('JWT')
   @ApiQuery({ name: 'page', required: false, type: Number, description: 'Page number', example: 1 })
   @ApiQuery({ name: 'limit', required: false, type: Number, description: 'Number of items per page', example: 10 })
+  // @Get()
+  // async getAllProductCategory(@Query('page') page: number, @Query('limit') limit: number){
+  //   return this.productCategoryService.getAllProductCategory(page, limit)
+  // }
+
   @Get()
   async getAllProductCategory(@Query('page') page: number, @Query('limit') limit: number){
-    return this.productCategoryService.getAllProductCategory(page, limit)
+    const { data, meta } = await this.productCategoryService.getAllProductCategory(page, limit);
+
+    return {
+      data,
+      meta: {
+        currentPage: meta.currentPage,
+        itemsPerPage: meta.itemsPerPage,
+        totalPages: meta.totalPages,
+        totalItems: meta.totalItems,
+      },
+    }
   }
 
   @HttpCode(HttpStatus.OK)

@@ -39,7 +39,7 @@ export class ProductController {
   @ApiQuery({ name: 'page', required: false, type: Number, description: 'Page number', example: 1 })
   @ApiQuery({ name: 'limit', required: false, type: Number, description: 'Number of items per page', example: 10 })
   @Get('pages')
-  find_product_by_page(@Query('page') page: number, @Query('limit') limit: number) {
+  async find_product_by_page(@Query('page') page: number, @Query('limit') limit: number) {
     return this.productService.get_product_by_page(page, limit);
   }
 
@@ -51,7 +51,7 @@ export class ProductController {
   @ApiResponse( unauthorized_response)
   @ApiBearerAuth('JWT')
   @Get('all')
-  async ind_all_products() {
+  async find_all_products() {
     const find_products = await this.productService.find_all_products();
     return {
       status: HttpStatus.OK,

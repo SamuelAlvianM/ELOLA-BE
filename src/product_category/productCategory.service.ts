@@ -24,6 +24,7 @@ export class ProductCategoryService {
     const maxLimit = 10;
     const normalLimit = Math.min(limit, maxLimit)
     const skip = (page - 1) * normalLimit;
+    
     const [productCategories, totalCount] = await this.prisma.$transaction([
       this.prisma.productCategory.findMany({
         where: {
@@ -42,10 +43,10 @@ export class ProductCategoryService {
     return {
       data: productCategories,
       meta: {
-        "Current Page": page,
-        "Items per Page": normalLimit,
-        "Total Pages": Math.ceil(totalCount / limit),
-        "Total Items": totalCount,
+        currentPage: page,
+        itemsPerPage: normalLimit,
+        totalPages: Math.ceil(totalCount / normalLimit ),
+        totalItems: totalCount,
       },
     };
   }
