@@ -2,7 +2,6 @@
 import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateTransactionDto, UpdateTransactionDto } from './dto/transaction.dto';
-import { SavedOrderService } from '../saved_order/saved_order.service'; 
 import { UserService } from '../user/user.service';
 
 @Injectable()
@@ -10,7 +9,6 @@ export class TransactionService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly userService: UserService,
-    private savedOrderService: SavedOrderService, 
   ) {}
 
   async createTransaction(createTransactionDto: CreateTransactionDto, store_id: number, user_id: number) {
