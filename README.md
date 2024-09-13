@@ -133,10 +133,14 @@ $ npm run test:cov
 ## API Documentation Reference : [SaleMate API Collection](http://localhost:3000/api)
 
 ## Deployment Link
-
+### Backend Deployment Link:
 To deploy this project run:
 
 ```bash
   http://salemate-be-production.up.railway.app
 ```
 
+### Frontend Deployment Link:
+```bash
+   [https://sale-mate-fe.vercel.app/login](https://sale-mate-fe.vercel.app/)
+```
