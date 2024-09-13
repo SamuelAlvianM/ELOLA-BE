@@ -20,13 +20,13 @@ export class CreateTaxDto {
     tax_name: string;
 
     @IsInt()
-    @IsNotEmpty()
+    @IsOptional()
     @ApiProperty({example: 20, description: "Will be show as percentage in frontend"})
     @ValidateIf(type => type.tax_type === "VAT")
     tax_value?: number;
 
     @IsInt()
-    @IsNotEmpty()
+    @IsOptional()
     @ApiProperty({example: 20, description: "Will be show as percentage in frontend"})
     @ValidateIf(type => type.tax_name === "Service")
     service_value?: number;
@@ -59,7 +59,7 @@ export class UpdateTaxDto {
     tax_value?: number;
 
     @IsInt()
-    @IsNotEmpty()
+    @IsOptional()
     @ApiProperty({example: 20, description: "Will be show as percentage in frontend"})
     @ValidateIf(type => type.tax_name === "Service")
     service_value?: number;

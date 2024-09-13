@@ -82,8 +82,8 @@ model Tax {
   tax_id              Int           @id @default(autoincrement())
   tax_type            Tax_type
   tax_name            String        @unique
-  tax_value           Int
-  service_value       Int           @default(0)
+  tax_value           Int?
+  service_value       Int?           @default(0)
   tax_status          Boolean       @default(false)
   created_at          DateTime      @default(now())
   updated_at          DateTime      @updatedAt
@@ -209,8 +209,8 @@ model Transaction {
   driver_partner   String?
   order_type       Order_type
   receipt_number   String             @unique
-  total_quantity   Int
-  change           Int
+  quantity         Int
+  change           Int?
   sub_total        Float
   grand_total      Float
   payment_type     Order_payment_type
