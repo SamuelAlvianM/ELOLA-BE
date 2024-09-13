@@ -13,12 +13,12 @@ export class ProductService {
     const product = await this.prisma.product.findUnique({
       where: { product_id: product_id },
       include: {
-        ProductTax: {
+        product_taxes: {
           include: {
             tax: true,
           },
         },
-        ProductPromo: {
+        product_promos: {
           include: {
             promo: true,
           },
@@ -30,8 +30,8 @@ export class ProductService {
       throw new NotFoundException('Product not found');
     }
     
-    const isPromoIncluded = product.ProductPromo.length > 0;
-    const isTaxIncluded = product.ProductTax.length > 0;
+    const isPromoIncluded = product.product_promos.length > 0;
+    const isTaxIncluded = product.product_taxes.length > 0;
   
     return {
       product,

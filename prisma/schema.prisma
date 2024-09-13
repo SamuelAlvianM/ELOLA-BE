@@ -5,8 +5,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  // url      = env("DATABASE_PUBLIC_URL")
-  url      = env("DATABASE_URL")
+  url      = env("DATABASE_PUBLIC_URL")
 }
 
 model SuperAdmin {
@@ -84,6 +83,7 @@ model Tax {
   tax_type            Tax_type
   tax_name            String        @unique
   tax_value           Int
+  service_value       Int           @default(0)
   tax_status          Boolean       @default(false)
   created_at          DateTime      @default(now())
   updated_at          DateTime      @updatedAt
@@ -170,7 +170,7 @@ model DriverPartner {
   deleted_at         DateTime?
   stores             Store                @relation(fields: [store_id], references: [store_id])
   DriverPartnerStore DriverPartnerStore[]
-  transaction              Transaction[]
+  transaction        Transaction[]
 
   @@unique([store_id, partner_name])
 }
@@ -186,20 +186,54 @@ model Payment {
   store        Store?        @relation(fields: [store_id], references: [store_id])
 }
 
+model Product {
+  product_id          Int            @id @default(autoincrement())
+  store_id            Int
+  product_category_id Int
+  product_name        String         @unique
+  product_price       Int
+  cost_of_good_sold   Int
+  product_code        Int
+  product_image       String?
+  created_at          DateTime       @default(now())
+  updated_at          DateTime       @updatedAt
+  deleted_at          DateTime?
+
+  inventories         Inventory[]
+  product_category    ProductCategory @relation(fields: [product_category_id], references: [product_category_id])
+  store               Store           @relation(fields: [store_id], references: [store_id])
+  product_promos      ProductPromo[]
+  product_taxes       ProductTax[]
+  transactions        TransactionProduct[]
+}
+
+model TransactionProduct {
+  id             Int       @id @default(autoincrement())
+  transaction_id Int
+  product_id     Int
+  quantity       Int
+  saved_order_id Int?
+  
+  transaction    Transaction @relation(fields: [transaction_id], references: [transaction_id])
+  product        Product     @relation(fields: [product_id], references: [product_id])
+  savedOrder     SavedOrder? @relation(fields: [saved_order_id], references: [saved_order_id])
+  
+  @@unique([transaction_id, product_id])
+}
+
 model Transaction {
   transaction_id   Int                @id @default(autoincrement())
   store_id         Int
   user_id          Int
-  product_id       Int
   tax_id           Int
-  order_type       Order_type
   driver_partner   String?
+  order_type       Order_type
   receipt_number   String             @unique
-  quantity         Int
+  total_quantity   Int
+  change           Int
   sub_total        Float
   grand_total      Float
   payment_type     Order_payment_type
-  change           Int
   customer_name    String
   whatsapp_number  String
 
@@ -207,14 +241,12 @@ model Transaction {
   updated_at       DateTime           @updatedAt
   deleted_at       DateTime?
 
-  partner          DriverPartner?      @relation(fields: [driver_partner], references: [partner_name])
-  selected_product Product            @relation(fields: [product_id], references: [product_id])
   store            Store              @relation(fields: [store_id], references: [store_id])
-  taxes            Tax                @relation(fields: [tax_id], references: [tax_id])
   user             User               @relation(fields: [user_id], references: [user_id])
-  saved_order      SavedOrder[]
-
-  @@unique([store_id, user_id, driver_partner])
+  taxes            Tax                @relation(fields: [tax_id], references: [tax_id])
+  partner          DriverPartner?      @relation(fields: [driver_partner], references: [partner_name])
+  products         TransactionProduct[]
+  saved_orders     SavedOrder[]
 }
 
 
@@ -304,13 +336,14 @@ model SavedOrder {
   saved_order_id    Int          @id @default(autoincrement())
   transaction_id    Int?
   is_done           Boolean?      @default(false)
-  status            String       
+  status            String        
 
   created_at        DateTime     @default(now())
   updated_at        DateTime     @updatedAt
   deleted_at        DateTime?
 
   transaction       Transaction? @relation(fields: [transaction_id], references: [transaction_id])
+  transaction_Product TransactionProduct[]  
 }
 
 

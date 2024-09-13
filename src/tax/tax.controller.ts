@@ -38,6 +38,18 @@ export class TaxController {
         };
     }
 
+    @Get('active')
+    @Roles(Role.OWNER, Role.STAFF, Role.SUPER_ADMIN)
+    @ApiBearerAuth('JWT')
+    async activeTaxForOrder() {
+        const result = await this.tax_service.taxDataForOrder();
+        return {
+            StatusCode: HttpStatus.OK,
+            response: 'This tax details for order',
+            data: result,
+        };
+    }
+
     @Get(':tax_id')
     @Roles(Role.SUPER_ADMIN, Role.OWNER, Role.STAFF)
     @ApiBearerAuth('JWT')

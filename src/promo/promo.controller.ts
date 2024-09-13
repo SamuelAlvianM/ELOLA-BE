@@ -25,7 +25,7 @@ export class PromoController {
   @ApiResponse(create_promo_bad_request_response)
   @ApiBearerAuth('JWT')
   async createPromo(@Body() createPromoDto: CreatePromoDto) {
-      const promo = await this.promoService.createPromo(createPromoDto);
+      const promo = await this.promoService.createPromoForProduct(createPromoDto);
       return {
         message: 'Promo Data Created Successfully!',
         data: promo,

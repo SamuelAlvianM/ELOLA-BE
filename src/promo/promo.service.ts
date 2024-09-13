@@ -9,7 +9,7 @@ export class PromoService {
   constructor(private prisma: PrismaService) {}
 
 
-  async createPromo(createPromoDto: CreatePromoDto) {
+  async createPromoForProduct(createPromoDto: CreatePromoDto) {
     const { promo_name, promo_type, promo_value, product_id, start_date, end_date } = createPromoDto;
 
     if (end_date && start_date && end_date < start_date) {
@@ -181,7 +181,7 @@ export class PromoService {
     return this.prisma.product.findUnique({
       where: { product_id: product_id },
       include: {
-        ProductPromo: {
+        product_promos: {
           include: {
             promo: true,
           },

@@ -1,6 +1,15 @@
-import { IsNotEmpty, IsNumber, IsOptional, IsString, IsEnum } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsOptional, IsString, IsEnum, IsArray, ValidateNested } from 'class-validator';
 import { Order_type, Order_payment_type } from '@prisma/client';
 import { ApiProperty } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
+
+export class ProductDto {
+  @IsNumber()
+  product_id: number;
+
+  @IsNumber()
+  quantity: number;
+}
 
 export class CreateTransactionDto {
   
@@ -9,15 +18,15 @@ export class CreateTransactionDto {
   @ApiProperty({example: 'TakeAway | Order'})
   order_type: Order_type;
 
-  @IsNotEmpty()
-  @IsNumber()
-  @ApiProperty({example: 1})
-  product_id: number;
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => ProductDto)
+  products: ProductDto[];
 
   @IsNotEmpty()
   @IsNumber()
   @ApiProperty({example: 2})
-  quantity: number;
+  total_quantity: number;
 
   @IsNotEmpty()
   @IsEnum(Order_payment_type)
@@ -64,7 +73,7 @@ export class UpdateTransactionDto {
   @IsOptional()
   @IsNumber()
   @ApiProperty({example: 2})
-  quantity?: number;
+  total_quantity?: number;
 
   @IsOptional()
   @IsEnum(Order_payment_type)

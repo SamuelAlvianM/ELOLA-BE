@@ -22,6 +22,7 @@ import { InventoryModule } from './inventory/inventory.module';
 import { OpenCloseModule } from './open_close/open_close.module';
 import { TransactionModule } from './transactions/transaction.module';
 import { JwtStrategy } from './auth/middleware/jwt.strategy';
+import { SavedOrderModule } from './saved_order/saved_order.module';
 import * as dotenv from 'dotenv';
 
 dotenv.config();
@@ -51,7 +52,8 @@ dotenv.config();
     TaxModule,
     DriverPartnerModule,
     OpenCloseModule,
-    TransactionModule
+    TransactionModule,
+    SavedOrderModule,
   ],
   controllers: [AppController],
   providers: [AppService, UserService, PrismaService, JwtStrategy],
