@@ -142,6 +142,13 @@ export class ProductService {
       where: {
         deleted_at: null,
       },
+      include: {
+        product_category:{
+          select: {
+            category_name: true,
+          },
+        },
+      },
     });
   }
 
