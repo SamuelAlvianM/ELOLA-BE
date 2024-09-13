@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString, IsInt, IsOptional, IsEnum, IsBoolean } from 'class-validator';
+import { IsNotEmpty, IsString, IsInt, IsOptional, IsEnum, IsBoolean, ValidateIf } from 'class-validator';
 import { TaxController } from '../tax.controller';
 import { Tax_type } from '@prisma/client';
 import { ApiProperty } from '@nestjs/swagger';
@@ -12,23 +12,29 @@ export class CreateTaxDto {
     @ApiProperty({example: "Service / VAT"})
     @Expose()
     tax_type: Tax_type;
+
     @Expose()
     @IsNotEmpty()
     @IsString()
     @ApiProperty({example: "Pajak Toko (Service)"})
-    @Expose()
     tax_name: string;
 
     @IsInt()
     @IsNotEmpty()
     @ApiProperty({example: 20, description: "Will be show as percentage in frontend"})
-    @Expose()
-    tax_value: number;
+    @ValidateIf(type => type.tax_type === "VAT")
+    tax_value?: number;
+
+    @IsInt()
+    @IsNotEmpty()
+    @ApiProperty({example: 20, description: "Will be show as percentage in frontend"})
+    @ValidateIf(type => type.tax_name === "Service")
+    service_value?: number;
 
     @IsBoolean()
     @ApiProperty({example: true})
     @Expose()
-    tax_status: boolean;
+    tax_status?: boolean;
 
 }
 
@@ -49,13 +55,19 @@ export class UpdateTaxDto {
     @IsInt()
     @IsOptional()
     @ApiProperty({example: 20, description: "Will be show as percentage in frontend"})
-    @Expose()
-    tax_value: number;
+    @ValidateIf(type => type.tax_type === "VAT")
+    tax_value?: number;
+
+    @IsInt()
+    @IsNotEmpty()
+    @ApiProperty({example: 20, description: "Will be show as percentage in frontend"})
+    @ValidateIf(type => type.tax_name === "Service")
+    service_value?: number;
 
     @IsBoolean()
     @IsOptional()
     @ApiProperty({example: true})
     @Expose()
-    tax_status: boolean;
+    tax_status?: boolean;
 
 }

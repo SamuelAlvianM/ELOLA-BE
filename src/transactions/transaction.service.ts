@@ -2,6 +2,7 @@
 import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateTransactionDto, UpdateTransactionDto } from './dto/transaction.dto';
+import { SavedOrderService } from '../saved_order/saved_order.service'; 
 import { UserService } from '../user/user.service';
 
 @Injectable()
@@ -9,10 +10,11 @@ export class TransactionService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly userService: UserService,
+    private savedOrderService: SavedOrderService, 
   ) {}
 
   async createTransaction(createTransactionDto: CreateTransactionDto, store_id: number, user_id: number) {
-    const { order_type, product_id, quantity, payment_type, customer_name, whatsapp_number, sub_total, grand_total, change } = createTransactionDto;
+    const { order_type, products, total_quantity, payment_type, customer_name, whatsapp_number, sub_total, grand_total, change } = createTransactionDto;
 
     // Check if the cashier is open and get the user ID from the open session
     // const openClose = await this.openCloseService.getOpenSessionForStore(store_id);
@@ -34,15 +36,13 @@ export class TransactionService {
       ? `${receipt_prefix}${(parseInt(lastTransaction.receipt_number.substring(2)) + 1).toString().padStart(4, '0')}`
       : `${receipt_prefix}0001`;
 
-      const active_tax = await this.prisma.tax.findFirst({
+      const active_tax = await this.prisma.tax.findMany({
         where: { tax_status: true },
       })
 
-      if(!active_tax ) {
+      if (active_tax.length === 0) {
         throw new BadRequestException('No active tax found.');
       }
-
-      const tax_id = active_tax.tax_id;
 
     // Create the transaction
     const transaction = await this.prisma.transaction.create({
@@ -52,15 +52,20 @@ export class TransactionService {
         order_type,
         receipt_number,
         sub_total,
-        tax_id,
+        tax_id:  active_tax[0].tax_id,
         grand_total,
-        product_id,
-        quantity,
+        total_quantity,
         payment_type,
         change,
         customer_name: customer_name || null,
         whatsapp_number: whatsapp_number || null,
+        products: {
+          create: products.map(product => ({
+            product_id: product.product_id,
+            quantity: product.quantity,
+          })),
       },
+    }
     });
 
     return transaction;

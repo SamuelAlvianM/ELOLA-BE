@@ -5,7 +5,7 @@ import { CreateTransactionDto, UpdateTransactionDto } from './dto/transaction.dt
 import { Role } from '@prisma/client';
 import { RolesGuard } from 'src/utils/guard/roles.guard';
 import { Roles } from 'src/utils/decorator/roles.decorator';
-import { ApiResponse, ApiBearerAuth, ApiTags, ApiQuery } from '@nestjs/swagger';
+import { ApiResponse, ApiBearerAuth, ApiTags, ApiQuery, ApiOperation } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/utils/guard/jwt.guard';
 
 @ApiTags('Transactions')

@@ -12,12 +12,6 @@ import { HttpStatus, BadRequestException, NotFoundException } from '@nestjs/comm
     if (!receipt_number) {
       throw new BadRequestException(errorResponse(HttpStatus.BAD_REQUEST, `Receipt number is required`));
     }
-    else if (!create_dto.product_id) {
-      throw new BadRequestException(errorResponse(HttpStatus.BAD_REQUEST, `Product ID is required`));
-    }
-    else if (!create_dto.quantity) {
-      throw new BadRequestException(errorResponse(HttpStatus.BAD_REQUEST, `Quantity is required`));
-    }
     else if (!create_dto.payment_type) {
       throw new BadRequestException(errorResponse(HttpStatus.BAD_REQUEST, `Payment type is required`));
     }
@@ -33,12 +27,6 @@ import { HttpStatus, BadRequestException, NotFoundException } from '@nestjs/comm
   export function checkFalseData(receipt_number: string, create_dto: CreateTransactionDto): void {
     if (receipt_number) {
       throw new BadRequestException(errorResponse(HttpStatus.BAD_REQUEST, `Receipt number ${receipt_number} already exists`));
-    }
-    else if (!create_dto.product_id) {
-      throw new BadRequestException(errorResponse(HttpStatus.BAD_REQUEST, `Product ID must be an integer ${create_dto.product_id}`));
-    }
-    else if (!create_dto.quantity) {
-      throw new BadRequestException(errorResponse(HttpStatus.BAD_REQUEST, `Quantity is required`));
     }
     else if (!create_dto.payment_type) {
       throw new BadRequestException(errorResponse(HttpStatus.BAD_REQUEST, `Payment type is required`));
