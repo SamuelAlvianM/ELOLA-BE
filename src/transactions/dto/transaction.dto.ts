@@ -5,9 +5,19 @@ import { Type } from 'class-transformer';
 
 export class ProductDto {
   @IsNumber()
+  @ApiProperty({
+    example: 1,
+    description: 'ID dari produk yang akan dibeli',
+    type: Number,
+  })
   product_id: number;
 
   @IsNumber()
+  @ApiProperty({
+    example: 2,
+    description: 'Jumlah produk yang dipesan',
+    type: Number,
+  })
   quantity: number;
 }
 
@@ -21,6 +31,20 @@ export class CreateTransactionDto {
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => ProductDto)
+  @ApiProperty({
+    description: 'Daftar produk yang dipesan dengan ID dan kuantitasnya',
+    type: [ProductDto],
+    example: [
+      {
+        product_id: 1,
+        quantity: 2,
+      },
+      {
+        product_id: 2,
+        quantity: 1,
+      },
+    ],
+  })
   products: ProductDto[];
 
   @IsNotEmpty()
@@ -68,7 +92,7 @@ export class UpdateTransactionDto {
   @IsOptional()
   @IsNumber()
   @ApiProperty({example: 2})
-  product_id?: number;
+  product?: number;
 
   @IsOptional()
   @IsNumber()
