@@ -12,7 +12,7 @@ export class TransactionService {
   ) {}
 
   async createTransaction(createTransactionDto: CreateTransactionDto, store_id: number, user_id: number) {
-    const { order_type, products, total_quantity, payment_type, customer_name, whatsapp_number, sub_total, grand_total, change } = createTransactionDto;
+    const { order_type, products, quantity, payment_type, customer_name, whatsapp_number, sub_total, grand_total, change } = createTransactionDto;
 
     // Check if the cashier is open and get the user ID from the open session
     // const openClose = await this.openCloseService.getOpenSessionForStore(store_id);
@@ -52,7 +52,7 @@ export class TransactionService {
         sub_total,
         tax_id:  active_tax[0].tax_id,
         grand_total,
-        total_quantity,
+        quantity,
         payment_type,
         change,
         customer_name: customer_name || null,

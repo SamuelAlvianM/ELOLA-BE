@@ -26,7 +26,7 @@ export class CreateTransactionDto {
   @IsNotEmpty()
   @IsNumber()
   @ApiProperty({example: 2})
-  total_quantity: number;
+  quantity: number;
 
   @IsNotEmpty()
   @IsEnum(Order_payment_type)
