@@ -46,7 +46,7 @@ export class TransactionController {
   @ApiQuery({ name: 'limit', required: false, type: Number, description: 'Number of items per page', example: 10 })
   @Get()
   async getAllTransactions(@Query('page') page: number, @Query('limit') limit: number) {
-    const transactions = await this.transactionService.findAllTransactions();
+    const transactions = await this.transactionService.findAllTransactions(page, limit);
     return {
       statusCode: HttpStatus.OK,
       message: 'Fetch all transactions successfully.',

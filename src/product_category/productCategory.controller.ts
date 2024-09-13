@@ -46,14 +46,25 @@ export class ProductCategoryController {
   @ApiBearerAuth('JWT')
   @ApiQuery({ name: 'page', required: false, type: Number, description: 'Page number', example: 1 })
   @ApiQuery({ name: 'limit', required: false, type: Number, description: 'Number of items per page', example: 10 })
+  @ApiQuery({ name: 'filter', required: false, type: String, description: 'Filter by category_name (partial match)' })
+  @ApiQuery({ name: 'sortField', required: false, type: String, description: 'Sort field (e.g., category_name, created_at)', example: 'Desserts' })
+  @ApiQuery({ name: 'sortOrder', required: false, type: String, description: 'Sort order (asc or desc)', example: 'asc' })
   // @Get()
   // async getAllProductCategory(@Query('page') page: number, @Query('limit') limit: number){
   //   return this.productCategoryService.getAllProductCategory(page, limit)
   // }
 
   @Get()
-  async getAllProductCategory(@Query('page') page: number, @Query('limit') limit: number){
-    const { data, meta } = await this.productCategoryService.getAllProductCategory(page, limit);
+  async getAllProductCategory(
+    @Query('page', new ParseIntPipe({ errorHttpStatusCode: 400 })) page: number = 1,
+    @Query('limit', new ParseIntPipe({ errorHttpStatusCode: 400 })) limit: number = 10,
+    @Query('filter') filter?: string,
+    @Query('sortField') sortField?: string,
+    @Query('sortOrder') sortOrder?: 'asc' | 'desc',
+  ){
+    page = page > 0 ? page : 1;
+    limit = limit > 0 ? limit : 10;
+    const { data, meta } = await this.productCategoryService.getAllProductCategory(page, limit, filter, sortField, sortOrder);
 
     return {
       data,

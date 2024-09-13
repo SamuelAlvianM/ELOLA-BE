@@ -20,23 +20,38 @@ export class ProductCategoryService {
     });
   }
 
-  async getAllProductCategory(page: number, limit: number) {
+  async getAllProductCategory(page: number, limit: number, filter?: string, sortField?: string, sortOrder?: 'asc' | 'desc') {
     const maxLimit = 10;
     const normalLimit = Math.min(limit, maxLimit)
     const skip = (page - 1) * normalLimit;
+
+    const condition: any = {
+      deleted_at: null,
+    };
+
+    if (filter) {
+      condition.category_name = {
+        contains: filter,
+        mode: 'insensitive',
+      };
+    }
+
+    const sort: any = {};
+    if (sortField) {
+      sort[sortField] = sortOrder || 'asc';
+    } else {
+      sort['created_at'] = 'asc'; 
+    }
     
     const [productCategories, totalCount] = await this.prisma.$transaction([
       this.prisma.productCategory.findMany({
-        where: {
-          deleted_at: null,
-        },
+        where: condition,
         skip: skip,
         take: normalLimit,
+        orderBy: sort,
       }),
       this.prisma.productCategory.count({
-        where: {
-          deleted_at: null,
-        },
+        where: condition,
       }),
     ]);
 

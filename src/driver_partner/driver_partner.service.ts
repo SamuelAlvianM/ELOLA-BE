@@ -30,10 +30,10 @@ export class DriverPartnerService {
         return {
           data: drivers,
           meta: {
-            "Current Page": page,
-            "Items per Page": normalLimit,
-            "Total Pages": Math.ceil(totalCount / limit),
-            "Total Items": totalCount,
+            currentPage: page,
+            itemsPerPage: normalLimit,
+            totalPages: Math.ceil(totalCount / normalLimit ),
+            totalItems: totalCount,
           },
         };
       }
