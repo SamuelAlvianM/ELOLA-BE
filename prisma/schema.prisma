@@ -106,26 +106,6 @@ model ProductCategory {
   product             Product[]
 }
 
-model Product {
-  product_id          Int            @id @default(autoincrement())
-  store_id            Int
-  product_category_id Int
-  product_name        String         @unique
-  product_price       Int
-  cost_of_good_sold   Int
-  product_code        Int
-  product_image       String?
-  created_at          DateTime       @default(now())
-  updated_at          DateTime       @updatedAt
-  deleted_at          DateTime?
-  inventories         Inventory[]
-  product_category    ProductCategory @relation(fields: [product_category_id], references: [product_category_id])
-  stores              Store          @relation(fields: [store_id], references: [store_id])
-  ProductPromo        ProductPromo[]
-  ProductTax          ProductTax[]
-  transaction         Transaction[]
-}
-
 model Inventory {
   inventory_id      Int                 @id @default(autoincrement())
   product_id        Int
