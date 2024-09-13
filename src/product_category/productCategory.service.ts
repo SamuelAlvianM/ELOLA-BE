@@ -49,6 +49,9 @@ export class ProductCategoryService {
         skip: skip,
         take: normalLimit,
         orderBy: sort,
+        include: {
+          product: true,
+        },
       }),
       this.prisma.productCategory.count({
         where: condition,
