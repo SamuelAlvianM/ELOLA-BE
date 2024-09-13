@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateTransactionDto, UpdateTransactionDto } from './dto/transaction.dto';
@@ -65,8 +66,39 @@ export class TransactionService {
     return transaction;
   }
 
-  async findAllTransactions() {
-    return this.prisma.transaction.findMany();
+  // async findAllTransactions() {
+  //   return this.prisma.transaction.findMany();
+  // }
+
+  async findAllTransactions(page: number, limit: number) {
+    const maxLimit = 10;
+    const normalLimit = Math.min(limit, maxLimit)
+    const skip = (page - 1) * normalLimit;
+    
+    const [transactions, totalCount] = await this.prisma.$transaction([
+      this.prisma.transaction.findMany({
+        where: {
+          deleted_at: null,
+        },
+        skip: skip,
+        take: normalLimit,
+      }),
+      this.prisma.transaction.count({
+        where: {
+          deleted_at: null,
+        },
+      }),
+    ]);
+
+    return {
+      transactions,
+      meta: {
+        currentPage: page,
+        itemsPerPage: normalLimit,
+        totalPages: Math.ceil(totalCount / normalLimit ),
+        totalItems: totalCount,
+      },
+    };
   }
 
   async findTransactionById(transaction_id: number) {

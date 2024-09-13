@@ -1,15 +1,15 @@
 /* eslint-disable prettier/prettier */
-import { create_product_response, create_product_bad_request_response, get_all_products_response, get_all_products_bad_request_response, get_product_by_id_response, get_product_by_id_bad_request_response, update_product_response, update_product_bad_request_response, delete_product_response, delete_product_bad_request_response, add_tax_to_product_response, add_tax_to_product_bad_request_response, remove_tax_from_product_response, remove_tax_from_product_bad_request_response, add_promo_to_product_response, add_promo_to_product_bad_request_response, remove_promo_from_product_response, remove_promo_from_product_bad_request_response, get_product_with_taxes_promos_response, get_product_with_taxes_promos_bad_request_response, forbidden_role_response, unauthorized_response} from '../../tests/swagger/product.swagger';
-import { Controller, Get, Post, Body, Patch, Param, Delete, HttpCode, HttpStatus, Put, UseGuards, Query} from '@nestjs/common';
+import { create_product_response, create_product_bad_request_response, get_all_products_response, get_all_products_bad_request_response, get_product_by_id_response, get_product_by_id_bad_request_response, update_product_response, update_product_bad_request_response, remove_tax_from_product_response, remove_tax_from_product_bad_request_response,  get_product_with_taxes_promos_response, get_product_with_taxes_promos_bad_request_response, forbidden_role_response, unauthorized_response} from '../../tests/swagger/product.swagger';
+import { Controller, Get, Post, Body, Param, Delete, HttpCode, HttpStatus, Put, UseGuards, Query} from '@nestjs/common';
 import { ProductService } from './product.service';
 import { CreateProductDto } from './dto/product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { RolesGuard } from 'src/utils/guard/roles.guard';
 import { Roles } from 'src/utils/decorator/roles.decorator';
-import { ApiResponse, ApiBadRequestResponse, ApiUnauthorizedResponse, ApiBearerAuth, ApiTags, ApiQuery } from '@nestjs/swagger';
+import { ApiResponse, ApiBearerAuth, ApiTags, ApiQuery } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/utils/guard/jwt.guard';
 import { Role } from '@prisma/client';
-import { create_promo_response, delete_promo_bad_request_response, delete_promo_response } from 'tests/swagger/promo.swagger';
+import { delete_promo_bad_request_response, delete_promo_response } from 'tests/swagger/promo.swagger';
 
 @ApiTags('Product')
 @Controller('products')
@@ -38,9 +38,38 @@ export class ProductController {
   @ApiBearerAuth('JWT')
   @ApiQuery({ name: 'page', required: false, type: Number, description: 'Page number', example: 1 })
   @ApiQuery({ name: 'limit', required: false, type: Number, description: 'Number of items per page', example: 10 })
+  @ApiQuery({ name: 'category', required: false, type: String })
+  @ApiQuery({ name: 'product_name', required: false, type: String })
+  @ApiQuery({ name: 'sortField', required: false, type: String, example: 'created_at' })
+  @ApiQuery({ name: 'sortOrder', required: false, type: String, example: 'asc' })
   @Get('pages')
-  async find_product_by_page(@Query('page') page: number, @Query('limit') limit: number) {
-    return this.productService.get_product_by_page(page, limit);
+  async find_product_by_page(
+    @Query() query: {
+      page?: number;
+      limit?: number;
+      category?: string;
+      product_name?: string;
+      sortField?: string;
+      sortOrder?: 'asc' | 'desc';
+    }  
+  ) {
+    const {
+      page = 1,
+      limit = 10,
+      category,
+      product_name,
+      sortField,
+      sortOrder,
+    } = query;
+    return this.productService.get_product_by_page(page,
+      limit,
+      {
+        category,
+        product_name,
+      },
+      sortField,
+      sortOrder,
+    );
   }
 
   @Roles(Role.SUPER_ADMIN, Role.OWNER, Role.STAFF)

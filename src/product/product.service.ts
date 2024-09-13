@@ -68,7 +68,16 @@ export class ProductService {
     })
   }
 
-  async get_product_by_page(page: number, limit: number, category?: string, product_name?: string) {
+  async get_product_by_page(
+    page: number, 
+    limit: number, 
+    filters: {
+      category?: string;
+      product_name: string;
+    },
+    sortField?: string, 
+    sortOrder?: 'asc' | 'desc',
+  ) {
     const maxLimit = 10;
     const normalLimit = Math.min(limit, maxLimit)
     const skip = (page - 1) * normalLimit;
@@ -77,17 +86,27 @@ export class ProductService {
       deleted_at: null,
     };
 
-    if(category) {
+    if(filters.category) {
       condition.product_category = {
-        category_name: category,
+        category_name: {
+          contains: filters.category,
+          mode: 'insensitive',  
+        },
       };
     }
 
-    if(product_name) {
+    if(filters.product_name) {
       condition.product_name = {
-        contains: product_name,
+        contains: filters.product_name,
         mode: 'insensitive',
       };
+    }
+
+    const sort: any = {};
+    if (sortField) {
+      sort[sortField] = sortOrder || 'asc';
+    } else {
+      sort['created_at'] = 'asc'; 
     }
 
     const [products, totalCount] = await this.prisma.$transaction([
@@ -95,6 +114,9 @@ export class ProductService {
         where: condition,
         skip: skip,
         take: normalLimit,
+        orderBy: {
+          [sortField]: sortOrder,
+        },
         include: {
           product_category: true,
         },
