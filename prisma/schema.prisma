@@ -23,10 +23,10 @@ model super_admin {
 
 model user {
   user_id      Int           @id @default(autoincrement())
-  user_name    String        @unique  @db.VarChar(30)
-  email        String        @unique  @db.VarChar(50)
+  user_name    String        @unique  @db.VarChar(50)
+  email        String        @unique  @db.VarChar(100)
   pin          String        @unique  
-  password     String        @db.VarChar(50)
+  password     String        
   role         has_role
   class        hierarchy
   created_at   DateTime      @default(now())

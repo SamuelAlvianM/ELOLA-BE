@@ -16,20 +16,11 @@ async function main() {
   }];
 
   // data akun superadmin
-  // for (const super_admin of super_admins) {
-  //   const create_admin_data = await prisma.super_admin.create({
-  //       data: super_admin,
-  //     });
-  //     await prisma.user.create({
-  //       data: {
-  //           user_name: create_admin_data.admin_name,
-  //           email: create_admin_data.admin_email,
-  //           password: create_admin_data.password,
-  //           pin: create_admin_data.admin_pin,
-  //           role: 'super_admin',
-  //       },
-  //     });
-  //   }
+  for (const super_admin of super_admins) {
+    const create_admin_data = await prisma.super_admin.create({
+        data: super_admin,
+      });
+    }
   console.log('SuperAdmin account created successfully!');
 }
 

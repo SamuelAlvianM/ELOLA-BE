@@ -8,6 +8,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { Login_Pin_Dto, Login_User_Dto, Super_Login_Dto } from './dto/login.dto';
+import { has_role } from '@prisma/client';
 
 @Injectable()
 export class AuthService {
@@ -56,33 +57,32 @@ export class AuthService {
 
     async login_user(email: string, password: string): Promise<any> {
 
-        const user = await this.prisma.user.findUnique({ where: { email } });
-        const super_admin = await this.prisma.super_admin.findUnique({ where: { admin_email: email } });
-    
+        const [user, super_admin] = await Promise.all([
+            this.prisma.user.findUnique({ where: { email } }),
+            this.prisma.super_admin.findUnique({ where: { admin_email: email } }),
+        ]);
+
         if (!user && !super_admin ) {
           throw new BadRequestException(`Wrong email address: ${email}, try again or use another email`);
         }
 
-        let account;
-        if(user){
-            account = user;
-        } else {
-            account = super_admin;
-        }
+        const account = user || super_admin;
+        const account_password = user? user.password : super_admin.password;
     
-        const check_valid_password = await bcrypt.compare(password, user.password);
-    
+        const check_valid_password = await bcrypt.compare(password, account_password);
         if (!check_valid_password) {
           throw new BadRequestException('Wrong Password, Try again.');
         }
     
         const payload = { 
-            email: account.email, 
-            user_name: account.user_name || account.admin_name,
-            sub: account.user_id || account.super_admin_id,
-         };
+            email: user? user.email : super_admin.admin_email, 
+            user_name: user? user.user_name : super_admin.admin_name,
+            sub: user? user.user_id : super_admin.super_admin_id,
+        };
         return {
-          access_token: this.jwtService.sign(payload),
+            user_name: user? user.user_name : super_admin.admin_name,
+            email: user? user.email : super_admin.admin_email,
+            access_token: this.jwtService.sign(payload),
         };
       }
 
