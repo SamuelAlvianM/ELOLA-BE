@@ -1,5 +1,5 @@
 import { IsInt, IsNumber, IsString, IsEnum, IsOptional } from 'class-validator';
-import { Order_type, Order_payment_type } from '@prisma/client';
+import { order_type, order_payment_type } from '@prisma/client';
 import { ApiProperty } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
 

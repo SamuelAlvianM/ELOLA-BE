@@ -9,9 +9,9 @@ export class OpenCloseService {
 
 
   async getOpenSessionForStore(store_id: number) {
-    return this.prisma.openClose.findFirst({
+    return this.prisma.open_close.findFirst({
       where: {
-        store_id,
+        // store_id,
         is_cashier_open: true,
       },
       orderBy: {
@@ -25,10 +25,10 @@ export class OpenCloseService {
         throw new BadRequestException('Cashier is already open');
     }
 
-    return await this.prisma.openClose.create ({
+    return await this.prisma.open_close.create ({
         data: {
             user_id,
-            store_id,
+            // store_id,
             is_cashier_open: true,
             open_by: user_id,
             open_date: new Date(),
@@ -44,10 +44,10 @@ export class OpenCloseService {
       throw new BadRequestException('Cashier is not open. There is no open session to close.');
     }
 
-    const transactions_count = await this.prisma.openClose.count({
+    const transactions_count = await this.prisma.open_close.count({
       where: {
         user_id,
-        store_id,
+        // store_id,
         created_at: {
           gte: open_close.open_date, // lebih besar dan sama dengan = gte
           lte: new Date() // lebih kecil dan sama dengan = lte
@@ -55,7 +55,7 @@ export class OpenCloseService {
       },
     });
 
-    return await this.prisma.openClose.update({
+    return await this.prisma.open_close.update({
       where: { open_close_id: open_close.open_close_id },
       data: {
         is_cashier_open: false,
@@ -67,9 +67,9 @@ export class OpenCloseService {
   }
 
   async handle_cashier_status(user_id: number, store_id: number, oc_dto: Handle_Open_Close_Dto) {
-    const open_close = await this.prisma.openClose.findFirst({
+    const open_close = await this.prisma.open_close.findFirst({
       where: {
-        store_id,
+        // store_id,
         is_cashier_open: true,
       },
       orderBy: {
@@ -96,7 +96,7 @@ export class OpenCloseService {
 
   async get_all_data_open_close() {
     try {
-      return await this.prisma.openClose.findMany();
+      return await this.prisma.open_close.findMany();
     } catch (error) {
       throw new BadRequestException('Error when fetching open/close sessions');
     }
@@ -104,7 +104,7 @@ export class OpenCloseService {
 
   async delete_data_open_close(id: number): Promise<void> {
     try {
-      const openCloseSession = await this.prisma.openClose.findUnique({
+      const openCloseSession = await this.prisma.open_close.findUnique({
         where: { open_close_id: id },
       });
 
@@ -112,7 +112,7 @@ export class OpenCloseService {
         throw new NotFoundException(`Open/close session with ID ${id} not found`);
       }
 
-      await this.prisma.openClose.delete({
+      await this.prisma.open_close.delete({
         where: { open_close_id: id },
       });
     } catch (error) {

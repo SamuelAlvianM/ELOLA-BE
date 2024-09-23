@@ -1,12 +1,8 @@
 /* eslint-disable prettier/prettier */
-import { bad_request_response, login_response, register_response, unauthorized_response, not_found_response } from '../../tests/swagger/auth.swagger';
-import { Controller, Post, Request, Body, UseGuards, Req, HttpCode, HttpStatus, Get } from '@nestjs/common';
+import { bad_request_response, login_response, unauthorized_response, not_found_response } from '../../tests/swagger/auth.swagger';
+import { Controller, Post, Body, UseGuards, Req, HttpCode, HttpStatus, Get } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { UserDto } from '../user/dto/user.dto';
-import { LoginDto, LoginStaffDto, Super_Login } from './dto/login.dto';
-import { Role } from '@prisma/client';
-import { Roles } from '../utils/decorator/roles.decorator';
-import { RolesGuard} from '../utils/guard/roles.guard';
+import { Login_User_Dto, Login_Pin_Dto, Super_Login_Dto } from './dto/login.dto';
 import { JwtAuthGuard } from '../utils/guard/jwt.guard';
 import {
     ApiTags,
@@ -22,24 +18,6 @@ import {
 export class AuthController {
     constructor(private authService: AuthService) {}
         
-    @Post('register')
-    @ApiBearerAuth('JWT')
-    @Roles(Role.SUPER_ADMIN, Role.OWNER)
-    @UseGuards(JwtAuthGuard, RolesGuard)
-    @HttpCode(HttpStatus.CREATED)
-    @ApiResponse(register_response)
-    @ApiResponse(not_found_response)
-    @ApiBadRequestResponse(bad_request_response)
-    @ApiUnauthorizedResponse(unauthorized_response)
-    async register(
-        @Body() user_dto: UserDto){
-        const result = await this.authService.register(user_dto);
-        return {
-            statusCode: HttpStatus.CREATED,
-            message: 'Successfully registered',
-            data: result,
-        };
-    }
 
     @Post('super-login')
     @HttpCode(HttpStatus.OK)
@@ -49,8 +27,8 @@ export class AuthController {
     @ApiUnauthorizedResponse(unauthorized_response)
     @ApiBearerAuth()
     async login_super_admin(
-        @Body() login_super_admin: Super_Login){
-        const result = await this.authService.super_login(login_super_admin, login_super_admin.password);
+        @Body() login_super_admin: Super_Login_Dto){
+        const result = await this.authService.super_login(login_super_admin);
         return {
             statusCode: HttpStatus.OK,
             message: 'Super Admin Successfully login ',
@@ -66,8 +44,8 @@ export class AuthController {
     @ApiUnauthorizedResponse(unauthorized_response)
     @ApiBearerAuth()
     async login(
-        @Body() login_dto: LoginDto){
-        const result = await this.authService.login(login_dto.email, login_dto.password);
+        @Body() login_dto: Login_User_Dto){
+        const result = await this.authService.login_user(login_dto.email, login_dto.password);
         return {
             statusCode: HttpStatus.OK,
             message: 'Successfully logged in',
@@ -83,8 +61,8 @@ export class AuthController {
     @ApiUnauthorizedResponse(unauthorized_response)
     @ApiBearerAuth()
     async loginStaff(
-        @Body() pin: LoginStaffDto){
-        const result = await this.authService.loginWithPin(pin);
+        @Body() pin: Login_Pin_Dto){
+        const result = await this.authService.login_with_pin(pin);
         return {
             statusCode: HttpStatus.OK,
             message: 'Successfully logged in',

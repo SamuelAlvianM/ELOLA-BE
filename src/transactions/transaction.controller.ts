@@ -2,20 +2,20 @@
 import { Controller, Get, Post, Body, Param, Patch, Delete, HttpStatus, HttpCode, UseGuards, ParseIntPipe, NotFoundException, Query } from '@nestjs/common';
 import { TransactionService } from './transaction.service';
 import { CreateTransactionDto, UpdateTransactionDto } from './dto/transaction.dto';
-import { Role } from '@prisma/client';
-import { RolesGuard } from 'src/utils/guard/roles.guard';
+import { has_role } from '@prisma/client';
+import { Roles_Guards } from 'src/utils/guard/roles.guard';
 import { Roles } from 'src/utils/decorator/roles.decorator';
 import { ApiResponse, ApiBearerAuth, ApiTags, ApiQuery, ApiOperation } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/utils/guard/jwt.guard';
 
 @ApiTags('Transactions')
 @Controller('transactions')
-@UseGuards(JwtAuthGuard, RolesGuard)
+@UseGuards(JwtAuthGuard, Roles_Guards)
 export class TransactionController {
   constructor(private readonly transactionService: TransactionService) {}
 
   @Post()
-  @Roles(Role.SUPER_ADMIN, Role.OWNER, Role.STAFF)
+  @Roles()
   @HttpCode(HttpStatus.CREATED)
   @ApiResponse({ status: HttpStatus.CREATED, description: 'Transaction created successfully.' })
   @ApiResponse({ status: HttpStatus.UNAUTHORIZED, description: 'Unauthorized' })
@@ -35,7 +35,7 @@ export class TransactionController {
     };
   }
 
-  @Roles(Role.SUPER_ADMIN, Role.OWNER, Role.STAFF)
+  @Roles()
   @HttpCode(HttpStatus.OK)
   @ApiResponse({ status: HttpStatus.OK, description: 'Fetch all transactions.' })
   @ApiResponse({ status: HttpStatus.UNAUTHORIZED, description: 'Unauthorized' })
@@ -54,7 +54,7 @@ export class TransactionController {
     };
   }
 
-  @Roles(Role.SUPER_ADMIN, Role.OWNER, Role.STAFF)
+  @Roles()
   @HttpCode(HttpStatus.OK)
   @ApiResponse({ status: HttpStatus.OK, description: 'Fetch transaction by ID.' })
   @ApiResponse({ status: HttpStatus.UNAUTHORIZED, description: 'Unauthorized' })
@@ -70,7 +70,7 @@ export class TransactionController {
     };
   }
 
-  @Roles(Role.SUPER_ADMIN, Role.OWNER, Role.STAFF)
+  @Roles()
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiResponse({ status: HttpStatus.NO_CONTENT, description: 'Transaction updated successfully.' })
   @ApiResponse({ status: HttpStatus.UNAUTHORIZED, description: 'Unauthorized' })
@@ -86,7 +86,7 @@ export class TransactionController {
     };
   }
 
-  @Roles(Role.SUPER_ADMIN, Role.OWNER)
+  @Roles()
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiResponse({ status: HttpStatus.NO_CONTENT, description: 'Transaction deleted successfully.' })
   @ApiResponse({ status: HttpStatus.UNAUTHORIZED, description: 'Unauthorized' })

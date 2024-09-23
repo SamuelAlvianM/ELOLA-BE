@@ -3,10 +3,10 @@ import {unauthorized_role_response, get_all_suppliers_response, get_all_supplier
 import { Controller, Get, Post, Body, Param, Query, ParseEnumPipe, Delete, UseGuards, Put, HttpCode, HttpStatus, ParseIntPipe, Patch} from '@nestjs/common';
 import { SupplierService } from './supplier.service';
 import { CreateSupplierDto, UpdateSupplierDto } from './dto/supplier.dto';
-import {Role } from '@prisma/client';
+import {has_role } from '@prisma/client';
 import { ApiBadRequestResponse, ApiBearerAuth, ApiResponse, ApiTags, ApiUnauthorizedResponse, ApiQuery } from '@nestjs/swagger';
 import { Roles } from 'src/utils/decorator/roles.decorator';
-import { RolesGuard } from 'src/utils/guard/roles.guard';
+import { Roles_Guards } from 'src/utils/guard/roles.guard';
 import { JwtAuthGuard } from 'src/utils/guard/jwt.guard';
 
 @ApiTags('Suppliers')
@@ -15,8 +15,8 @@ export class SupplierController {
   constructor(private readonly supplierService: SupplierService) {}
 
   @Post()
-  @Roles(Role.SUPER_ADMIN, Role.OWNER)
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles()
+  @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.CREATED)
   @ApiResponse( create_supplier_response )
   @ApiResponse( unauthorized_role_response )
@@ -33,8 +33,8 @@ export class SupplierController {
   }
 
   @Get()
-  @Roles(Role.SUPER_ADMIN, Role.OWNER, Role.STAFF)
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles()
+  @UseGuards(JwtAuthGuard, )
   @HttpCode(HttpStatus.OK)
   @ApiResponse( get_all_suppliers_response )
   @ApiResponse( unauthorized_role_response )
@@ -55,8 +55,8 @@ export class SupplierController {
 
 
   @Get('supplier/:supplier_id')
-  @Roles(Role.SUPER_ADMIN, Role.OWNER, Role.STAFF)
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles()
+  @UseGuards(JwtAuthGuard,)
   @HttpCode(HttpStatus.OK)
   @ApiResponse( get_supplier_id_response )
   @ApiResponse( unauthorized_role_response )
@@ -73,8 +73,8 @@ export class SupplierController {
   }
 
   @Delete('supplier/:supplier_id')
-  @Roles(Role.SUPER_ADMIN, Role.OWNER)
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles()
+  @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiResponse( delete_supplier_response )
   @ApiResponse( unauthorized_role_response )
@@ -92,8 +92,8 @@ export class SupplierController {
 
   @Put('supplier/:supplier_id')
   @HttpCode(HttpStatus.CREATED)
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.SUPER_ADMIN, Role.OWNER)
+  @UseGuards(JwtAuthGuard,)
+  @Roles()
   @ApiResponse( update_supplier_response )
   @ApiResponse( unauthorized_role_response )
   @ApiBadRequestResponse(update_supplier_bad_req_response)

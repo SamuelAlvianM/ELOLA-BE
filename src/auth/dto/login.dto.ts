@@ -4,12 +4,12 @@ import { Expose } from 'class-transformer';
 import { IsNotEmpty, IsEmail, IsString } from 'class-validator';
 
 
-export class Super_Login {
+export class Super_Login_Dto {
     @IsNotEmpty()
     @IsString()
     @ApiProperty({ example: 'Samuel'})
     @Expose()
-    admin_name: string;
+    admin_email: string;
 
     @IsNotEmpty()
     @ApiProperty({ example: 'your_password' })
@@ -18,7 +18,7 @@ export class Super_Login {
 }
 
 
-export class LoginDto {
+export class Login_User_Dto {
     @IsNotEmpty()
     @IsEmail()
     @ApiProperty({ example: 'samuel@gmail.com' })
@@ -31,7 +31,7 @@ export class LoginDto {
     password: string;
 }
 
-export class LoginStaffDto {
+export class Login_Pin_Dto {
     @IsNotEmpty()
     @ApiProperty({ example: '6_combinations_number_pin' })
     @Expose()

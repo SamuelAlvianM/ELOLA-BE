@@ -3,9 +3,9 @@ import { get_all_dp_bad_request_response, get_all_dp_response, unauthorized_resp
 import { Body, Controller, Delete, Get, HttpCode, HttpStatus, NotFoundException, Param, Patch, Post, UseGuards, ParseIntPipe, Query } from '@nestjs/common';
 import { DriverPartnerService } from './driver_partner.service';
 import { JwtAuthGuard } from '../utils/guard/jwt.guard';
-import { RolesGuard } from '../utils/guard/roles.guard';
+import { Roles_Guards } from '../utils/guard/roles.guard';
 import { Roles } from '../utils/decorator/roles.decorator';
-import { Role } from '@prisma/client';
+import { has_role } from '@prisma/client';
 import { ApiBadRequestResponse, ApiResponse, ApiTags, ApiUnauthorizedResponse, ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
 import { Create_DP_Dto, Update_DP_Dto } from './dto/dp.dto';
 import { CurrentStore, User } from 'src/utils/decorator/user.decorator';
@@ -16,8 +16,8 @@ export class DriverPartnerController {
     constructor(private service_dp: DriverPartnerService) {}
 
     @Get()
-    @UseGuards(JwtAuthGuard, RolesGuard)
-    @Roles(Role.SUPER_ADMIN, Role.OWNER, Role.STAFF)
+    @UseGuards(JwtAuthGuard, Roles_Guards)
+    @Roles()
     @ApiBearerAuth('JWT')
     @ApiResponse( get_all_dp_response )
     @ApiResponse( unauthorized_role_response )
@@ -35,8 +35,8 @@ export class DriverPartnerController {
     }
 
     @Get(':driver_partner_id')
-    @UseGuards(JwtAuthGuard, RolesGuard)
-    @Roles(Role.SUPER_ADMIN, Role.OWNER, Role.STAFF)
+    @UseGuards(JwtAuthGuard, Roles_Guards)
+    @Roles()
     @ApiBearerAuth('JWT')
     @ApiResponse( det_dp_by_id_response )
     @ApiResponse( unauthorized_role_response )
@@ -53,8 +53,8 @@ export class DriverPartnerController {
     }
 
     @Post(':store_id')
-    @UseGuards(JwtAuthGuard, RolesGuard)
-    @Roles(Role.SUPER_ADMIN, Role.OWNER)
+    @UseGuards(JwtAuthGuard, Roles_Guards)
+    @Roles()
     @ApiBearerAuth('JWT')
     @ApiResponse( create_dp_response )
     @ApiResponse( unauthorized_role_response )
@@ -74,8 +74,8 @@ export class DriverPartnerController {
     }
 
     @Patch(':driver_partner_id')
-    @UseGuards(JwtAuthGuard, RolesGuard)
-    @Roles(Role.SUPER_ADMIN, Role.OWNER)
+    @UseGuards(JwtAuthGuard, Roles_Guards)
+    @Roles()
     @ApiBearerAuth('JWT')
     @ApiResponse( update_dp_response )
     @ApiResponse( unauthorized_role_response )
@@ -94,8 +94,8 @@ export class DriverPartnerController {
     }
 
     @Delete(':driver_partner_id')
-    @UseGuards(JwtAuthGuard, RolesGuard)
-    @Roles(Role.OWNER, Role.SUPER_ADMIN)
+    @UseGuards(JwtAuthGuard, Roles_Guards)
+    @Roles()
     @HttpCode(HttpStatus.OK)
     @ApiBearerAuth('JWT')
     @ApiResponse( delete_dp_response )

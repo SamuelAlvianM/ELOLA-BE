@@ -2,7 +2,7 @@
 import { Injectable } from '@nestjs/common';
 import { CreateTaxDto, UpdateTaxDto } from './dto/tax.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { Tax_type } from '@prisma/client';
+import { tax_type } from '@prisma/client';
 
 @Injectable()
 export class TaxService {
@@ -40,7 +40,7 @@ export class TaxService {
 
       async taxDataForOrder() {
         const vatData = await this.prisma.tax.findFirst({
-          where: { tax_status: true, tax_type: 'VAT' },
+          where: { tax_status: true, tax_type: 'vat' },
           select: {
             tax_name: true,
             tax_value: true,
@@ -49,7 +49,7 @@ export class TaxService {
         });
     
         const serviceData = await this.prisma.tax.findFirst({
-          where: { tax_status: true, tax_type: 'Service' },
+          where: { tax_status: true, tax_type: 'service' },
           select: {
             tax_name: true,
             service_value: true,
@@ -97,8 +97,8 @@ export class TaxService {
         const data_tax = await this.prisma.tax.create({
             data: {
                 ...create_tax_data,
-                tax_value: create_tax_data.tax_type === 'VAT' ? create_tax_data.tax_value : null,
-                service_value: create_tax_data.tax_type === 'Service' ? create_tax_data.service_value : null,
+                tax_value: create_tax_data.tax_type === 'vat' ? create_tax_data.tax_value : null,
+                service_value: create_tax_data.tax_type === 'service' ? create_tax_data.service_value : null,
             },
         });
         return data_tax;

@@ -1,24 +1,24 @@
 /* eslint-disable prettier/prettier */
 import { Injectable, CanActivate, ExecutionContext, ForbiddenException } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { ROLES_KEY } from '../decorator/roles.decorator';
-import { has_role, hierarchy } from '@prisma/client';
+import { CLASS_KEY } from '../decorator/roles.decorator';
+import { hierarchy } from '@prisma/client';
 
 @Injectable()
-export class Roles_Guards implements CanActivate {
+export class Class_Guards implements CanActivate {
   constructor(private readonly reflector: Reflector) {}
 
   canActivate(context: ExecutionContext): boolean {
-    // Get all roles required for the current route
-    const role_required = this.reflector.getAllAndOverride<has_role[]>(
-        ROLES_KEY, 
+
+    const role_required = this.reflector.getAllAndOverride<hierarchy[]>(
+        CLASS_KEY, 
         [ context.getHandler(), context.getClass()],
     );
 
     if(!role_required) {
         return true;
     }
-    // role(s) yang dibutuhkan untuk request 
+
     const request  = context.switchToHttp().getRequest();
     const user = request.user;
 
@@ -35,15 +35,6 @@ export class Roles_Guards implements CanActivate {
     if (!hasRole()) {
       throw new ForbiddenException('You do not have the required roles');
     }
-
-    // const path = request.route.path;
-    // const method = request.method;
-    // if (user.role === Role.STAFF) {
-    //   if (method === 'POST' && path.includes('/auth/register')) {
-    //     throw new ForbiddenException('Staff cannot create new users');
-    //   }
-    // }
-
 
     return true;
 

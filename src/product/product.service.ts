@@ -3,7 +3,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateProductDto } from './dto/product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
-import { Product } from '@prisma/client';
+import { product } from '@prisma/client';
 
 @Injectable()
 export class ProductService {
@@ -43,7 +43,7 @@ export class ProductService {
   }
 
   async add_tax_product(product_id: string, tax_id: string) {
-    return this.prisma.productTax.create({
+    return this.prisma.product_tax.create({
       data: {
         product_id: parseInt(product_id),  // Convert to integer
         tax_id: parseInt(tax_id)
@@ -52,7 +52,7 @@ export class ProductService {
   }
 
   async remove_tax_product(product_id: number, tax_id: number) {
-    return this.prisma.productTax.delete({
+    return this.prisma.product_tax.delete({
       where: {
         product_id_tax_id:{
           product_id: product_id,
@@ -167,7 +167,7 @@ export class ProductService {
       data,
     })
   }
-  async remove(product_id: number): Promise<Product> {
+  async remove(product_id: number): Promise<product> {
     return this.prisma.product.update({
       where: { product_id },
       data: { deleted_at: new Date()}

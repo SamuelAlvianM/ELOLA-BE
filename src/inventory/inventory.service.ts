@@ -2,7 +2,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateInventoryDto, UpdateInventoryDto } from './dto/inventory.dto';
-import { Inventory } from '@prisma/client';
+import { inventory } from '@prisma/client';
 
 @Injectable()
 export class InventoryService {
@@ -48,7 +48,7 @@ export class InventoryService {
     };
   }
 
-  async getInventoryById(inventory_id: number): Promise<Inventory> {
+  async getInventoryById(inventory_id: number): Promise<inventory> {
     const inventory = await this.prisma.inventory.findFirst({
       where: {
         inventory_id,
@@ -73,7 +73,7 @@ export class InventoryService {
     });
   }
 
-  async softDeleteInventory(inventory_id: number): Promise<Inventory> {
+  async softDeleteInventory(inventory_id: number): Promise<inventory> {
     return this.prisma.inventory.update({
       where: {
         inventory_id

@@ -1,16 +1,21 @@
 /* eslint-disable prettier/prettier */
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ConflictException, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { UpdateDto, UserDto } from './dto/user.dto';
+import { Update_User_Dto, Create_User_Dto } from './dto/user.dto';
 import * as bcrypt from 'bcrypt';
-import { User } from '@prisma/client';
+import { user } from '@prisma/client';
+import { JwtService } from '@nestjs/jwt';
 import { checkForUpdateConflict, checkIfUserExists } from 'src/common/user/user-response';
 
 @Injectable()
 export class UserService {
-    constructor( private prisma: PrismaService) {}
+    private readonly logger = new Logger(UserService.name);
+    constructor( 
+      private prisma: PrismaService, 
+      private jwtService: JwtService,
+    ) {}
 
-    private async generateUniquePin(): Promise<string> {
+    private async generate_unique_pin(): Promise<string> {
         let pin: string;
         let isUnique = false;
     
@@ -26,43 +31,63 @@ export class UserService {
         return pin;
       }
 
-    async createNewUser(user_dto: UserDto) {
-        const hashed_password = await bcrypt.hash(user_dto.password, 10);
-        const unique_pin = await this.generateUniquePin();
-        const existing_user = await this.prisma.user.findFirst({
-            where: {
-              OR: [
-                { email: user_dto.email },
-                { user_name: user_dto.user_name },
-              ],
-            },
-          });
-      
-          checkIfUserExists(existing_user, user_dto);
-        
-        return this.prisma.user.create({
-            data: {
-                ...user_dto,
-                role: user_dto.role,
-                password: hashed_password,
-                pin: unique_pin,
+    async register_new_user(register_user: Create_User_Dto) {
+        const payload = await this.prisma.user.findFirst ({
+            where:{
+                OR: [
+                    { user_name: register_user.user_name},
+                    { email: register_user.email},
+                ],
             },
         });
+
+        if (payload) {
+            if ( payload.user_name === register_user.user_name ) {
+                throw new ConflictException(`User name: ${register_user.user_name} already exists`);
+            } else {
+                throw new ConflictException(`email: ${register_user.email} already exists`);
+            }
+        }
+
+        try {
+            const hashed_pass = await bcrypt.hash(register_user.password, 10);
+            const unique_pin = await this.generate_unique_pin();
+            const user = await this.prisma.user.create({
+                data: {
+                    user_name: register_user.user_name,
+                    email: register_user.email,
+                    password: hashed_pass,
+                    role: register_user.role,
+                    class: register_user.class,
+                    pin: unique_pin,
+                }
+            });
+
+            const payload = { email: user.email, sub: user.user_id };
+            const accessToken = await this.jwtService.sign(payload)
+
+            return {user, access_token: accessToken};
+        } catch(error) {
+            this.logger.error(`Failed to register user: ${error.message}`);
+            throw new ConflictException(`Error occured: ${error.message}`);
+        }
     }
 
-    async findAllUser(page: number, limit: number) {
-      const maxLimit = 10;
-      const normalLimit = Math.min(limit, maxLimit)
-      const skip = (page - 1) * normalLimit;
-      const [users, totalCount] = await this.prisma.$transaction([
+    async get_all_users(page: number, limit: number) {
+      const max_limit = 10;
+      const normal_limit = Math.min(limit, max_limit)
+      const skip = (page - 1) * normal_limit;
+      const [users, total_count] = await this.prisma.$transaction([
         this.prisma.user.findMany({
           where: {
             deleted_at: null,
           },
           skip: skip,
-          take: normalLimit,
+          take: normal_limit,
           include: {
-            store: true,
+            company: true,
+            branches: true,
+            outlet: true,
             store_staff: true,
             transaction: true,
           },
@@ -79,21 +104,23 @@ export class UserService {
         data: users,
         meta: {
           currentPage: page,
-          itemsPerPage: normalLimit,
-          totalPages: Math.ceil(totalCount / normalLimit ),
-          totalItems: totalCount,
+          itemsPerPage: normal_limit,
+          totalPages: Math.ceil(total_count / normal_limit ),
+          totalItems: total_count,
         },
       };
     }
 
-    async findOne(user_id: number): Promise<User> {
+    async get_user_by_id(user_id: number): Promise<user> {
         const user = await this.prisma.user.findFirst({
             where: {
                 user_id,
                 deleted_at: null,
             },
             include: {
-              store: true,
+              company: true,
+              branches: true,
+              outlet: true,
               store_staff: true,
               transaction: true,
             },
@@ -106,7 +133,16 @@ export class UserService {
         return user;
     }
 
-    async updateUserData(user_id: number, update_dto: UpdateDto) {
+    async filter_active_user():Promise<user[]> {
+      return this.prisma.user.findMany({
+        where: {
+          is_deleted: false,
+          deleted_at: null,
+        }
+      });
+    }
+
+    async update_user_data(user_id: number, update_dto: Update_User_Dto) {
         const user = await this.prisma.user.findUnique({ where: { user_id: user_id } });
 
         if (!user) {
@@ -135,25 +171,28 @@ export class UserService {
         return updatedUser
     }
 
-    async softDeleteUser(user_id: number): Promise<User> {
+    async soft_delete_user(user_id: number): Promise<user> {
         return this.prisma.user.update({
             where: {
                 user_id
             },
             data: {
-                deleted_at: new Date()
-            }
-        })
+                deleted_at: new Date(),
+                is_deleted: true,
+            },
+        });
     }
 
-    async getCurrentUser(user_id: number): Promise<User> {
+    async get_current_user(user_id: number): Promise<user> {
       const user = await this.prisma.user.findFirst({
         where:{
           user_id,
           deleted_at: null,
         },
         include: {
-          store: true,
+          company: true,
+          branches: true,
+          outlet: true,
           store_staff: true,
           transaction: true,
         },

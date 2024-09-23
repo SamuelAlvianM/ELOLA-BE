@@ -18,12 +18,12 @@ export class SavedOrderService {
     }
     
     try {
-      return await this.prisma.savedOrder.create({
+      return await this.prisma.saved_order.create({
         data: {
           transaction_id: transaction.transaction_id,
           is_done: false,
           status: 'Not Paid', 
-          transaction_Product: {
+          transaction_products: {
             create: transaction.products.map(product => ({
               transaction_id: product.transaction_id,
               product_id: product.product_id,
@@ -43,11 +43,11 @@ export class SavedOrderService {
     const skip = (page - 1) * normalLimit;
 
     const [savedOrders, totalCount] = await this.prisma.$transaction([
-      this.prisma.savedOrder.findMany({
+      this.prisma.saved_order.findMany({
         skip: skip,
         take: normalLimit,
       }),
-      this.prisma.savedOrder.count(),
+      this.prisma.saved_order.count(),
     ]);
 
     return {
@@ -62,7 +62,7 @@ export class SavedOrderService {
   }
 
   async findOneSavedOrder(id: number) {
-    const savedOrder = await this.prisma.savedOrder.findUnique({
+    const savedOrder = await this.prisma.saved_order.findUnique({
       where: { saved_order_id: id },
     });
     if (!savedOrder) {
@@ -73,7 +73,7 @@ export class SavedOrderService {
 
   async updateSavedOrder(id: number, updateSavedOrderDto: { is_done?: boolean; status?: string }) {
     try {
-      return await this.prisma.savedOrder.update({
+      return await this.prisma.saved_order.update({
         where: { saved_order_id: id },
         data: updateSavedOrderDto,
       });
@@ -84,7 +84,7 @@ export class SavedOrderService {
 
   async deleteSavedOrder(id: number) {
     try {
-      return await this.prisma.savedOrder.update({
+      return await this.prisma.saved_order.update({
         where: { saved_order_id: id },
         data: { deleted_at: new Date() },
       });

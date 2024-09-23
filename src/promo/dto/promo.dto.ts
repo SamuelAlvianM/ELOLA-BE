@@ -1,6 +1,6 @@
 /* eslint-disable prettier/prettier */
 import { ApiProperty } from '@nestjs/swagger';
-import { Promo_type } from '@prisma/client';
+import { promo_type } from '@prisma/client';
 import { Type } from 'class-transformer';
 import { IsEnum, IsInt, IsOptional, IsDate, IsNotEmpty, IsString, MinDate } from 'class-validator';
 
@@ -16,9 +16,9 @@ export class CreatePromoDto {
   @ApiProperty({example: "Promo 1"})
   promo_name: string;
 
-  @IsEnum(Promo_type)
+  @IsEnum(promo_type)
   @ApiProperty({example: "Discount / Sales"})
-  promo_type: Promo_type;
+  promo_type: promo_type;
 
   @IsInt()
   @ApiProperty({example: 20, description: "Prothis will be added as percentage"})
@@ -50,9 +50,9 @@ export class UpdatePromoDto {
   promo_name?: string;
 
   @IsOptional()
-  @IsEnum(Promo_type)
+  @IsEnum(promo_type)
   @ApiProperty({example: "Discount"})
-  promo_type?: Promo_type;
+  promo_type?: promo_type;
 
   @IsOptional()
   @IsInt()

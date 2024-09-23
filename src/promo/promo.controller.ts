@@ -3,21 +3,21 @@ import {unauthorized_response, unauthorized_role_response, get_all_promos_respon
 import { Controller, Get, Post, Body, Param, Patch, Delete, HttpStatus, HttpCode, UseGuards, ParseIntPipe, NotFoundException, Query,} from '@nestjs/common';
 import { PromoService } from './promo.service';
 import { ApplyPromoDto, CreatePromoDto, UpdatePromoDto } from './dto/promo.dto';
-import { Role } from '@prisma/client';
-import { RolesGuard } from 'src/utils/guard/roles.guard';
+import { has_role } from '@prisma/client';
+import { Roles_Guards } from 'src/utils/guard/roles.guard';
 import { Roles } from 'src/utils/decorator/roles.decorator';
 import { ApiResponse, ApiBearerAuth, ApiTags, ApiQuery } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/utils/guard/jwt.guard';
 
 @ApiTags('Promos')
 @Controller('promos')
-@UseGuards(JwtAuthGuard, RolesGuard)
+@UseGuards(JwtAuthGuard, Roles_Guards)
 export class PromoController {
   constructor(private readonly promoService: PromoService) {}
 
   
   @Post()
-  @Roles(Role.SUPER_ADMIN, Role.OWNER)
+  @Roles()
   @HttpCode(HttpStatus.CREATED)
   @ApiResponse(create_promo_response)
   @ApiResponse(unauthorized_response)
@@ -32,7 +32,7 @@ export class PromoController {
       };
   }
       
-  @Roles(Role.SUPER_ADMIN, Role.OWNER, Role.STAFF)
+  @Roles()
   @HttpCode(HttpStatus.OK)
   @ApiResponse(get_all_promos_response)
   @ApiResponse(unauthorized_response)
@@ -51,7 +51,7 @@ export class PromoController {
         };
     }
 
-  @Roles(Role.SUPER_ADMIN, Role.OWNER, Role.STAFF)
+  @Roles()
   @HttpCode(HttpStatus.OK)
   @ApiResponse(get_promo_by_id_response)
   @ApiResponse(unauthorized_response)
@@ -67,7 +67,7 @@ export class PromoController {
     };
   }
 
-  @Roles(Role.SUPER_ADMIN, Role.OWNER)
+  @Roles()
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiResponse(update_promo_response)
   @ApiResponse(unauthorized_response)
@@ -76,14 +76,14 @@ export class PromoController {
   @ApiBearerAuth('JWT')
   @Patch(':id')
   async update(@Param('id') id: string, @Body() updatePromoDto: UpdatePromoDto) {
-    const result_update = await this.promoService.updatePromo(+id, updatePromoDto);
+    const result_update = await this.promoService.updatepromo(+id, updatePromoDto);
     return {
       message: 'Data Promo Successfully Updated!',
       data: result_update,
     };
   }
 
-  @Roles(Role.SUPER_ADMIN, Role.OWNER)
+  @Roles()
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiResponse(delete_promo_response)
   @ApiResponse(unauthorized_response)
@@ -92,7 +92,7 @@ export class PromoController {
   @ApiBearerAuth('JWT')
   @Delete(':id')
   async softDeletePromo(@Param('id') id: string) {
-    const promos = await this.promoService.softDeletePromo(+id);
+    const promos = await this.promoService.softDeletepromo(+id);
     if (!promos) {
       throw new NotFoundException("Promo Data Not Found!")
     }
@@ -103,7 +103,7 @@ export class PromoController {
     }
   }
 
-  @Roles(Role.SUPER_ADMIN, Role.OWNER)
+  @Roles()
   @HttpCode(HttpStatus.CREATED)
   @ApiResponse(apply_promo_response)
   @ApiResponse(unauthorized_response)
@@ -112,7 +112,7 @@ export class PromoController {
   @ApiBearerAuth('JWT')
   @Post('apply')
   async applyPromo(@Body() applyPromoDto: ApplyPromoDto) {
-    const applied_promos = await this.promoService.applyPromo(applyPromoDto);
+    const applied_promos = await this.promoService.applypromo(applyPromoDto);
     return {
       message: 'Apply Promo to Product Success!!',
       data: applied_promos,
@@ -123,7 +123,7 @@ export class PromoController {
   async apply_promo_global(
     @Param('promo_id', ParseIntPipe) promo_id: number,
   ) {
-    const result = await this.promoService.applyPromoGlobal(promo_id);
+    const result = await this.promoService.applypromoGlobal(promo_id);
     return {
       status: HttpStatus.OK,
       message: 'success apply promo to all product, please check your price now',

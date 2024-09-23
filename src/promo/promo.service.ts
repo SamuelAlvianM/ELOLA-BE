@@ -2,7 +2,7 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { ApplyPromoDto, CreatePromoDto, UpdatePromoDto } from './dto/promo.dto';
-import { Promo } from '@prisma/client';
+import { promo } from '@prisma/client';
 
 @Injectable()
 export class PromoService {
@@ -60,7 +60,7 @@ export class PromoService {
     };
   }
 
-  async getPromoById(promo_id: number): Promise<Promo> {
+  async getPromoById(promo_id: number): Promise<promo> {
     const promo = await this.prisma.promo.findFirst({
       where: {
         promo_id,
@@ -75,14 +75,14 @@ export class PromoService {
     return promo;
   }
 
-  async updatePromo(promo_id: number, data: UpdatePromoDto) {
+  async updatepromo(promo_id: number, data: UpdatePromoDto) {
     return this.prisma.promo.update({
       where: { promo_id },
       data,
     });
   }
 
-  async softDeletePromo(promo_id: number): Promise<Promo> {
+  async softDeletepromo(promo_id: number): Promise<promo> {
     return this.prisma.promo.update({
       where: {
         promo_id: promo_id
@@ -93,13 +93,13 @@ export class PromoService {
     });
   }
 
-  async applyPromoGlobal(promo_id: number) {
+  async applypromoGlobal(promo_id: number) {
     const promo_global = await this.prisma.promo.findUnique({
       where: { promo_id },
     });
 
     if(!promo_global) {
-      throw new NotFoundException('Promo not found');
+      throw new NotFoundException('promo not found');
     }
 
     const products = await this.prisma.product.findMany ({
@@ -108,7 +108,7 @@ export class PromoService {
 
     for (const product of products) {
       let new_price;
-      if (promo_global.promo_type === 'Discount') {
+      if (promo_global.promo_type === 'discount') {
         new_price = product.product_price - (product.product_price * promo_global.promo_value) / 100;
       } else {
         new_price = product.product_price - promo_global.promo_value;
@@ -119,7 +119,7 @@ export class PromoService {
         data: { product_price: new_price },
       });
 
-      await this.prisma.productPromo.upsert({
+      await this.prisma.product_promo.upsert({
         where: {
           product_id_promo_id: {
             product_id: product.product_id,
@@ -134,10 +134,10 @@ export class PromoService {
       });
     }
 
-    return { message: 'Promo applied to all products successfully' };
+    return { message: 'promo applied to all products successfully' };
 }
 
-  async applyPromo(applyPromoDto: ApplyPromoDto) {
+  async applypromo(applyPromoDto: ApplyPromoDto) {
     const { product_id, promo_id } = applyPromoDto;
 
     const promo = await this.prisma.promo.findUnique({ where: { promo_id } });
@@ -147,7 +147,7 @@ export class PromoService {
     if (!product) throw new Error('Product not found');
 
     let newPrice;
-    if (promo.promo_type === 'Discount') {
+    if (promo.promo_type === 'discount') {
       newPrice = product.product_price - (product.product_price * promo.promo_value) / 100;
     } else {
       newPrice = product.product_price - promo.promo_value;
@@ -163,7 +163,7 @@ export class PromoService {
       data: { product_price: newPrice },
     });
 
-    await this.prisma.productPromo.upsert({
+    await this.prisma.product_promo.upsert({
       where: {
         product_id_promo_id: {
           product_id: product_id,

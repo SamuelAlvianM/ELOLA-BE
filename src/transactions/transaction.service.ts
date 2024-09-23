@@ -20,11 +20,11 @@ export class TransactionService {
     //   throw new BadRequestException('No open cashier session found for this store.');
     // }
 
-    const current_user = await this.userService.getCurrentUser(user_id);
+    const current_user = await this.userService.get_current_user(user_id);
     const current_user_id = current_user.user_id;
 
     // Generate receipt number
-    const receipt_prefix = order_type === 'Order' ? 'DI' : 'TA';
+    const receipt_prefix = order_type === 'order' ? 'DI' : 'TA';
     const lastTransaction = await this.prisma.transaction.findFirst({
       where: { store_id },
       orderBy: { receipt_number: 'desc' },

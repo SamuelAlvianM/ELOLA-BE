@@ -3,9 +3,9 @@
 
 import { unauthorized_role_response, get_all_tax_response, get_tax_by_id_response, update_tax_response, create_tax_response, not_found_response, bad_request_response, unauthorized_response, delete_tax_response } from '../../tests/swagger/tax.swagger';
 import { Controller, Get, Post, Body, HttpCode, HttpStatus, UseGuards, Patch, Delete, Param, ParseIntPipe, Query} from '@nestjs/common';
-import { Role } from '@prisma/client';
+import { has_role } from '@prisma/client';
 import { JwtAuthGuard } from 'src/utils/guard/jwt.guard';
-import { RolesGuard } from 'src/utils/guard/roles.guard';
+import { Roles_Guards } from 'src/utils/guard/roles.guard';
 import { User } from 'src/utils/decorator/user.decorator';
 import { Roles } from 'src/utils/decorator/roles.decorator';
 import { TaxService } from './tax.service';
@@ -15,12 +15,12 @@ import { ApiResponse, ApiBadRequestResponse, ApiUnauthorizedResponse, ApiBearerA
 
 @ApiTags('Taxes')
 @Controller('tax')
-@UseGuards(JwtAuthGuard, RolesGuard)
+@UseGuards(JwtAuthGuard, Roles_Guards)
 export class TaxController {
     constructor( private readonly tax_service: TaxService) {}
 
     @Get()
-    @Roles(Role.SUPER_ADMIN, Role.OWNER, Role.STAFF)
+    @Roles()
     @ApiBearerAuth('JWT')
     @ApiResponse(get_all_tax_response)
     @ApiResponse( unauthorized_role_response )
@@ -39,7 +39,7 @@ export class TaxController {
     }
 
     @Get('active')
-    @Roles(Role.OWNER, Role.STAFF, Role.SUPER_ADMIN)
+    @Roles()
     @ApiBearerAuth('JWT')
     async activeTaxForOrder() {
         const result = await this.tax_service.taxDataForOrder();
@@ -51,7 +51,7 @@ export class TaxController {
     }
 
     @Get(':tax_id')
-    @Roles(Role.SUPER_ADMIN, Role.OWNER, Role.STAFF)
+    @Roles()
     @ApiBearerAuth('JWT')
     @ApiResponse(get_tax_by_id_response)
     @ApiResponse( unauthorized_role_response )
@@ -68,7 +68,7 @@ export class TaxController {
     }
 
     @Post()
-    @Roles(Role.SUPER_ADMIN, Role.OWNER)
+    @Roles()
     @HttpCode(HttpStatus.CREATED)
     @ApiBearerAuth('JWT')
     @ApiResponse(create_tax_response)
@@ -86,7 +86,7 @@ export class TaxController {
     }
 
     @Patch(':tax_id')
-    @Roles(Role.SUPER_ADMIN, Role.OWNER)
+    @Roles()
     @ApiResponse(update_tax_response)
     @ApiResponse( unauthorized_role_response )
     @ApiNotFoundResponse(not_found_response)
@@ -105,7 +105,7 @@ export class TaxController {
     }
 
     @Delete(':tax_id')
-    @Roles(Role.SUPER_ADMIN, Role.OWNER)
+    @Roles()
     @ApiBearerAuth('JWT')
     @ApiResponse(delete_tax_response)
     @ApiResponse( unauthorized_role_response )

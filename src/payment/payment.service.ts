@@ -2,7 +2,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreatePayment, UpdatePayment, } from './dto/payment.dto';
-import { Payment } from '@prisma/client';
+import { payment } from '@prisma/client';
 
 @Injectable()
 export class PaymentService {
@@ -53,7 +53,7 @@ export class PaymentService {
     };
   }
 
-  async getPaymentById(payment_id: number): Promise<Payment> {
+  async getPaymentById(payment_id: number): Promise<payment> {
     const payment = await this.prisma.payment.findFirst({
       where: {
         payment_id: payment_id,
@@ -79,7 +79,7 @@ export class PaymentService {
     });
   }
 
-  async softDeletePayment(payment_id: number): Promise<Payment> {
+  async softDeletePayment(payment_id: number): Promise<payment> {
     return this.prisma.payment.update({
       where: {
         payment_id: payment_id,

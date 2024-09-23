@@ -4,20 +4,20 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, NotFoundException, H
 import { InventoryService } from './inventory.service';
 import { CreateInventoryDto, UpdateInventoryDto } from './dto/inventory.dto';
 import { JwtAuthGuard } from 'src/utils/guard/jwt.guard';
-import { RolesGuard } from 'src/utils/guard/roles.guard';
-import { Inventory, Role } from '@prisma/client';
+import { Roles_Guards } from 'src/utils/guard/roles.guard';
+import { inventory, has_role } from '@prisma/client';
 import { Roles } from 'src/utils/decorator/roles.decorator';
 import { ApiBadRequestResponse, ApiBearerAuth, ApiResponse, ApiTags, ApiOperation, ApiUnauthorizedResponse, ApiQuery } from '@nestjs/swagger';
 
 @ApiTags('Inventories')
 @Controller('inventory')
-@UseGuards(JwtAuthGuard, RolesGuard)
+@UseGuards(JwtAuthGuard, Roles_Guards)
 export class InventoryController {
   constructor(private readonly inventoryService: InventoryService) {}
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  @Roles(Role.SUPER_ADMIN, Role.OWNER)
+  @Roles()
   @ApiOperation( {summary: 'Create a new inventory'})
   @ApiResponse(unauthorized_response)
   @ApiResponse(create_inventory_response)
@@ -31,7 +31,7 @@ export class InventoryController {
   }
 
   @Get()
-  @Roles(Role.SUPER_ADMIN, Role.OWNER, Role.STAFF)
+  @Roles()
   @HttpCode(HttpStatus.OK)
   @ApiOperation( {summary: 'Get All Inventory'})
   @ApiResponse(unauthorized_response)
@@ -51,7 +51,7 @@ export class InventoryController {
 }
 
   @Get(':id')
-  @Roles(Role.SUPER_ADMIN, Role.OWNER, Role.STAFF)
+  @Roles()
   @HttpCode(HttpStatus.OK)
   @ApiOperation( {summary: 'Get Inventory by ID'})
   @ApiResponse(unauthorized_response)
@@ -59,13 +59,13 @@ export class InventoryController {
   @ApiResponse(get_inventory_by_id_bad_request_response)
   @ApiResponse(unauthorized_role_response)
   @ApiBearerAuth('JWT')
-  async getInventoryById(@Param('id', ParseIntPipe) id: number): Promise<Inventory> {
+  async getInventoryById(@Param('id', ParseIntPipe) id: number): Promise<inventory> {
     return this.inventoryService.getInventoryById(id);
   }
 
   @Patch(':id')
   @HttpCode(HttpStatus.CREATED)
-  @Roles(Role.SUPER_ADMIN, Role.OWNER)
+  @Roles()
   @ApiOperation( {summary: 'Update Inventory'})
   @ApiBearerAuth('JWT')
   @ApiResponse(unauthorized_response)
@@ -79,7 +79,7 @@ export class InventoryController {
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  @Roles(Role.SUPER_ADMIN, Role.OWNER)
+  @Roles()
   @ApiOperation( {summary: 'Delete Data Inventory'})
   @ApiResponse(unauthorized_response)
   @ApiResponse(delete_inventory_response)

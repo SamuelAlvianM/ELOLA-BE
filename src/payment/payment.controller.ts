@@ -4,18 +4,18 @@ import { Controller, Get, Post, Delete, Body, Param, NotFoundException, UseGuard
 import { PaymentService } from './payment.service';
 import {CreatePayment, UpdatePayment } from './dto/payment.dto';
 import { JwtAuthGuard } from 'src/utils/guard/jwt.guard';
-import { RolesGuard } from 'src/utils/guard/roles.guard';
+import { Roles_Guards } from 'src/utils/guard/roles.guard';
 import { Roles } from 'src/utils/decorator/roles.decorator';
-import { Payment, Role } from '@prisma/client';
+import { payment, has_role } from '@prisma/client';
 import { ApiBadRequestResponse, ApiBearerAuth, ApiQuery, ApiResponse, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
 
 @ApiTags('Payments')
 @Controller('payments')
-@UseGuards(JwtAuthGuard, RolesGuard)
+@UseGuards(JwtAuthGuard, Roles_Guards)
 export class PaymentController {
   constructor(private readonly paymentService: PaymentService) {}
 
-  @Roles(Role.SUPER_ADMIN, Role.OWNER)
+  @Roles()
   @Post()
   @HttpCode(HttpStatus.CREATED)
   @ApiResponse( unauthorized_response )
@@ -38,7 +38,7 @@ export class PaymentController {
     }
   }
 
-  @Roles(Role.SUPER_ADMIN, Role.OWNER, Role.STAFF)
+  @Roles()
   @HttpCode(HttpStatus.OK)
   @ApiResponse( unauthorized_response )
   @ApiResponse( get_Payment_by_id_response)
@@ -46,11 +46,11 @@ export class PaymentController {
   @ApiUnauthorizedResponse(unauthorized_role_response)
   @ApiBearerAuth('JWT')
   @Get(':id')
-  async getPaymentById(@Param('id', ParseIntPipe) id: number): Promise<Payment> {
+  async getPaymentById(@Param('id', ParseIntPipe) id: number): Promise<payment> {
     return this.paymentService.getPaymentById(id);
   }
 
-  @Roles(Role.SUPER_ADMIN, Role.OWNER, Role.STAFF)
+  @Roles()
   @HttpCode(HttpStatus.OK)
   @ApiResponse( unauthorized_response )
   @ApiResponse( get_all_payments_response)
@@ -69,7 +69,7 @@ export class PaymentController {
   }
   
   @HttpCode(HttpStatus.CREATED)
-  @Roles(Role.SUPER_ADMIN, Role.OWNER)
+  @Roles()
   @ApiResponse( update_Payment_response)
   @ApiBadRequestResponse(update_Payment_bad_request_response)
   @ApiResponse( update_Payment_response)
@@ -82,7 +82,7 @@ export class PaymentController {
     return this.paymentService.updatePayment(+id, data);
   }
 
-  @Roles(Role.SUPER_ADMIN, Role.OWNER)
+  @Roles()
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiResponse(delete_Payment_response)
   @ApiBadRequestResponse(delete_Payment_bad_request_response)
