@@ -9,43 +9,38 @@ export class Roles_Guards implements CanActivate {
   constructor(private readonly reflector: Reflector) {}
 
   canActivate(context: ExecutionContext): boolean {
-    // Get all roles required for the current route
     const role_required = this.reflector.getAllAndOverride<has_role[]>(
-        ROLES_KEY, 
-        [ context.getHandler(), context.getClass()],
-    );
+        'roles', [ 
+          context.getHandler(), 
+          context.getClass()
+      ]);
 
-    if(!role_required) {
+    const required_hierarchy = this.reflector.getAllAndOverride<hierarchy[]>('hierarchy', [
+          context.getHandler(),
+          context.getClass(),
+      ]);
+
+    if(!role_required && !required_hierarchy) {
         return true;
     }
-    // role(s) yang dibutuhkan untuk request 
-    const request  = context.switchToHttp().getRequest();
+
+    const request = context.switchToHttp().getRequest();
     const user = request.user;
 
-    if(!user) {
-        throw new ForbiddenException('you do not have permission to access this resource');
+    if (!user) {
+      return false;
     }
 
-    if (user.super_admin_id) {
+    const jwtPayload = user.jwtPayload;
+
+    if (user.userType === 'superAdmin') {
       return true;
     }
 
-    const hasRole =  () => role_required.some((role) => user.role.includes(role));
+    const hasRole = role_required.length === 0 || role_required.some(role => user.role === role);
 
-    if (!hasRole()) {
-      throw new ForbiddenException('You do not have the required roles');
-    }
+    const hasClass = required_hierarchy.length === 0 || required_hierarchy.some(cls => user.class === cls);
 
-    // const path = request.route.path;
-    // const method = request.method;
-    // if (user.role === Role.STAFF) {
-    //   if (method === 'POST' && path.includes('/auth/register')) {
-    //     throw new ForbiddenException('Staff cannot create new users');
-    //   }
-    // }
-
-
-    return true;
-
-  }
+    return hasRole && hasClass;
+}
 }

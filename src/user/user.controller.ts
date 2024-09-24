@@ -3,7 +3,7 @@ import { unauthorized_response, unauthorized_role_response, bad_request_response
 import { Controller, UseGuards, Get, Post, Body, HttpCode, HttpStatus, Delete, Param, Patch, NotFoundException, Query } from '@nestjs/common';
 import { UserService } from './user.service';
 import { Create_User_Dto, Update_User_Dto } from './dto/user.dto';
-import { Roles, Class, Super_Admin } from '../utils/decorator/roles.decorator';
+import { Class, Roles } from '../utils/decorator/roles.decorator';
 import {
     ApiTags,
     ApiQuery,
@@ -15,13 +15,12 @@ import {
 } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/utils/guard/jwt.guard';
 import { Roles_Guards } from '../utils/guard/roles.guard';
-import { Class_Guards } from '../utils/guard/class.guard';
-import { Super_Admin_Guard } from '../utils/guard/super_admin.guard';
 import { has_role, hierarchy } from '@prisma/client';
+import { AuthGuard } from '@nestjs/passport';
 
 @ApiTags('Users')
 @Controller('user')
-@UseGuards(JwtAuthGuard, Roles_Guards, Class_Guards, Super_Admin_Guard)
+@UseGuards(JwtAuthGuard, Roles_Guards)
 @Roles(has_role.hr, has_role.spv, has_role.owner, has_role.head, has_role.manager)
 @Class(hierarchy.company, hierarchy.branch, hierarchy.outlet)
 @ApiBearerAuth('JWT')

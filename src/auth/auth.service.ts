@@ -18,7 +18,7 @@ export class AuthService {
     ) {}
 
     // Validation system
-    async validateUser(user_name: string, password: string) {
+    async validate_user(user_name: string, password: string) {
         const user = await this.prisma.user.findUnique({ where: {user_name}});
 
         if(user && user.password === password) {
@@ -51,6 +51,7 @@ export class AuthService {
         return {
             email: super_admin.admin_email,
             admin_name: super_admin.admin_name,
+            role: super_admin.role,
             access_token: access_token
         }
     }
@@ -77,11 +78,13 @@ export class AuthService {
         const payload = { 
             email: user? user.email : super_admin.admin_email, 
             user_name: user? user.user_name : super_admin.admin_name,
+            role: account.role,
             sub: user? user.user_id : super_admin.super_admin_id,
         };
         return {
             user_name: user? user.user_name : super_admin.admin_name,
             email: user? user.email : super_admin.admin_email,
+            role: user? user.role : super_admin.role,
             access_token: this.jwtService.sign(payload),
         };
       }
@@ -114,6 +117,7 @@ export class AuthService {
         return {
             user_name: account.user_name || account.admin_name,
             email: account.email || account.admin_email,
+            role: account.role || account.admin_role,
             access_token: access_token,
         }
       }

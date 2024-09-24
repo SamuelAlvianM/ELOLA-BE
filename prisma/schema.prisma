@@ -10,7 +10,7 @@ datasource db {
 
 model super_admin {
   super_admin_id Int       @id @default(autoincrement())
-  role           String    @default("super_admin")
+  admin_role     String    @default("super_admin")
   admin_email    String    @unique @db.VarChar(50)
   admin_name     String    @db.VarChar(50)
   admin_pin      String    @unique 

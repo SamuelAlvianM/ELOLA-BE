@@ -1,22 +1,21 @@
 /* eslint-disable prettier/prettier */
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { ConfigService } from '@nestjs/config';
 import * as dotenv from 'dotenv';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { user, super_admin } from '@prisma/client';
+
+
 
 dotenv.config();
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
-
     constructor(
         private readonly configService: ConfigService, 
         private readonly prisma: PrismaService,
     ) {
-
         super({
             jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
             ignoreExpiration: false,
@@ -24,26 +23,32 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
         });
     }
 
-    async validate(payload:any) {
-        let user: user | super_admin | null = null;
+    async validate(payload: any) {
 
-        if( payload.sub) {
-            user = await this.prisma.user.findUnique({ where: { user_id: payload.sub } });
+        const user = await this.prisma.user.findUnique({where: {user_id: payload.sub}});
+        if (user) {
+            return { 
+                ...user,
+                 user_type: user.role, 
+                 jwt_payload: payload
+                };
         }
 
-        if(!user && payload.pin) {
-            user = await this.prisma.user.findUnique({ where: { pin: payload.pin } });
+        const superAdmin = await this.prisma.super_admin.findFirst({ 
+            where: { 
+                OR: [
+                    { admin_pin: payload.sub.toString() },
+                    { super_admin_id: typeof payload.sub === 'number' ? payload.sub : undefined }
+                ]
+            }
+        });
+        if (superAdmin) {
+            return { 
+                ...superAdmin, 
+                user_type: 'super_admin', 
+                jwt_payload: payload};
         }
 
-        if (!user) {
-            user = await this.prisma.super_admin.findUnique({ where: { super_admin_id: payload.sub }});
-        }
-
-        if (!user) {
-            throw new UnauthorizedException('User not found');
-        }
-
-        console.log('JWT Payload:', payload);
-        return user;
+        throw new UnauthorizedException('User not found');
     }
 }

@@ -72,6 +72,7 @@ export class UserService {
             throw new ConflictException(`Error occured: ${error.message}`);
         }
     }
+    
 
     async get_all_users(page: number, limit: number) {
       const max_limit = 10;
