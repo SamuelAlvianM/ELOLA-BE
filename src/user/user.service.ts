@@ -89,8 +89,7 @@ export class UserService {
             company: true,
             branches: true,
             outlet: true,
-            store_staff: true,
-            transaction: true,
+            order: true,
           },
         }),
         this.prisma.user.count({
@@ -112,7 +111,7 @@ export class UserService {
       };
     }
 
-    async get_user_by_id(user_id: number): Promise<user> {
+    async get_user_by_id(user_id: string): Promise<user> {
         const user = await this.prisma.user.findFirst({
             where: {
                 user_id,
@@ -122,8 +121,7 @@ export class UserService {
               company: true,
               branches: true,
               outlet: true,
-              store_staff: true,
-              transaction: true,
+              order: true,
             },
         });
 
@@ -143,7 +141,7 @@ export class UserService {
       });
     }
 
-    async update_user_data(user_id: number, update_dto: Update_User_Dto) {
+    async update_user_data(user_id: string, update_dto: Update_User_Dto) {
         const user = await this.prisma.user.findUnique({ where: { user_id: user_id } });
 
         if (!user) {
@@ -172,7 +170,7 @@ export class UserService {
         return updatedUser
     }
 
-    async soft_delete_user(user_id: number): Promise<user> {
+    async soft_delete_user(user_id: string): Promise<user> {
         return this.prisma.user.update({
             where: {
                 user_id
@@ -184,7 +182,7 @@ export class UserService {
         });
     }
 
-    async get_current_user(user_id: number): Promise<user> {
+    async get_current_user(user_id: string): Promise<user> {
       const user = await this.prisma.user.findFirst({
         where:{
           user_id,
@@ -194,8 +192,7 @@ export class UserService {
           company: true,
           branches: true,
           outlet: true,
-          store_staff: true,
-          transaction: true,
+          order: true,
         },
       });
 

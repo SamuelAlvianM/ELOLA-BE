@@ -26,9 +26,9 @@ export class ProductCategoryController {
   @ApiBearerAuth('JWT')
   async createNewCategory(
     @Body() createProductCategoryDto: CreateProductCategoryDto,
-    @Query('storeId', ParseIntPipe) storeId: number,
+    @Query('outlet_id') outlet_id: string,
   ) {
-    const result = await this.productCategoryService.createNewCategory(createProductCategoryDto, storeId);
+    const result = await this.productCategoryService.createNewCategory(createProductCategoryDto, outlet_id);
     return {
       statusCode: HttpStatus.CREATED,
       message: "Data Category Product Created Success!",

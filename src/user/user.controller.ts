@@ -61,8 +61,8 @@ export class UserController {
     @ApiNotFoundResponse(not_found_response)
     @ApiBadRequestResponse(bad_request_response)
     @ApiUnauthorizedResponse(unauthorized_response)
-    async findOne(@Param('user_id') user_id: number) {
-        const result = await this.user_service.get_user_by_id(+user_id);
+    async findOne(@Param('user_id') user_id: string) {
+        const result = await this.user_service.get_user_by_id(user_id);
         return {
             statusCode: HttpStatus.OK,
             message: 'Successfully fetched user by id',
@@ -86,8 +86,8 @@ export class UserController {
     @ApiNotFoundResponse(not_found_response)
     @ApiBadRequestResponse(bad_request_response)
     @ApiUnauthorizedResponse(unauthorized_response)
-    async update(@Param('user_id') user_id: number, @Body() update_dto: Update_User_Dto) {
-        const result = await this.user_service.update_user_data(+user_id, update_dto);
+    async update(@Param('user_id') user_id: string, @Body() update_dto: Update_User_Dto) {
+        const result = await this.user_service.update_user_data(user_id, update_dto);
         return {
             statusCode: HttpStatus.OK,
             message: 'Data Update Success!',
@@ -101,8 +101,8 @@ export class UserController {
     @ApiNotFoundResponse(not_found_response)
     @ApiBadRequestResponse(bad_request_response)
     @ApiUnauthorizedResponse(unauthorized_response)
-    async softDeleteUser(@Param('user_id') user_id: number) {
-        const user = await this.user_service.soft_delete_user(+user_id);
+    async softDeleteUser(@Param('user_id') user_id: string) {
+        const user = await this.user_service.soft_delete_user(user_id);
 
         if (!user) {
             throw new NotFoundException ("Data User Not Found!")

@@ -10,46 +10,46 @@ import { has_role } from '@prisma/client';
 @ApiTags('Saved Orders')
 @UseGuards(JwtAuthGuard, Roles_Guards)
 export class SavedOrderController {
-  constructor(private readonly savedOrderService: SavedOrderService) {}
+  // constructor(private readonly savedOrderService: SavedOrderService) {}
 
-  @Post()
-  @ApiBearerAuth('JWT')
-  @Roles()
-  async create(@Body('transactionId') transactionId: number) {
-    return this.savedOrderService.createSavedOrder(transactionId);
-  }
+  // @Post()
+  // @ApiBearerAuth('JWT')
+  // @Roles()
+  // async create(@Body('transactionId') transactionId: number) {
+  //   return this.savedOrderService.createSavedOrder(transactionId);
+  // }
 
-  @Get()
-  @ApiBearerAuth('JWT')
-  @Roles()
-  async findAll(
-    @Query('page', ParseIntPipe) page: number, 
-    @Query('limit', ParseIntPipe) limit: number
-  ) {
-    return this.savedOrderService.findAllSavedOrders(page, limit);
-  }
+  // @Get()
+  // @ApiBearerAuth('JWT')
+  // @Roles()
+  // async findAll(
+  //   @Query('page', ParseIntPipe) page: number, 
+  //   @Query('limit', ParseIntPipe) limit: number
+  // ) {
+  //   return this.savedOrderService.findAllSavedOrders(page, limit);
+  // }
 
-  @Get(':id')
-  @ApiBearerAuth('JWT')
-  @Roles()
-  async findOne(@Param('id') id: number) {
-    return this.savedOrderService.findOneSavedOrder(id);
-  }
+  // @Get(':id')
+  // @ApiBearerAuth('JWT')
+  // @Roles()
+  // async findOne(@Param('id') id: number) {
+  //   return this.savedOrderService.findOneSavedOrder(id);
+  // }
 
-  @Patch(':id')
-  @ApiBearerAuth('JWT')
-  @Roles()
-  async update(
-    @Param('id') id: number, 
-    @Body() updateSavedOrderDto: { is_done?: boolean; status?: string }
-  ) {
-    return this.savedOrderService.updateSavedOrder(id, updateSavedOrderDto);
-  }
+  // @Patch(':id')
+  // @ApiBearerAuth('JWT')
+  // @Roles()
+  // async update(
+  //   @Param('id') id: number, 
+  //   @Body() updateSavedOrderDto: { is_done?: boolean; status?: string }
+  // ) {
+  //   return this.savedOrderService.updateSavedOrder(id, updateSavedOrderDto);
+  // }
 
-  @Delete(':id')
-  @ApiBearerAuth('JWT')
-  @Roles()
-  async remove(@Param('id') id: number) {
-    return this.savedOrderService.deleteSavedOrder(id);
-  }
+  // @Delete(':id')
+  // @ApiBearerAuth('JWT')
+  // @Roles()
+  // async remove(@Param('id') id: number) {
+  //   return this.savedOrderService.deleteSavedOrder(id);
+  // }
 }

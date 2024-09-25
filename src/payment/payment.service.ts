@@ -9,11 +9,11 @@ export class PaymentService {
   constructor(private prisma: PrismaService) {}
 
   async createPayment(createPaymentDto: CreatePayment) {
-    const { store_id, payment_name, payment_type } = createPaymentDto;
+    const { outlet_id, payment_name, payment_type } = createPaymentDto;
 
     const payment = await this.prisma.payment.create({
       data: {
-        store_id: store_id || null, 
+        outlet_id: outlet_id || null, 
         payment_name,
         payment_type,
       },
@@ -72,7 +72,7 @@ export class PaymentService {
     return this.prisma.payment.update({
       where: { payment_id },
       data: {
-        store_id: data.store_id,
+        outlet_id: data.outlet_id,
         payment_name: data.payment_name,
         payment_type: data.payment_type,
       },

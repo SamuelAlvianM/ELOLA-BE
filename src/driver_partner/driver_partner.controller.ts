@@ -52,7 +52,7 @@ export class DriverPartnerController {
         }
     }
 
-    @Post(':store_id')
+    @Post(':outlet_id')
     @UseGuards(JwtAuthGuard, Roles_Guards)
     @Roles()
     @ApiBearerAuth('JWT')
@@ -61,10 +61,10 @@ export class DriverPartnerController {
     @ApiUnauthorizedResponse(unauthorized_response)
     @ApiBadRequestResponse(create_dp_bad_request_response)
     async createDriver_Partner(
-        @Param('store_id', ParseIntPipe) store_id: number,
+        @Param('outlet_id' ) outlet_id: string,
         @Body() create_driver_partner: Create_DP_Dto,
     ) {
-        const result = await this.service_dp.create_Driver_Partner(create_driver_partner, store_id);
+        const result = await this.service_dp.create_Driver_Partner(create_driver_partner, outlet_id);
         return {
             StatusCode: HttpStatus.CREATED,
             response: 'Successfully created driver partner',

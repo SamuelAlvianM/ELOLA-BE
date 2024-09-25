@@ -10,7 +10,7 @@ export class CreatePayment {
     @IsNotEmpty()
     @ApiProperty({example: 1})
     @Expose()
-    store_id?: number;
+    outlet_id?: string;
     
     @IsString()
     @IsNotEmpty()
@@ -30,7 +30,7 @@ export class UpdatePayment {
     @IsOptional()
     @ApiProperty({example: 1})
     @Expose()
-    store_id?: number;
+    outlet_id?: string;
     
     @IsString()
     @IsNotEmpty()

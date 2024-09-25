@@ -8,12 +8,12 @@ import { product_category } from '@prisma/client';
 export class ProductCategoryService {
   constructor(private prisma: PrismaService) {}
 
-  async createNewCategory(data: CreateProductCategoryDto, store_id: number) {
+  async createNewCategory(data: CreateProductCategoryDto, outlet_id: string) {
     return this.prisma.product_category.create({
       data: {
         ...data,
-        store: {
-          connect: {store_id: store_id},
+        outlet: {
+          connect: {outlet_id: outlet_id},
         },
       },
 

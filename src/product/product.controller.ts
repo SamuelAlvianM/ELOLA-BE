@@ -98,7 +98,7 @@ export class ProductController {
   @ApiBearerAuth('JWT')
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.productService.findOne(+id);
+    return this.productService.findOne(id);
   }
 
   @HttpCode(HttpStatus.CREATED)
@@ -110,7 +110,7 @@ export class ProductController {
   @ApiBearerAuth('JWT')
   @Put(':id')
   update(@Param('id') id: string, @Body() updateProductDto: UpdateProductDto) {
-    return this.productService.update(+id, updateProductDto);
+    return this.productService.update(id, updateProductDto);
   }
 
   @Roles()
@@ -122,7 +122,7 @@ export class ProductController {
   @ApiBearerAuth('JWT')
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.productService.remove(+id);
+    return this.productService.remove(id);
   }
 
   @Roles()
@@ -148,7 +148,7 @@ export class ProductController {
   @ApiBearerAuth('JWT')
   @Delete(':productId/taxes/:taxId')
   async removeTaxFromProduct(
-    @Param('productId') productId: number,
+    @Param('productId') productId: string,
     @Param('taxId') taxId: number,
   ) {
     return this.productService.remove_tax_product(productId, taxId);
@@ -162,7 +162,7 @@ export class ProductController {
   @ApiResponse( unauthorized_response)
   @ApiBearerAuth('JWT')
   @Get(':productId')
-  async getProductWithTaxesAndPromos(@Param('productId') productId: number) {
+  async getProductWithTaxesAndPromos(@Param('productId') productId: string) {
     return this.productService.get_product_taxes_promos(productId);
   }
 }

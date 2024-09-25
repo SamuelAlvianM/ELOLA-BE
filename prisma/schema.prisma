@@ -10,7 +10,7 @@ datasource db {
 
 model super_admin {
   super_admin_id Int       @id @default(autoincrement())
-  admin_role     String    @default("super_admin")
+  role           String    @default("super_admin")
   admin_email    String    @unique @db.VarChar(50)
   admin_name     String    @db.VarChar(50)
   admin_pin      String    @unique 
@@ -22,31 +22,29 @@ model super_admin {
 }
 
 model user {
-  user_id      Int           @id @default(autoincrement())
-  user_name    String        @unique  @db.VarChar(50)
-  email        String        @unique  @db.VarChar(100)
-  pin          String        @unique  
+  user_id      String         @id @default(uuid())
+  user_name    String         @unique  @db.VarChar(50)
+  email        String         @unique  @db.VarChar(100)
+  pin          String         @unique  
   password     String        
   role         has_role
   class        hierarchy
-  created_at   DateTime      @default(now())
-  updated_at   DateTime      @updatedAt
+  created_at   DateTime       @default(now())
+  updated_at   DateTime       @updatedAt
   deleted_at   DateTime?
-  is_deleted   Boolean       @default(false)
-  user_closing open_close[]  @relation("user_closed")
-  user_opening open_close[]  @relation("user_open")
+  is_deleted   Boolean        @default(false)
+  open_closes  open_close[]
   company      company?       @relation(fields: [company_id], references: [company_id])
-  company_id   Int?
-  outlet       outlet?       @relation(fields: [outlet_id], references: [outlet_id])
-  outlet_id    Int?
-  branches     branch? @relation(fields: [branch_id], references: [branch_id])  
-  branch_id    Int?
-  store_staff  store_staff[]
-  transaction  transaction[]
+  company_id   String?
+  outlet       outlet?        @relation(fields: [outlet_id], references: [outlet_id])
+  outlet_id    String?
+  branches     branch?        @relation(fields: [branch_id], references: [branch_id])  
+  branch_id    String?
+  order        order[]
 }
 
 model company {
-  company_id        Int       @id @default(autoincrement())
+  company_id        String    @id @default(uuid())
   company_name      String    @unique @db.VarChar(50)
   company_owner     String    @db.VarChar(30)
   company_address   String    @db.Text
@@ -63,7 +61,7 @@ model company {
 }
 
 model branch {
-  branch_id       Int       @id @default(autoincrement())
+  branch_id       String    @id @default(uuid())
   branch_name     String    @unique @db.VarChar(50)
   branch_address  String    @db.Text
   branch_email    String    @db.VarChar(50)
@@ -73,15 +71,15 @@ model branch {
   updated_at      DateTime  @updatedAt
   deleted_at      DateTime?
   is_deleted      Boolean   @default(false)
-  company         company   @relation(fields: [company_id], references: [company_id])
-  company_id      Int
+  company         company?   @relation(fields: [company_id], references: [company_id])
+  company_id      String?
   outlets         outlet[]
   open_close      open_close[]
   users           user[]
 }
 
 model outlet {
-  outlet_id       Int       @id @default(autoincrement())
+  outlet_id       String    @id @default(uuid())
   outlet_name     String    @unique @db.VarChar(50)
   outlet_address  String    @db.Text
   outlet_email    String    @db.VarChar(50)
@@ -91,58 +89,43 @@ model outlet {
   updated_at      DateTime  @updatedAt
   deleted_at      DateTime?
   is_deleted      Boolean   @default(false)
-  company         company   @relation(fields: [company_id], references: [company_id])
-  company_id      Int
-  branch          branch    @relation(fields: [branch_id], references: [branch_id])
-  branch_id       Int
-  users           user[]
-  open_close      open_close[]
-  stores          store[]
-}
-
-model store {
-  store_id           Int                 @id @default(autoincrement())
-  outlet_id          Int
-  store_name         String              @unique
-  store_address      String              @unique
-  created_at         DateTime            @default(now())
-  updated_at         DateTime            @updatedAt
-  deleted_at         DateTime?
-  driver_partners    driver_partner[]
-  driver_partner_store driver_partner_store[]
-  inventories        inventory[]
-  payments           payment[]
-  products           product[]
-  product_category   product_category[]
-  outlet             outlet              @relation(fields: [outlet_id], references: [outlet_id])
-  store_staff        store_staff[]
-  store_supply       store_supplier[]
-  transaction        transaction[]
+  company         company?   @relation(fields: [company_id], references: [company_id])
+  company_id      String?
+  branch          branch?    @relation(fields: [branch_id], references: [branch_id])
+  branch_id       String?
+  users                   user[]
+  open_closes             open_close[]
+  driver_partners         driver_partner[]
+  driver_partner_outlet   driver_partner_outlet[]
+  inventories             inventory[]
+  payments                payment[]
+  products                product[]
+  product_categories      product_category[]
+  outlet_suppliers        outlet_supplier[]
+  orders                  order[]
 }
 
 model open_close {
-  open_close_id   Int       @id @default(autoincrement())
-  user_id         Int?
-  company_id      Int?
-  branch_id       Int?
-  outlet_id       Int?
-  is_cashier_open Boolean   @default(false)
-  open_date       DateTime? @default(now())
-  open_by         Int?
-  close_date      DateTime? @default(now())
-  close_by        Int?
-  bill_quantity   Int
-  created_at      DateTime  @default(now())
-  updated_at      DateTime  @updatedAt
-  deleted_at      DateTime?
+  open_close_id     Int       @id @default(autoincrement())
+  is_cashier_open   Boolean   @default(false)
+  start_time        DateTime? @default(now())
+  end_time          DateTime? @default(now())
+  bill_quantity     Int
+  created_at        DateTime  @default(now())
+  updated_at        DateTime  @updatedAt
+  deleted_at        DateTime?
+  is_deleted        Boolean   @default(false)
 
-  user_closed     user?     @relation("user_closed", fields: [close_by], references: [user_id])
-  user_opened     user?     @relation("user_open", fields: [open_by], references: [user_id])
+  user            user?     @relation(fields: [user_id], references: [user_id])
+  user_id         String?
   company         company?  @relation(fields: [company_id], references: [company_id])
+  company_id      String?
   branch          branch?   @relation(fields: [branch_id], references: [branch_id])
+  branch_id       String?
   outlet          outlet?   @relation(fields: [outlet_id], references: [outlet_id])
+  outlet_id       String?
 
-  @@unique([user_id, company_id, branch_id, outlet_id, open_date, close_date])
+  @@unique([user_id, company_id, branch_id, outlet_id, start_time, end_time])
 }
 
 model tax {
@@ -158,38 +141,38 @@ model tax {
   supplier_supplier_id Int?
   product_tax         product_tax[]
   supplier_tax        supplier_tax[]
+  orders              order[]
   supplier            supplier?     @relation(fields: [supplier_supplier_id], references: [supplier_id])
-  transaction         transaction[]
 }
 
 model product_category {
   product_category_id Int       @id @default(autoincrement())
-  store_id            Int
+  outlet_id           String
   category_name       String
   created_at          DateTime  @default(now())
   updated_at          DateTime  @updatedAt
   deleted_at          DateTime?
-  store               store     @relation(fields: [store_id], references: [store_id])
+  outlet              outlet     @relation(fields: [outlet_id], references: [outlet_id])
   product             product[]
 }
 
 model inventory {
   inventory_id      Int                 @id @default(autoincrement())
-  product_id        Int
-  store_id          Int
+  product_id        String
+  outlet_id         String
   inventory_name    String
   in_storage_date   DateTime            @default(now())
-  value_stored      Int
-  value_out         Int
+  value_in          Int?
+  value_out         Int?
   out_storage_date  DateTime            @default(now())
   created_at        DateTime            @default(now())
   updated_at        DateTime            @updatedAt
   deleted_at        DateTime?
   product           product             @relation(fields: [product_id], references: [product_id])
-  store             store               @relation(fields: [store_id], references: [store_id])
+  outlet            outlet               @relation(fields: [outlet_id], references: [outlet_id])
   inventory_supply  inventory_supplier[]
 
-  @@unique([product_id, store_id])
+  @@unique([product_id, outlet_id])
 }
 
 model supplier {
@@ -202,40 +185,40 @@ model supplier {
   updated_at        DateTime            @updatedAt
   deleted_at        DateTime?
   inventory_supply inventory_supplier[]
-  store_supply      store_supplier[]
+  outlet_supply      outlet_supplier[]
   supplier_tax       supplier_tax[]
   taxes              tax[]
 }
 
 model driver_partner {
   driver_partner_id  Int                  @id @default(autoincrement())
-  store_id           Int
-  partner_name       String               @unique
-  benefit            Float
-  created_at         DateTime             @default(now())
-  updated_at         DateTime             @updatedAt
-  deleted_at         DateTime?
-  stores             store                @relation(fields: [store_id], references: [store_id])
-  driver_partner_store driver_partner_store[]
-  transaction        transaction[]
+  outlet_id             String
+  partner_name          String               @unique
+  benefit               Float
+  created_at            DateTime             @default(now())
+  updated_at            DateTime             @updatedAt
+  deleted_at            DateTime?
+  outlets                outlet                @relation(fields: [outlet_id], references: [outlet_id])
+  driver_partner_outlet  driver_partner_outlet[]
+  orders                order[]
 
-  @@unique([store_id, partner_name])
+  @@unique([outlet_id, partner_name])
 }
 
 model payment {
   payment_id   Int          @id @default(autoincrement())
-  store_id     Int?
+  outlet_id    String?
   payment_name String
   payment_type payment_type
   created_at   DateTime     @default(now())
   updated_at   DateTime     @updatedAt
   deleted_at   DateTime?
-  store        store?       @relation(fields: [store_id], references: [store_id])
+  outlet       outlet?       @relation(fields: [outlet_id], references: [outlet_id])
 }
 
 model product {
-  product_id          Int            @id @default(autoincrement())
-  store_id            Int
+  product_id          String         @id @default(uuid())
+  outlet_id           String
   product_category_id Int
   product_name        String         @unique
   product_price       Int
@@ -246,32 +229,32 @@ model product {
   updated_at          DateTime       @updatedAt
   deleted_at          DateTime?
 
-  inventories         inventory[]
   product_category    product_category @relation(fields: [product_category_id], references: [product_category_id])
-  store               store           @relation(fields: [store_id], references: [store_id])
+  outlet              outlet           @relation(fields: [outlet_id], references: [outlet_id])
+  inventories         inventory[]
   product_promos      product_promo[]
   product_taxes       product_tax[]
-  transactions        transaction_product[]
+  order_products      order_product[]
 }
 
-model transaction_product {
-  id             Int       @id @default(autoincrement())
-  transaction_id Int
-  product_id     Int
+model order_product {
+  order_product_id      Int       @id @default(autoincrement())
+  order_id       String
+  product_id     String
   quantity       Int
   saved_order_id Int?
   
-  transaction    transaction @relation(fields: [transaction_id], references: [transaction_id])
-  product        product     @relation(fields: [product_id], references: [product_id])
+  orders         order         @relation(fields: [order_id], references: [order_id])
+  product        product      @relation(fields: [product_id], references: [product_id])
   saved_order    saved_order? @relation(fields: [saved_order_id], references: [saved_order_id])
   
-  @@unique([transaction_id, product_id])
+  @@unique([order_id, product_id])
 }
 
-model transaction {
-  transaction_id   Int                @id @default(autoincrement())
-  store_id         Int
-  user_id          Int
+model order {
+  order_id         String                @id @default(uuid())
+  outlet_id        String
+  user_id          String
   tax_id           Int
   driver_partner   String?
   order_type       order_type
@@ -288,17 +271,17 @@ model transaction {
   updated_at       DateTime           @updatedAt
   deleted_at       DateTime?
 
-  store            store              @relation(fields: [store_id], references: [store_id])
+  outlet           outlet              @relation(fields: [outlet_id], references: [outlet_id])
   user             user               @relation(fields: [user_id], references: [user_id])
   taxes            tax                @relation(fields: [tax_id], references: [tax_id])
   partner          driver_partner?    @relation(fields: [driver_partner], references: [partner_name])
-  products         transaction_product[]
+  order_products   order_product[]
   saved_orders     saved_order[]
 }
 
 model promo {
   promo_id     Int            @id @default(autoincrement())
-  product_id   Int?
+  product_id   String?
   promo_type   promo_type
   promo_value  Int
   start_date   DateTime       @default(now())
@@ -311,7 +294,7 @@ model promo {
 }
 
 model product_promo {
-  product_id Int
+  product_id String
   promo_id   Int
   id         Int     @id @default(autoincrement())
   product    product @relation(fields: [product_id], references: [product_id])
@@ -321,7 +304,7 @@ model product_promo {
 }
 
 model product_tax {
-  product_id     Int
+  product_id     String
   tax_id         Int
   product_tax_id Int     @id @default(autoincrement())
   product        product @relation(fields: [product_id], references: [product_id])
@@ -331,22 +314,22 @@ model product_tax {
 }
 
 
-model driver_partner_store {
-  driver_partner_id Int
-  store_id          Int
+model driver_partner_outlet{
+  driver_partner_id  Int
+  outlet_id          String
   driver_partners   driver_partner @relation(fields: [driver_partner_id], references: [driver_partner_id])
-  store             store         @relation(fields: [store_id], references: [store_id])
+  outlet             outlet         @relation(fields: [outlet_id], references: [outlet_id])
 
-  @@id([driver_partner_id, store_id])
+  @@id([driver_partner_id, outlet_id])
 }
 
-model store_supplier {
-  store_id    Int
-  supplier_id Int
-  store       store    @relation(fields: [store_id], references: [store_id])
+model outlet_supplier {
+  outlet_id    String
+  supplier_id  Int
+  outlet       outlet    @relation(fields: [outlet_id], references: [outlet_id])
   supplier    supplier @relation(fields: [supplier_id], references: [supplier_id])
 
-  @@id([store_id, supplier_id])
+  @@id([outlet_id, supplier_id])
 }
 
 model inventory_supplier {
@@ -367,21 +350,9 @@ model supplier_tax {
   @@id([supplier_id, tax_id])
 }
 
-model store_staff {
-  store_staff_id Int       @id @default(autoincrement())
-  store_id       Int
-  user_id        Int
-  role           String
-  created_at     DateTime  @default(now())
-  updated_at     DateTime  @updatedAt
-  deleted_at     DateTime?
-  store          store     @relation(fields: [store_id], references: [store_id])
-  user           user      @relation(fields: [user_id], references: [user_id])
-}
-
 model saved_order {
   saved_order_id    Int          @id @default(autoincrement())
-  transaction_id    Int?
+  order_id          String?
   is_done           Boolean?      @default(false)
   status            String        
 
@@ -389,8 +360,8 @@ model saved_order {
   updated_at        DateTime     @updatedAt
   deleted_at        DateTime?
 
-  transaction           transaction? @relation(fields: [transaction_id], references: [transaction_id])
-  transaction_products  transaction_product[]  
+  orders           order? @relation(fields: [order_id], references: [order_id])
+  order_products  order_product[]  
 }
 
 

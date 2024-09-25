@@ -1,26 +1,26 @@
 import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { Handle_Open_Close_Dto } from './dto/oc.dto';
-import { Update_Store_Dto } from '../store/dto/store.dto';
+import { Update_Outlet_Dto } from '../outlet/dto/outlet.dto';
 
 @Injectable()
 export class OpenCloseService {
   constructor(private readonly prisma: PrismaService) {}
 
 
-  async getOpenSessionForStore(store_id: number) {
+  async getOpenSessionForStore(outlet_id: string) {
     return this.prisma.open_close.findFirst({
       where: {
-        // store_id,
+        outlet_id,
         is_cashier_open: true,
       },
       orderBy: {
-        open_date: 'desc',
+        start_time: 'desc',
       },
     });
   }
 
-  private async open_cashier(user_id: number, store_id: number, open_close: Handle_Open_Close_Dto) {
+  private async open_cashier(user_id: string, outlet_id: string, open_close: Handle_Open_Close_Dto) {
     if (open_close && open_close.is_cashier_open) {
         throw new BadRequestException('Cashier is already open');
     }
@@ -28,17 +28,16 @@ export class OpenCloseService {
     return await this.prisma.open_close.create ({
         data: {
             user_id,
-            // store_id,
+            outlet_id,
             is_cashier_open: true,
-            open_by: user_id,
-            open_date: new Date(),
+            start_time: new Date(),
             bill_quantity: 0,
         },
     });
   }
   
 
-  private async close_cashier(user_id: number, store_id: number, open_close: any) {
+  private async close_cashier(user_id: string, outlet_id: string, open_close: any) {
     // Jika tidak ada sesi terbuka atau kasir tidak terbuka
     if (!open_close || !open_close.is_cashier_open) {
       throw new BadRequestException('Cashier is not open. There is no open session to close.');
@@ -47,7 +46,7 @@ export class OpenCloseService {
     const transactions_count = await this.prisma.open_close.count({
       where: {
         user_id,
-        // store_id,
+        outlet_id,
         created_at: {
           gte: open_close.open_date, // lebih besar dan sama dengan = gte
           lte: new Date() // lebih kecil dan sama dengan = lte
@@ -59,21 +58,20 @@ export class OpenCloseService {
       where: { open_close_id: open_close.open_close_id },
       data: {
         is_cashier_open: false,
-        close_by: user_id,
-        close_date: new Date(),
+        end_time: new Date(),
         bill_quantity: transactions_count,
       }
     });
   }
 
-  async handle_cashier_status(user_id: number, store_id: number, oc_dto: Handle_Open_Close_Dto) {
+  async handle_cashier_status(user_id: string, outlet_id: string, oc_dto: Handle_Open_Close_Dto) {
     const open_close = await this.prisma.open_close.findFirst({
       where: {
-        // store_id,
+        outlet_id,
         is_cashier_open: true,
       },
       orderBy: {
-        open_date: 'desc',
+        start_time: 'desc',
       },
     });
 
@@ -83,14 +81,14 @@ export class OpenCloseService {
         throw new BadRequestException('Cashier is already open. Please close it first if you want to open it again.');
       }
 
-      return await this.open_cashier(user_id, store_id, open_close);
+      return await this.open_cashier(user_id, outlet_id, open_close);
     } else {
       // Jika kasir sudah ditutup
       if (!open_close || !open_close.is_cashier_open) {
         throw new BadRequestException('Cashier is not open. There is no open session to close.');
       }
 
-      return await this.close_cashier(user_id, store_id, open_close);
+      return await this.close_cashier(user_id, outlet_id, open_close);
     }
   }
 

@@ -47,15 +47,15 @@ export class DriverPartnerService {
         });
     }
 
-    async create_Driver_Partner(create_driver_partner: Create_DP_Dto, store_id: number) {
+    async create_Driver_Partner(create_driver_partner: Create_DP_Dto, outlet_id: string) {
 
         const { partner_name, benefit} = create_driver_partner;
         return this.prisma.driver_partner.create({
             data: {
                 partner_name: partner_name,
                 benefit: benefit,
-                stores: {
-                    connect:{store_id: store_id}
+                outlets: {
+                    connect:{outlet_id: outlet_id}
                 }
             },
         });
