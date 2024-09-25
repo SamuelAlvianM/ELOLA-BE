@@ -8,11 +8,11 @@ async function main() {
 
   // deklarasi akun superadmin
   const super_admins = [{
-    admin_name: 'SaleMate Official',
-    admin_email: 'salemate.official@gmail.com',
-    admin_pin: "889777",
+    admin_name: 'Samuel',
+    admin_email: 'samuelalvian07@gmail.com',
+    admin_pin: "776699",
     role: 'super_admin',
-    password: await bcrypt.hash('supesradminsamuel', 10),
+    password: await bcrypt.hash('Samuel7699', 10),
   }];
 
   // data akun superadmin
