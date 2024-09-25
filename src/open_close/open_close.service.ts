@@ -83,7 +83,7 @@ export class OpenCloseService {
 
       return await this.open_cashier(user_id, outlet_id, open_close);
     } else {
-      // Jika kasir sudah ditutup
+      // Jika kasir sudah ditutupp
       if (!open_close || !open_close.is_cashier_open) {
         throw new BadRequestException('Cashier is not open. There is no open session to close.');
       }
