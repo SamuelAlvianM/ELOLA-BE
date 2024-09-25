@@ -1,6 +1,6 @@
 import { IsNotEmpty, IsString, IsInt, IsOptional, IsEnum, IsBoolean, ValidateIf } from 'class-validator';
 import { TaxController } from '../tax.controller';
-import { Tax_type } from '@prisma/client';
+import { tax_type } from '@prisma/client';
 import { ApiProperty } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
 
@@ -8,10 +8,10 @@ import { Expose } from 'class-transformer';
 export class CreateTaxDto {
 
     @IsNotEmpty()
-    @IsEnum(Tax_type)
+    @IsEnum(tax_type)
     @ApiProperty({example: "Service / VAT"})
     @Expose()
-    tax_type: Tax_type;
+    tax_type: tax_type;
 
     @Expose()
     @IsNotEmpty()
@@ -41,10 +41,10 @@ export class CreateTaxDto {
 export class UpdateTaxDto {
 
     @IsOptional()
-    @IsEnum(Tax_type)
+    @IsEnum(tax_type)
     @ApiProperty({example: "Service / VAT"})
     @Expose()
-    tax_type: Tax_type;
+    tax_type: tax_type;
 
     @IsOptional()
     @IsString()

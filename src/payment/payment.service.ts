@@ -2,18 +2,18 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreatePayment, UpdatePayment, } from './dto/payment.dto';
-import { Payment } from '@prisma/client';
+import { payment } from '@prisma/client';
 
 @Injectable()
 export class PaymentService {
   constructor(private prisma: PrismaService) {}
 
   async createPayment(createPaymentDto: CreatePayment) {
-    const { store_id, payment_name, payment_type } = createPaymentDto;
+    const { outlet_id, payment_name, payment_type } = createPaymentDto;
 
     const payment = await this.prisma.payment.create({
       data: {
-        store_id: store_id || null, 
+        outlet_id: outlet_id || null, 
         payment_name,
         payment_type,
       },
@@ -53,7 +53,7 @@ export class PaymentService {
     };
   }
 
-  async getPaymentById(payment_id: number): Promise<Payment> {
+  async getPaymentById(payment_id: number): Promise<payment> {
     const payment = await this.prisma.payment.findFirst({
       where: {
         payment_id: payment_id,
@@ -72,14 +72,14 @@ export class PaymentService {
     return this.prisma.payment.update({
       where: { payment_id },
       data: {
-        store_id: data.store_id,
+        outlet_id: data.outlet_id,
         payment_name: data.payment_name,
         payment_type: data.payment_type,
       },
     });
   }
 
-  async softDeletePayment(payment_id: number): Promise<Payment> {
+  async softDeletePayment(payment_id: number): Promise<payment> {
     return this.prisma.payment.update({
       where: {
         payment_id: payment_id,

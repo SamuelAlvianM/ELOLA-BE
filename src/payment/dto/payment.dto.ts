@@ -1,6 +1,6 @@
 /* eslint-disable prettier/prettier */
 import { IsInt, IsNotEmpty, IsString, IsEnum, IsOptional } from "class-validator";
-import { Payment_type } from "@prisma/client";
+import { payment_type } from "@prisma/client";
 import { ApiProperty } from "@nestjs/swagger";
 import { Expose } from "class-transformer";
 
@@ -10,7 +10,7 @@ export class CreatePayment {
     @IsNotEmpty()
     @ApiProperty({example: 1})
     @Expose()
-    store_id?: number;
+    outlet_id?: string;
     
     @IsString()
     @IsNotEmpty()
@@ -18,10 +18,10 @@ export class CreatePayment {
     @Expose()
     payment_name: string;
 
-    @IsEnum(Payment_type)
+    @IsEnum(payment_type)
     @ApiProperty({example: "Bank"})
     @Expose()
-    payment_type: Payment_type;
+    payment_type: payment_type;
 }
 
 export class UpdatePayment {
@@ -30,7 +30,7 @@ export class UpdatePayment {
     @IsOptional()
     @ApiProperty({example: 1})
     @Expose()
-    store_id?: number;
+    outlet_id?: string;
     
     @IsString()
     @IsNotEmpty()
@@ -38,8 +38,8 @@ export class UpdatePayment {
     @Expose()
     payment_name: string;
 
-    @IsEnum(Payment_type)
+    @IsEnum(payment_type)
     @ApiProperty({example: "E-Payment"})
     @Expose()
-    payment_type: Payment_type;
+    payment_type: payment_type;
 }

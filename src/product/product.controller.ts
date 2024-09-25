@@ -4,21 +4,21 @@ import { Controller, Get, Post, Body, Param, Delete, HttpCode, HttpStatus, Put, 
 import { ProductService } from './product.service';
 import { CreateProductDto } from './dto/product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
-import { RolesGuard } from 'src/utils/guard/roles.guard';
+import { Roles_Guards } from 'src/utils/guard/roles.guard';
 import { Roles } from 'src/utils/decorator/roles.decorator';
 import { ApiResponse, ApiBearerAuth, ApiTags, ApiQuery } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/utils/guard/jwt.guard';
-import { Role } from '@prisma/client';
+import { has_role } from '@prisma/client';
 import { delete_promo_bad_request_response, delete_promo_response } from 'tests/swagger/promo.swagger';
 
 @ApiTags('Product')
 @Controller('products')
-@UseGuards(JwtAuthGuard, RolesGuard)
+@UseGuards(JwtAuthGuard, Roles_Guards)
 export class ProductController {
   constructor(private readonly productService: ProductService) {}
 
   @Post()
-  @Roles(Role.SUPER_ADMIN, Role.OWNER)
+  @Roles()
   @HttpCode(HttpStatus.CREATED)
   @ApiResponse( create_product_response)
   @ApiResponse( create_product_bad_request_response)
@@ -29,7 +29,7 @@ export class ProductController {
     return this.productService.create_product(createProductDto);
   }
 
-  @Roles(Role.SUPER_ADMIN, Role.OWNER, Role.STAFF)
+  @Roles()
   @HttpCode(HttpStatus.OK)
   @ApiResponse( get_all_products_response)
   @ApiResponse( get_all_products_bad_request_response)
@@ -72,7 +72,7 @@ export class ProductController {
     );
   }
 
-  @Roles(Role.SUPER_ADMIN, Role.OWNER, Role.STAFF)
+  @Roles()
   @HttpCode(HttpStatus.OK)
   @ApiResponse( get_all_products_response)
   @ApiResponse( get_all_products_bad_request_response)
@@ -89,7 +89,7 @@ export class ProductController {
     };
   }
   
-  @Roles(Role.SUPER_ADMIN, Role.OWNER, Role.STAFF)
+  @Roles()
   @HttpCode(HttpStatus.OK)
   @ApiResponse( get_product_by_id_response)
   @ApiResponse( get_product_by_id_bad_request_response)
@@ -98,11 +98,11 @@ export class ProductController {
   @ApiBearerAuth('JWT')
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.productService.findOne(+id);
+    return this.productService.findOne(id);
   }
 
   @HttpCode(HttpStatus.CREATED)
-  @Roles(Role.SUPER_ADMIN, Role.OWNER)
+  @Roles()
   @ApiResponse( update_product_response)
   @ApiResponse( update_product_bad_request_response)
   @ApiResponse( forbidden_role_response )
@@ -110,10 +110,10 @@ export class ProductController {
   @ApiBearerAuth('JWT')
   @Put(':id')
   update(@Param('id') id: string, @Body() updateProductDto: UpdateProductDto) {
-    return this.productService.update(+id, updateProductDto);
+    return this.productService.update(id, updateProductDto);
   }
 
-  @Roles(Role.SUPER_ADMIN, Role.OWNER)
+  @Roles()
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiResponse( delete_promo_response)
   @ApiResponse( delete_promo_bad_request_response)
@@ -122,10 +122,10 @@ export class ProductController {
   @ApiBearerAuth('JWT')
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.productService.remove(+id);
+    return this.productService.remove(id);
   }
 
-  @Roles(Role.SUPER_ADMIN, Role.OWNER)
+  @Roles()
   @HttpCode(HttpStatus.CREATED)
   @ApiResponse( get_product_with_taxes_promos_response)
   @ApiResponse( get_product_with_taxes_promos_bad_request_response)
@@ -139,7 +139,7 @@ export class ProductController {
   ) {
     return this.productService.add_tax_product(productId, taxId);
   }
-  @Roles(Role.SUPER_ADMIN, Role.OWNER)
+  @Roles()
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiResponse( remove_tax_from_product_response)
   @ApiResponse( remove_tax_from_product_bad_request_response)
@@ -148,13 +148,13 @@ export class ProductController {
   @ApiBearerAuth('JWT')
   @Delete(':productId/taxes/:taxId')
   async removeTaxFromProduct(
-    @Param('productId') productId: number,
+    @Param('productId') productId: string,
     @Param('taxId') taxId: number,
   ) {
     return this.productService.remove_tax_product(productId, taxId);
   }
 
-  @Roles(Role.SUPER_ADMIN, Role.OWNER, Role.STAFF)
+  @Roles()
   @HttpCode(HttpStatus.OK)
   @ApiResponse( get_product_by_id_response)
   @ApiResponse( get_product_by_id_bad_request_response)
@@ -162,7 +162,7 @@ export class ProductController {
   @ApiResponse( unauthorized_response)
   @ApiBearerAuth('JWT')
   @Get(':productId')
-  async getProductWithTaxesAndPromos(@Param('productId') productId: number) {
+  async getProductWithTaxesAndPromos(@Param('productId') productId: string) {
     return this.productService.get_product_taxes_promos(productId);
   }
 }

@@ -1,9 +1,9 @@
 /* eslint-disable prettier/prettier */
 import { IsNotEmpty, IsEmail, MinLength, IsOptional, IsEnum } from 'class-validator';
-import { Role } from '@prisma/client';
+import { has_role, hierarchy } from '@prisma/client';
 import { ApiProperty } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
-export class UserDto {
+export class Create_User_Dto {
 
     @IsNotEmpty()
     @ApiProperty({example: "Samuel"})
@@ -22,14 +22,18 @@ export class UserDto {
     password: string;
 
     @IsNotEmpty()
-    @ApiProperty({example: "STAFF / OWNER"})
+    @ApiProperty({example: "hr | spv | staff | cashier | waiter | head | owner"})
     @Expose()
-    @IsEnum(Role, { message: 'role must be one of the following: STAFF, OWNER' })
-    role: Role;
+    @IsEnum(has_role, { message: `role must be one of the following: ${has_role}` })
+    role: has_role;
+
+    @ApiProperty({example:" company | branch | outlet"})
+    @IsEnum(hierarchy, {message: `class must be one of the following: ${hierarchy}` })
+    class: hierarchy;
 }
 
 
-export class UpdateDto {
+export class Update_User_Dto {
 
     @IsOptional()
     @ApiProperty({example: "Sam"})
@@ -48,9 +52,13 @@ export class UpdateDto {
     password: string;
 
     @IsOptional()
-    @ApiProperty({example: "USER / STAFF/ OWNER"})
-    @IsEnum(Role, { message: 'role must be one of the following: admin, user, superadmin' })
-    @Expose()
-    role: Role;
+    @ApiProperty({example: "hr | spv | staff | cashier | waiter | head | owner"})
+    @IsEnum(has_role, { message: `role must be one of the following: ${has_role}` })
+    role: has_role;
+
+    @IsOptional()
+    @ApiProperty({example:" company | branch | outlet"})
+    @IsEnum(hierarchy, {message: `class must be one of the following: ${hierarchy}` })
+    class: hierarchy;
     
 }

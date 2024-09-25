@@ -2,27 +2,23 @@
 import { Controller, 
     Logger,
     Injectable, 
-    NotFoundException, 
-    UnauthorizedException,
-    ConflictException 
+    BadRequestException
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
-import { UserDto } from '../user/dto/user.dto';
-import { LoginStaffDto, Super_Login } from './dto/login.dto';
+import { Login_Pin_Dto, Login_User_Dto, Super_Login_Dto } from './dto/login.dto';
+import { has_role } from '@prisma/client';
 
 @Injectable()
 export class AuthService {
-    private readonly logger = new Logger(AuthService.name);
-
     constructor(
         private prisma: PrismaService,
         private jwtService: JwtService,
     ) {}
 
     // Validation system
-    async validateUser(user_name: string, password: string) {
+    async validate_user(user_name: string, password: string) {
         const user = await this.prisma.user.findUnique({ where: {user_name}});
 
         if(user && user.password === password) {
@@ -32,119 +28,97 @@ export class AuthService {
         return null;
     }
 
-    private async generateUniquePin(): Promise<string> {
-        let pin: string;
-        let isUnique = false;
+    async super_login( super_login: Super_Login_Dto) {
+        const super_admin = await this.prisma.super_admin.findUnique({ where: { admin_email: super_login.admin_email}});
 
-        while (!isUnique) {
-            pin = Math.floor(100000 + Math.random() * 900000).toString();
-            const existingUser = await this.prisma.user.findUnique({ 
-                where: {pin},
-            });
-            if (!existingUser) {
-                isUnique = true;
-            }
+        if(!super_admin) {
+            throw new BadRequestException(`check your email: ${super_login.admin_email}, because we think you are not Super Admin`);
         }
-        return pin;
-    }
+        const check_valid_password = await bcrypt.compare(super_login.password, super_admin.password);
 
-    async register(registerUser: UserDto) {
-        const payload = await this.prisma.user.findFirst ({
-            where:{
-                OR: [
-                    { user_name: registerUser.user_name},
-                    { email: registerUser.email},
-                ],
-            },
-        });
-
-        if (payload) {
-            if ( payload.user_name === registerUser.user_name ) {
-                throw new ConflictException('User already exists');
-            } else {
-                throw new ConflictException('email already exists');
-            }
+        if(!check_valid_password) {
+            throw new BadRequestException(`Wrong Password, Try again.`);
         }
 
-        try {
-            const hashedPassword = await bcrypt.hash(registerUser.password, 10);
-            const uniquePin = await this.generateUniquePin();
-            const user = await this.prisma.user.create({
-                data: {
-                    user_name: registerUser.user_name,
-                    email: registerUser.email,
-                    password: hashedPassword,
-                    role: registerUser.role,
-                    pin: uniquePin,
-                }
-            });
-
-            const payload = { email: user.email, sub: user.user_id };
-            const accessToken = await this.jwtService.sign(payload)
-
-            return {user, access_token: accessToken};
-        } catch(error) {
-            this.logger.error(`Failed to register user: ${error.message}`);
-            throw new ConflictException(`Error occured: ${error.message}`);
+        const payload = {
+            email: super_admin.admin_email,
+            sub: super_admin.super_admin_id,
+            role: 'super_admin'
         }
-    }
 
-    async super_login(super_admin_login: Super_Login, password: string): Promise<any> {
-        const super_admin = await this.prisma.superAdmin.findFirst({ where: { admin_name: super_admin_login.admin_name } });
-    
-        if (!super_admin) {
-            throw new NotFoundException('I think you are not Admin');
-        }
-    
-        const isPasswordValid = await bcrypt.compare(password, super_admin.password);
-    
-        if (!isPasswordValid) {
-            throw new UnauthorizedException('Check your password again, something went wrong');
-        }
-    
-        const payload = { admin_name: super_admin.admin_name, sub: super_admin.super_admin_id };
+        const access_token = this.jwtService.sign(payload);
+
         return {
-            access_token: this.jwtService.sign(payload),
+            email: super_admin.admin_email,
+            admin_name: super_admin.admin_name,
+            role: super_admin.role,
+            access_token: access_token
+        }
+    }
+
+    async login_user(email: string, password: string): Promise<any> {
+
+        const [user, super_admin] = await Promise.all([
+            this.prisma.user.findUnique({ where: { email } }),
+            this.prisma.super_admin.findUnique({ where: { admin_email: email } }),
+        ]);
+
+        if (!user && !super_admin ) {
+          throw new BadRequestException(`Wrong email address: ${email}, try again or use another email`);
+        }
+
+        const account = user || super_admin;
+        const account_password = user? user.password : super_admin.password;
+    
+        const check_valid_password = await bcrypt.compare(password, account_password);
+        if (!check_valid_password) {
+          throw new BadRequestException('Wrong Password, Try again.');
+        }
+    
+        const payload = { 
+            email: user? user.email : super_admin.admin_email, 
+            user_name: user? user.user_name : super_admin.admin_name,
+            role: account.role,
+            sub: user? user.user_id : super_admin.super_admin_id,
         };
-    }
-
-
-
-    async login(email: string, password: string): Promise<any> {
-
-        const user = await this.prisma.user.findUnique({ where: { email } });
-    
-        if (!user) {
-          throw new NotFoundException('User not found');
-        }
-    
-        const isPasswordValid = await bcrypt.compare(password, user.password);
-    
-        if (!isPasswordValid) {
-          throw new UnauthorizedException('Invalid credentials');
-        }
-    
-        const payload = { email: user.email, sub: user.user_id };
         return {
-          access_token: this.jwtService.sign(payload),
+            user_name: user? user.user_name : super_admin.admin_name,
+            email: user? user.email : super_admin.admin_email,
+            role: user? user.role : super_admin.role,
+            access_token: this.jwtService.sign(payload),
         };
       }
 
 
-      async loginWithPin(login_pin: LoginStaffDto) {
+      async login_with_pin(login_pin: Login_Pin_Dto) {
         const user = await this.prisma.user.findUnique({ where: {pin: login_pin.pin} });
+
+        const super_admin = await this.prisma.super_admin.findUnique({ where: {admin_pin: login_pin.pin} });
         
-        if(!user) {
-            throw new NotFoundException('User not found');
+        if(!user && !super_admin) {
+            throw new BadRequestException(`User not found with pin: ${login_pin.pin}`);
         }
 
-        const payload = { sub: user.user_id, pin: user.pin, email: user.email, user_name: user.user_name };
-        const accessToken = this.jwtService.sign(payload);
+        let account;
+        if(user){
+            account = user;
+        } else {
+            account = super_admin
+        }
+
+        const payload = { 
+            sub: account.user_id || account.super_admin_id, 
+            pin: account.pin || account.admin_pin, 
+            email: account.email || account.admin_email, 
+            user_name: account.user_name || account.admin_name
+        };
+        const access_token = this.jwtService.sign(payload);
 
         return {
-            user_name: user.user_name,
-            email: user.email,
-            access_token: accessToken,
+            user_name: account.user_name || account.admin_name,
+            email: account.email || account.admin_email,
+            role: account.role || account.admin_role,
+            access_token: access_token,
         }
       }
     }

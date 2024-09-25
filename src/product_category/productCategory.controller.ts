@@ -3,19 +3,19 @@ import { unauthorized_role_response, update_pc_bad_request_response, create_prod
 import { Controller, Get, Post, Body, Patch, Param, Delete, NotFoundException, HttpCode, HttpStatus, UseGuards, ParseIntPipe, Query } from '@nestjs/common';
 import { ProductCategoryService } from './productCategory.service';
 import { CreateProductCategoryDto, UpdateProductCategoryDto } from './dto/productCategory.dto';
-import {  Role } from '@prisma/client';
+import {  has_role } from '@prisma/client';
 import { JwtAuthGuard } from 'src/utils/guard/jwt.guard';
-import { RolesGuard } from 'src/utils/guard/roles.guard';
+import { Roles_Guards } from 'src/utils/guard/roles.guard';
 import { ApiBearerAuth, ApiOperation, ApiQuery, ApiResponse, ApiTags} from '@nestjs/swagger';
 import { Roles } from 'src/utils/decorator/roles.decorator';
 
 @ApiTags('Product Categories')
 @Controller('products/product-category')
-@UseGuards(JwtAuthGuard, RolesGuard)
+@UseGuards(JwtAuthGuard)
 export class ProductCategoryController {
   constructor(private readonly productCategoryService: ProductCategoryService) {}
 
-  @Roles(Role.SUPER_ADMIN, Role.OWNER)
+  @Roles()
   @Post()
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation( {summary: 'Create a new product_category'})
@@ -26,9 +26,9 @@ export class ProductCategoryController {
   @ApiBearerAuth('JWT')
   async createNewCategory(
     @Body() createProductCategoryDto: CreateProductCategoryDto,
-    @Query('storeId', ParseIntPipe) storeId: number,
+    @Query('outlet_id') outlet_id: string,
   ) {
-    const result = await this.productCategoryService.createNewCategory(createProductCategoryDto, storeId);
+    const result = await this.productCategoryService.createNewCategory(createProductCategoryDto, outlet_id);
     return {
       statusCode: HttpStatus.CREATED,
       message: "Data Category Product Created Success!",
@@ -36,7 +36,7 @@ export class ProductCategoryController {
     }
   }
 
-  @Roles(Role.SUPER_ADMIN, Role.OWNER, Role.STAFF)
+  @Roles()
   @HttpCode(HttpStatus.OK)
   @ApiOperation( {summary: 'Get All Product Category'})
   @ApiResponse(unauthorized_response)
@@ -95,7 +95,7 @@ export class ProductCategoryController {
   }
 
   @HttpCode(HttpStatus.CREATED)
-  @Roles(Role.SUPER_ADMIN, Role.OWNER)
+  @Roles()
   @ApiResponse(unauthorized_response)
   @ApiResponse(update_product_category_response)
   @ApiResponse(update_pc_bad_request_response)
@@ -114,7 +114,7 @@ export class ProductCategoryController {
     }
   }
 
-  @Roles(Role.SUPER_ADMIN, Role.OWNER)
+  @Roles()
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiResponse(unauthorized_response)
   @ApiResponse(delete_product_category_response)

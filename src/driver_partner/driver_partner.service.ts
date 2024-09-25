@@ -2,7 +2,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { Create_DP_Dto, Update_DP_Dto } from './dto/dp.dto';
-import { DriverPartner } from '@prisma/client';
+import { driver_partner } from '@prisma/client';
 
 @Injectable()
 export class DriverPartnerService {
@@ -13,14 +13,14 @@ export class DriverPartnerService {
         const normalLimit = Math.min(limit, maxLimit)
         const skip = (page - 1) * normalLimit;
         const [drivers, totalCount] = await this.prisma.$transaction([
-          this.prisma.driverPartner.findMany({
+          this.prisma.driver_partner.findMany({
             where: {
               deleted_at: null,
             },
             skip: skip,
             take: normalLimit,
           }),
-          this.prisma.driverPartner.count({
+          this.prisma.driver_partner.count({
             where: {
               deleted_at: null,
             },
@@ -39,7 +39,7 @@ export class DriverPartnerService {
       }
 
     async findOne_Driver_Partner(driver_partner_id: number) {
-        return this.prisma.driverPartner.findFirst({
+        return this.prisma.driver_partner.findFirst({
             where: {
                 driver_partner_id: driver_partner_id,
                 deleted_at: null,
@@ -47,15 +47,15 @@ export class DriverPartnerService {
         });
     }
 
-    async create_Driver_Partner(create_driver_partner: Create_DP_Dto, store_id: number) {
+    async create_Driver_Partner(create_driver_partner: Create_DP_Dto, outlet_id: string) {
 
         const { partner_name, benefit} = create_driver_partner;
-        return this.prisma.driverPartner.create({
+        return this.prisma.driver_partner.create({
             data: {
                 partner_name: partner_name,
                 benefit: benefit,
-                stores: {
-                    connect:{store_id: store_id}
+                outlets: {
+                    connect:{outlet_id: outlet_id}
                 }
             },
         });
@@ -63,7 +63,7 @@ export class DriverPartnerService {
 
     async update_driver_partner(update_driver_partner: Update_DP_Dto, driver_partner_id: number) {
         const { partner_name, benefit } = update_driver_partner;
-        return this.prisma.driverPartner.update({
+        return this.prisma.driver_partner.update({
             where: { driver_partner_id: driver_partner_id },
             data: {
                 partner_name: partner_name,
@@ -72,8 +72,8 @@ export class DriverPartnerService {
         });
     }
 
-    async delete_driver_partner (driver_partner_id: number): Promise<DriverPartner> {
-        return this.prisma.driverPartner.update({
+    async delete_driver_partner (driver_partner_id: number): Promise<driver_partner> {
+        return this.prisma.driver_partner.update({
             where: {
                 driver_partner_id,
             },

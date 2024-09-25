@@ -11,22 +11,14 @@ async function main() {
     admin_name: 'SaleMate Official',
     admin_email: 'salemate.official@gmail.com',
     admin_pin: "889777",
+    role: 'super_admin',
     password: await bcrypt.hash('supesradminsamuel', 10),
   }];
 
   // data akun superadmin
   for (const super_admin of super_admins) {
-    const create_admin_data = await prisma.superAdmin.create({
+    const create_admin_data = await prisma.super_admin.create({
         data: super_admin,
-      });
-      await prisma.user.create({
-        data: {
-            user_name: create_admin_data.admin_name,
-            email: create_admin_data.admin_email,
-            password: create_admin_data.password,
-            pin: create_admin_data.admin_pin,
-            role: 'SUPER_ADMIN',
-        },
       });
     }
   console.log('SuperAdmin account created successfully!');

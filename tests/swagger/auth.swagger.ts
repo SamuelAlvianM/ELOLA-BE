@@ -1,7 +1,7 @@
 /* eslint-disable prettier/prettier */
 import { ApiProperty, ApiResponseOptions } from "@nestjs/swagger";
 import { HttpStatus } from "@nestjs/common";
-import { UserDto } from '../../src/user/dto/user.dto';
+import { Create_User_Dto } from '../../src/user/dto/user.dto';
 
 // dto - dummy - login response
 
@@ -72,7 +72,7 @@ export const not_found_response: ApiResponseOptions = {
 export const register_response: ApiResponseOptions = {
     status: HttpStatus.CREATED,
     description: 'Successfully Register ',
-    type: UserDto
+    type: Create_User_Dto
 }
 
 export const bad_request_response: ApiResponseOptions = {

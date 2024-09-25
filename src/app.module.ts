@@ -1,28 +1,30 @@
 /* eslint-disable prettier/prettier */
-import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { AuthModule } from './auth/auth.module';
-import { PrismaModule } from './prisma/prisma.module';
-import { UserService } from './user/user.service';
-import { UserModule } from './user/user.module';
-import { PrismaService } from './prisma/prisma.service';
-import { ConfigModule } from '@nestjs/config';
-import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
-import { StoreModule } from './store/store.module';
+import { Module } from '@nestjs/common';
+import { AppService } from './app.service';
+import { TaxModule } from './tax/tax.module';
+import { ConfigModule } from '@nestjs/config';
+import { UserModule } from './user/user.module';
+import { AuthModule } from './auth/auth.module';
+import { AppController } from './app.controller';
+import { PassportModule } from '@nestjs/passport';
+import { UserService } from './user/user.service';
+import { PromoModule } from './promo/promo.module';
+import { PrismaModule } from './prisma/prisma.module';
+import { OutletModule } from './outlet/outlet.module';
+import { PrismaService } from './prisma/prisma.service';
 import { PaymentModule } from './payment/payment.module';
 import { ProductModule } from './product/product.module';
 import { SupplierModule } from './supplier/supplier.module';
-import { TaxModule } from './tax/tax.module';
 import { DriverPartnerModule } from './driver_partner/driver_partner.module';
-import { PromoModule } from './promo/promo.module';
 import { ProductCategoryModule } from './product_category/productCategory.module';
+import { BranchModule } from './branch/branch.module';
+import { CompanyModule } from './company/company.module';
+import { JwtStrategy } from './auth/middleware/jwt.strategy';
 import { InventoryModule } from './inventory/inventory.module';
 import { OpenCloseModule } from './open_close/open_close.module';
-import { TransactionModule } from './transactions/transaction.module';
-import { JwtStrategy } from './auth/middleware/jwt.strategy';
 import { SavedOrderModule } from './saved_order/saved_order.module';
+import { TransactionModule } from './transactions/transaction.module';
 import * as dotenv from 'dotenv';
 
 dotenv.config();
@@ -34,26 +36,28 @@ dotenv.config();
     }),
     AuthModule,
     PrismaModule,
+    TaxModule,
     UserModule,
-    StoreModule,
     PromoModule,
-    InventoryModule,
-    ProductCategoryModule,
+    BranchModule,
+    OutletModule,
     PaymentModule,
     ProductModule,
+    CompanyModule,
     SupplierModule,
+    InventoryModule,
     OpenCloseModule,
+    OpenCloseModule,
+    SavedOrderModule,
+    TransactionModule,
+    DriverPartnerModule,
+    ProductCategoryModule,
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.register({
       secret: process.env.JWT_SECRET_KEY,
       signOptions: { expiresIn: '24h'},
 
     }),
-    TaxModule,
-    DriverPartnerModule,
-    OpenCloseModule,
-    TransactionModule,
-    SavedOrderModule,
   ],
   controllers: [AppController],
   providers: [AppService, UserService, PrismaService, JwtStrategy],

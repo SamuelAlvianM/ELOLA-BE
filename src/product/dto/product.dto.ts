@@ -6,7 +6,7 @@ import { IsInt, IsNotEmpty, IsOptional, IsString, Max } from 'class-validator';
 export class CreateProductDto {
   @IsInt()
   @ApiProperty({example: 1})
-  store_id: number;
+  outlet_id: string;
 
   @IsInt()
   @ApiProperty({example: 1})

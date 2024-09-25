@@ -2,18 +2,18 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateProductCategoryDto, UpdateProductCategoryDto } from './dto/productCategory.dto';
-import { ProductCategory } from '@prisma/client';
+import { product_category } from '@prisma/client';
 
 @Injectable()
 export class ProductCategoryService {
   constructor(private prisma: PrismaService) {}
 
-  async createNewCategory(data: CreateProductCategoryDto, store_id: number) {
-    return this.prisma.productCategory.create({
+  async createNewCategory(data: CreateProductCategoryDto, outlet_id: string) {
+    return this.prisma.product_category.create({
       data: {
         ...data,
-        store: {
-          connect: {store_id: store_id},
+        outlet: {
+          connect: {outlet_id: outlet_id},
         },
       },
 
@@ -44,7 +44,7 @@ export class ProductCategoryService {
     }
     
     const [productCategories, totalCount] = await this.prisma.$transaction([
-      this.prisma.productCategory.findMany({
+      this.prisma.product_category.findMany({
         where: condition,
         skip: skip,
         take: normalLimit,
@@ -53,7 +53,7 @@ export class ProductCategoryService {
           product: true,
         },
       }),
-      this.prisma.productCategory.count({
+      this.prisma.product_category.count({
         where: condition,
       }),
     ]);
@@ -69,8 +69,8 @@ export class ProductCategoryService {
     };
   }
 
-  async getProductCategoryById(product_category_id: number): Promise<ProductCategory> {
-    const category = await this.prisma.productCategory.findFirst({
+  async getProductCategoryById(product_category_id: number): Promise<product_category> {
+    const category = await this.prisma.product_category.findFirst({
       where:{
         product_category_id: product_category_id,
         deleted_at: null
@@ -90,7 +90,7 @@ export class ProductCategoryService {
 
 
   async updateCategory(product_category_id: number, update_dto: UpdateProductCategoryDto) {
-    return this.prisma.productCategory.update({
+    return this.prisma.product_category.update({
       where: { product_category_id: product_category_id },
       data: {
         category_name: update_dto.category_name,
@@ -99,7 +99,7 @@ export class ProductCategoryService {
   }
 
   async softDeleteProductCategory(product_category_id: number){
-    return this.prisma.productCategory.update({
+    return this.prisma.product_category.update({
       where: {
         product_category_id: product_category_id
       },

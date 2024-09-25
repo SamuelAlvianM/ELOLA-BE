@@ -14,7 +14,7 @@ import { ApiBadRequestResponse, ApiBearerAuth, ApiOperation, ApiResponse, ApiTag
 export class OpenCloseController {
   constructor(private readonly  oc_service: OpenCloseService) {}
 
-  @Post('open/:store_id') 
+  @Post('open/:outlet_id') 
   @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Get all open/close sessions' })
@@ -24,12 +24,12 @@ export class OpenCloseController {
   @ApiResponse(unauthorized_role_response)
   @ApiBearerAuth('JWT')
   async open_cashier(
-    @Param('store_id', ParseIntPipe) store_id: number,
+    @Param('outlet_id') outlet_id: string,
     @Body() open_dto: Handle_Open_Close_Dto,
     @User() user: any,
   ) {
     const user_id = user.user_id;
-    const result = await this.oc_service.handle_cashier_status(user_id, store_id, open_dto);
+    const result = await this.oc_service.handle_cashier_status(user_id, outlet_id, open_dto);
 
     return {
         status_code: HttpStatus.OK,
@@ -38,7 +38,7 @@ export class OpenCloseController {
     }
   }
 
-  @Post('close/:store_id') 
+  @Post('close/:outlet_id') 
   @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Create a new open/close session' })
@@ -48,12 +48,12 @@ export class OpenCloseController {
   @ApiResponse(unauthorized_role_response)
   @ApiBearerAuth('JWT')
   async close_cashier(
-    @Param('store_id', ParseIntPipe) store_id: number,
+    @Param('outlet_id') outlet_id: string,
     @Body() close_dto: Handle_Open_Close_Dto,
     @User() user: any,
   ) {
     const user_id = user.user_id;
-    const result = await this.oc_service.handle_cashier_status(user_id, store_id, close_dto);
+    const result = await this.oc_service.handle_cashier_status(user_id, outlet_id, close_dto);
 
     return {
         status_code: HttpStatus.OK,

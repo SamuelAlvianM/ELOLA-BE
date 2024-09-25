@@ -7,12 +7,12 @@ export class CreateInventoryDto {
   @IsInt()
   @ApiProperty({example: 1})
   @Expose()
-  product_id: number;
+  product_id: string;
 
   @IsInt()
   @ApiProperty({example: 1})
   @Expose()
-  store_id: number;
+  outlet_id: string;
 
   @IsString()
   @ApiProperty({example: 'pizza ingredients'})
@@ -35,7 +35,7 @@ export class UpdateInventoryDto {
   @IsInt()
   @ApiProperty({example: 1})
   @Expose()
-  product_id: number;
+  product_id: string;
 
   @IsInt()
   @ApiProperty({example: 1})
