@@ -85,12 +85,6 @@ export class UserService {
           },
           skip: skip,
           take: normal_limit,
-          include: {
-            company: true,
-            branches: true,
-            outlet: true,
-            order: true,
-          },
         }),
         this.prisma.user.count({
           where: {
