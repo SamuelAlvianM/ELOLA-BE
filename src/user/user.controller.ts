@@ -70,7 +70,7 @@ export class UserController {
         };
     }
 
-    @Get('active-users')
+    @Get('active-only')
     async get_active_users() {
         const active_users = await this.user_service.filter_active_user();
         return {
