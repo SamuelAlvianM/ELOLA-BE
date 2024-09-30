@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { SavedOrderService } from './saved_order.service';
 import { SavedOrderController } from './saved_order.controller';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { TransactionModule } from 'src/transactions/transaction.module';
+import { OrderModule } from 'src/order/order.module';
 
 @Module({
   controllers: [SavedOrderController],

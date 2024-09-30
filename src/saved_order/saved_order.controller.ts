@@ -1,55 +1,41 @@
-import { Controller, Get, Post, Param, Body, Patch, Delete, Query, UseGuards, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Post, Param, Body, Patch, Delete, Query, UseGuards, ParseIntPipe, Put } from '@nestjs/common';
 import { SavedOrderService } from './saved_order.service';
 import { JwtAuthGuard } from '../utils/guard/jwt.guard';
 import { Roles_Guards } from 'src/utils/guard/roles.guard';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Roles } from 'src/utils/decorator/roles.decorator';
-import { has_role } from '@prisma/client';
+import { has_role, saved_order } from '@prisma/client';
 
 @Controller('saved-orders')
 @ApiTags('Saved Orders')
 @UseGuards(JwtAuthGuard, Roles_Guards)
 export class SavedOrderController {
-  // constructor(private readonly savedOrderService: SavedOrderService) {}
+  constructor(private readonly saved_order_service: SavedOrderService) {}
 
-  // @Post()
-  // @ApiBearerAuth('JWT')
-  // @Roles()
-  // async create(@Body('transactionId') transactionId: number) {
-  //   return this.savedOrderService.createSavedOrder(transactionId);
-  // }
+  @Get(':id')
+  async get_saved_order(@Param('id') id: string) {
+    return this.saved_order_service.get_saved_order(Number(id));
+  }
 
-  // @Get()
-  // @ApiBearerAuth('JWT')
-  // @Roles()
-  // async findAll(
-  //   @Query('page', ParseIntPipe) page: number, 
-  //   @Query('limit', ParseIntPipe) limit: number
-  // ) {
-  //   return this.savedOrderService.findAllSavedOrders(page, limit);
-  // }
+  @Put(':id')
+  async update_saved_order(@Param('id') id: string, @Body() data: Partial<saved_order>) {
+    return this.saved_order_service.update_saved_order(Number(id), data);
+  }
 
-  // @Get(':id')
-  // @ApiBearerAuth('JWT')
-  // @Roles()
-  // async findOne(@Param('id') id: number) {
-  //   return this.savedOrderService.findOneSavedOrder(id);
-  // }
+  @Put(':id/serve')
+  async mark_as_served(@Param('id') id: string) {
+    return this.saved_order_service.mark_as_served(Number(id));
+  }
 
-  // @Patch(':id')
-  // @ApiBearerAuth('JWT')
-  // @Roles()
-  // async update(
-  //   @Param('id') id: number, 
-  //   @Body() updateSavedOrderDto: { is_done?: boolean; status?: string }
-  // ) {
-  //   return this.savedOrderService.updateSavedOrder(id, updateSavedOrderDto);
-  // }
+  @Get()
+  async get_all_saved_orders(@Body() filters?: Partial<saved_order>) {
+    return this.saved_order_service.get_all_saved_orders(filters);
+  }
 
-  // @Delete(':id')
-  // @ApiBearerAuth('JWT')
-  // @Roles()
-  // async remove(@Param('id') id: number) {
-  //   return this.savedOrderService.deleteSavedOrder(id);
-  // }
+  @Delete(':id')
+  @ApiBearerAuth('JWT')
+  @Roles()
+  async remove(@Param('id') id: number) {
+    return this.saved_order_service.deleteSavedOrder(id);
+  }
 }

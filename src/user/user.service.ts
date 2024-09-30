@@ -196,4 +196,20 @@ export class UserService {
 
       return user
     }
+
+    async get_current_user_name(user_id: string, user_name: string): Promise<user> {
+      const user = await this.prisma.user.findFirst({
+        where:{
+          user_id,
+          user_name,
+          deleted_at: null,
+        },
+      });
+
+      if (!user) {
+        throw new NotFoundException(`User with ID ${user_id} not found or has been deleted.`);
+      }
+
+      return user
+    }
 }

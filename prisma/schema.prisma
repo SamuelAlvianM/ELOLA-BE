@@ -33,7 +33,6 @@ model user {
   updated_at   DateTime       @updatedAt
   deleted_at   DateTime?
   is_deleted   Boolean        @default(false)
-  open_closes  open_close[]
   company      company?       @relation(fields: [company_id], references: [company_id])
   company_id   String?
   outlet       outlet?        @relation(fields: [outlet_id], references: [outlet_id])
@@ -41,6 +40,7 @@ model user {
   branches     branch?        @relation(fields: [branch_id], references: [branch_id])  
   branch_id    String?
   order        order[]
+  user_open_close open_close_user[]
 }
 
 model company {
@@ -57,7 +57,6 @@ model company {
   users             user[]
   branches          branch[]
   outlets           outlet[]
-  open_close        open_close[]
 }
 
 model branch {
@@ -74,7 +73,6 @@ model branch {
   company         company?   @relation(fields: [company_id], references: [company_id])
   company_id      String?
   outlets         outlet[]
-  open_close      open_close[]
   users           user[]
 }
 
@@ -116,16 +114,21 @@ model open_close {
   deleted_at        DateTime?
   is_deleted        Boolean   @default(false)
 
-  user            user?     @relation(fields: [user_id], references: [user_id])
-  user_id         String?
-  company         company?  @relation(fields: [company_id], references: [company_id])
-  company_id      String?
-  branch          branch?   @relation(fields: [branch_id], references: [branch_id])
-  branch_id       String?
+  open_close_by   open_close_user[]
   outlet          outlet?   @relation(fields: [outlet_id], references: [outlet_id])
   outlet_id       String?
 
-  @@unique([user_id, company_id, branch_id, outlet_id, start_time, end_time])
+  @@unique([ outlet_id, start_time, end_time])
+}
+
+model open_close_user{
+  open_close_id   Int
+  user_id         String
+
+  open_close     open_close @relation(fields: [open_close_id], references: [open_close_id])
+  user           user  @relation(fields: [user_id], references: [user_id])
+
+  @@id([open_close_id, user_id])
 }
 
 model tax {
@@ -259,7 +262,6 @@ model order {
   driver_partner   String?
   order_type       order_type
   receipt_number   String             @unique
-  quantity         Int
   change           Int?
   sub_total        Float
   grand_total      Float
@@ -277,6 +279,21 @@ model order {
   partner          driver_partner?    @relation(fields: [driver_partner], references: [partner_name])
   order_products   order_product[]
   saved_orders     saved_order[]
+}
+
+model saved_order {
+  saved_order_id    Int          @id @default(autoincrement())
+  order_id          String?
+  is_paid           Boolean?      
+  is_done           Boolean?      @default(false)
+  status            String        
+
+  created_at        DateTime     @default(now())
+  updated_at        DateTime     @updatedAt
+  deleted_at        DateTime?
+
+  orders           order? @relation(fields: [order_id], references: [order_id])
+  order_products  order_product[]  
 }
 
 model promo {
@@ -348,20 +365,6 @@ model supplier_tax {
   tax         tax      @relation(fields: [tax_id], references: [tax_id])
 
   @@id([supplier_id, tax_id])
-}
-
-model saved_order {
-  saved_order_id    Int          @id @default(autoincrement())
-  order_id          String?
-  is_done           Boolean?      @default(false)
-  status            String        
-
-  created_at        DateTime     @default(now())
-  updated_at        DateTime     @updatedAt
-  deleted_at        DateTime?
-
-  orders           order? @relation(fields: [order_id], references: [order_id])
-  order_products  order_product[]  
 }
 
 

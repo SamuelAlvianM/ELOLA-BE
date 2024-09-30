@@ -1,6 +1,6 @@
 /* eslint-disable prettier/prettier */
 import { ApiResponseOptions } from '@nestjs/swagger';
-import { CreateTransactionDto } from '../../src/transactions/dto/transaction.dto';
+import { Create_Order_Dto } from '../../src/order/dto/order.dto';
 
 
 // Unauthorized response
@@ -32,8 +32,8 @@ export const unauthorized_response: ApiResponseOptions = {
 
 export const create_transaction_response: ApiResponseOptions = {
   status: 201,
-  description: 'Successfully Created Transaction Data!',
-  type: CreateTransactionDto,
+  description: 'Successfully Created Order Data!',
+  type: Create_Order_Dto,
 };
 
 export const create_transaction_bad_request_response: ApiResponseOptions = {
@@ -64,7 +64,7 @@ export const create_transaction_unauthorized_response: ApiResponseOptions = {
 export const find_by_store_id_response: ApiResponseOptions = {
   status: 200,
   description: 'Successfully fetched transactions by store ID',
-  type: CreateTransactionDto,
+  type: Create_Order_Dto,
   isArray: true,
 };
 
@@ -84,7 +84,7 @@ export const find_by_store_id_bad_request_response: ApiResponseOptions = {
 export const find_by_payment_type_response: ApiResponseOptions = {
   status: 200,
   description: 'Successfully fetched transactions by payment type',
-  type: CreateTransactionDto,
+  type: Create_Order_Dto,
   isArray: true,
 };
 
@@ -104,7 +104,7 @@ export const find_by_payment_type_bad_request_response: ApiResponseOptions = {
 export const find_by_date_range_response: ApiResponseOptions = {
   status: 200,
   description: 'Successfully fetched transactions by date range',
-  type: CreateTransactionDto,
+  type: Create_Order_Dto,
   isArray: true,
 };
 
