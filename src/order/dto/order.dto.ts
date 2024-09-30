@@ -3,12 +3,11 @@ import { order_type, order_payment_type } from '@prisma/client';
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 
-export class ProductDto {
+export class Product_Dto {
   @IsNumber()
   @ApiProperty({
     example: 1,
     description: 'ID dari produk yang akan dibeli',
-    type: Number,
   })
   product_id: number;
 
@@ -21,7 +20,7 @@ export class ProductDto {
   quantity: number;
 }
 
-export class CreateTransactionDto {
+export class Create_Order_Dto {
   
   @IsNotEmpty()
   @IsEnum(order_type)
@@ -30,10 +29,10 @@ export class CreateTransactionDto {
 
   @IsArray()
   @ValidateNested({ each: true })
-  @Type(() => ProductDto)
+  @Type(() => Product_Dto)
   @ApiProperty({
     description: 'Daftar produk yang dipesan dengan ID dan kuantitasnya',
-    type: [ProductDto],
+    type: [Product_Dto],
     example: [
       {
         product_id: 1,
@@ -45,7 +44,7 @@ export class CreateTransactionDto {
       },
     ],
   })
-  products: ProductDto[];
+  products: Product_Dto[];
 
   @IsNotEmpty()
   @IsNumber()
@@ -83,7 +82,7 @@ export class CreateTransactionDto {
   change?: number;
 }
 
-export class UpdateTransactionDto {
+export class Update_Order_Dto {
   @IsOptional()
   @IsEnum(order_type)
   @ApiProperty({example: 'TakeAway | Order'})

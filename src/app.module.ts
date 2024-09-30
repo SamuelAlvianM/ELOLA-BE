@@ -21,10 +21,10 @@ import { ProductCategoryModule } from './product_category/productCategory.module
 import { BranchModule } from './branch/branch.module';
 import { CompanyModule } from './company/company.module';
 import { JwtStrategy } from './auth/middleware/jwt.strategy';
-import { InventoryModule } from './inventory/inventory.module';
+import { InventoryModule } from '../inventory/inventory.module';
 import { OpenCloseModule } from './open_close/open_close.module';
 import { SavedOrderModule } from './saved_order/saved_order.module';
-import { TransactionModule } from './transactions/transaction.module';
+import { OrderModule } from './order/order.module';
 import * as dotenv from 'dotenv';
 
 dotenv.config();
@@ -49,7 +49,7 @@ dotenv.config();
     OpenCloseModule,
     OpenCloseModule,
     SavedOrderModule,
-    TransactionModule,
+    OrderModule,
     DriverPartnerModule,
     ProductCategoryModule,
     PassportModule.register({ defaultStrategy: 'jwt' }),
