@@ -97,10 +97,10 @@ export class UserService {
       return {
         data: users,
         meta: {
-          currentPage: page,
-          itemsPerPage: normal_limit,
-          totalPages: Math.ceil(total_count / normal_limit ),
-          totalItems: total_count,
+          current_page: page,
+          items_per_page: normal_limit,
+          total_pages: Math.ceil(total_count / normal_limit ),
+          total_items: total_count,
         },
       };
     }
@@ -164,16 +164,31 @@ export class UserService {
         return updatedUser
     }
 
-    async soft_delete_user(user_id: string): Promise<user> {
-        return this.prisma.user.update({
-            where: {
-                user_id
-            },
-            data: {
-                deleted_at: new Date(),
-                is_deleted: true,
-            },
-        });
+    async soft_delete_user(user_id: string) {
+      const check_for_data = await this.prisma.user.findUnique({
+        where: { user_id },
+      });
+  
+      if (!check_for_data || check_for_data.is_deleted) {
+        throw new NotFoundException(`Branch not found or already deleted`);
+      }
+  
+      return await this.prisma.user.update({
+        where: { user_id },
+        data: { is_deleted: true, deleted_at: new Date() },
+      });
+    }
+
+    async permanent_delete_user(user_id: string) {
+      const check_user_data = await this.prisma.user.findUnique({where: {user_id: user_id}});
+
+      if(!check_user_data || check_user_data.is_deleted) {
+        throw new ConflictException(`User ${user_id} not found or deleted`);
+      }
+
+      return this.prisma.user.delete({
+        where: {user_id},
+      });
     }
 
     async get_current_user(user_id: string): Promise<user> {
@@ -181,12 +196,6 @@ export class UserService {
         where:{
           user_id,
           deleted_at: null,
-        },
-        include: {
-          company: true,
-          branches: true,
-          outlet: true,
-          order: true,
         },
       });
 
@@ -196,7 +205,6 @@ export class UserService {
 
       return user
     }
-
     async get_current_user_name(user_id: string, user_name: string): Promise<user> {
       const user = await this.prisma.user.findFirst({
         where:{

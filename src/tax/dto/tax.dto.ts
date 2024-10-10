@@ -5,7 +5,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
 
 
-export class CreateTaxDto {
+export class Create_Tax_Dto {
 
     @IsNotEmpty()
     @IsEnum(tax_type)
@@ -38,7 +38,7 @@ export class CreateTaxDto {
 
 }
 
-export class UpdateTaxDto {
+export class Update_Tax_Dto {
 
     @IsOptional()
     @IsEnum(tax_type)

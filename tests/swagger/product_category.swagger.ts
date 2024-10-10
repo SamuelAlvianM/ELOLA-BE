@@ -1,6 +1,6 @@
 import { ApiResponseOptions } from '@nestjs/swagger';
 import { HttpStatus } from '@nestjs/common';
-import { CreateProductCategoryDto } from '../../src/product_category/dto/productCategory.dto';
+import { Create_Product_Category_Dto } from '../../src/product_category/dto/productCategory.dto';
 
 // Unauthorized role response
 export const unauthorized_role_response: ApiResponseOptions = {
@@ -32,7 +32,7 @@ export const unauthorized_response: ApiResponseOptions = {
 export const get_all_product_categories_response: ApiResponseOptions = {
   status: HttpStatus.OK,
   description: 'Successfully retrieved all product categories',
-  type: [CreateProductCategoryDto]
+  type: [Create_Product_Category_Dto]
 };
 
 // GET all product categories bad request response
@@ -58,7 +58,7 @@ export const create_product_category_response: ApiResponseOptions = {
     properties: {
       statusCode: { type: 'number', example: 201 },
       message: { type: 'string', example: 'Data Category Product Created Success!' },
-      data: { $ref: '#/components/schemas/CreateProductCategoryDto' },
+      data: { $ref: '#/components/schemas/Create_Product_Category_Dto' },
     },
   },
 };

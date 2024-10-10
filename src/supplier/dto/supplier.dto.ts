@@ -1,9 +1,8 @@
 import { IsInt, IsNumber, IsString, IsEnum, IsOptional } from 'class-validator';
-import { order_type, order_payment_type } from '@prisma/client';
 import { ApiProperty } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
 
-export class CreateSupplierDto {
+export class Create_Supplier_Dto {
 
   @IsString()
   @ApiProperty({example: "Greenfield"})
@@ -26,7 +25,7 @@ export class CreateSupplierDto {
   email: string;
 }
 
-export class UpdateSupplierDto {
+export class Update_Supplier_Dto {
 
   @IsString()
   @ApiProperty({example: "Diamond"})

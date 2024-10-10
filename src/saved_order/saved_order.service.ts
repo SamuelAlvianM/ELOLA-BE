@@ -37,10 +37,10 @@ export class SavedOrderService {
     });
   }
 
-  async deleteSavedOrder(id: number) {
+  async deleted_save_order(saved_order_id: number) {
     try {
       return await this.prisma.saved_order.update({
-        where: { saved_order_id: id },
+        where: { saved_order_id: saved_order_id },
         data: { deleted_at: new Date() },
       });
     } catch (error) {

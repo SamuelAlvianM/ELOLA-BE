@@ -1,8 +1,8 @@
 /* eslint-disable prettier/prettier */
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { CreateProductDto } from './dto/product.dto';
-import { UpdateProductDto } from './dto/update-product.dto';
+import { Create_Product_Dto } from './dto/product.dto';
+import { Update_Product_Dto } from './dto/update-product.dto';
 import { product } from '@prisma/client';
 
 @Injectable()
@@ -30,14 +30,14 @@ export class ProductService {
       throw new NotFoundException('Product not found');
     }
     
-    const isPromoIncluded = product.product_promos.length > 0;
-    const isTaxIncluded = product.product_taxes.length > 0;
+    const is_promo_included = product.product_promos.length > 0;
+    const is_tax_included = product.product_taxes.length > 0;
   
     return {
       product,
       alerts: {
-        promoIncluded: isPromoIncluded ? 'This product is under a promo' : 'No active promo for this product',
-        taxIncluded: isTaxIncluded ? 'This product has tax applied' : 'No tax applied to this product',
+        promo_included: is_promo_included ? 'This product is under a promo' : 'No active promo for this product',
+        tax_included: is_tax_included ? 'This product has tax applied' : 'No tax applied to this product',
       },
     };
   }
@@ -62,9 +62,9 @@ export class ProductService {
     });
   }
 
-  async create_product(data: CreateProductDto) {
+  async create_new_product(create_data: Create_Product_Dto) {
     return this.prisma.product.create({
-      data,
+      data: create_data,
     })
   }
 
@@ -75,12 +75,12 @@ export class ProductService {
       category?: string;
       product_name: string;
     },
-    sortField?: string, 
-    sortOrder?: 'asc' | 'desc',
+    sorted_field?: string, 
+    sort_order?: 'asc' | 'desc',
   ) {
-    const maxLimit = 10;
-    const normalLimit = Math.min(limit, maxLimit)
-    const skip = (page - 1) * normalLimit;
+    const max_limit = 10;
+    const normal_limit = Math.min(limit, max_limit)
+    const skip = (page - 1) * normal_limit;
 
     const condition: any = {
       deleted_at: null,
@@ -103,19 +103,19 @@ export class ProductService {
     }
 
     const sort: any = {};
-    if (sortField) {
-      sort[sortField] = sortOrder || 'asc';
+    if (sorted_field) {
+      sort[sorted_field] = sort_order || 'asc';
     } else {
       sort['created_at'] = 'asc'; 
     }
 
-    const [products, totalCount] = await this.prisma.$transaction([
+    const [products, total] = await this.prisma.$transaction([
       this.prisma.product.findMany({
         where: condition,
         skip: skip,
-        take: normalLimit,
+        take: normal_limit,
         orderBy: {
-          [sortField]: sortOrder,
+          [sorted_field]: sort_order,
         },
         include: {
           product_category: true,
@@ -129,10 +129,10 @@ export class ProductService {
     return {
       data: products,
       meta: {
-        currentPage: page,
-        itemsPerPage: normalLimit,
-        totalPages: Math.ceil(totalCount / normalLimit),
-        totalItems: totalCount,
+        current_page: page,
+        items_per_page: normal_limit,
+        total_pages: Math.ceil(total / normal_limit),
+        total_items: total,
       },
     };
   }
@@ -152,7 +152,7 @@ export class ProductService {
     });
   }
 
-  async findOne(product_id: string) {
+  async find_one_product(product_id: string) {
     return this.prisma.product.findUnique({
       where: { 
         product_id,
@@ -161,16 +161,36 @@ export class ProductService {
     });
   }
 
-  async update(product_id: string, data: UpdateProductDto) {
+  async update_product(product_id: string, data: Update_Product_Dto) {
     return this.prisma.product.update({
       where: {product_id},
       data,
     })
   }
-  async remove(product_id: string): Promise<product> {
+  async soft_delete_product(product_id: string): Promise<product> {
+
+    const check_product_data = await this.prisma.product.findUnique({where: {product_id}});
+
+    if(!check_product_data || check_product_data.is_deleted) {
+      throw new NotFoundException(`Product ${product_id} not found`);
+    }
+
     return this.prisma.product.update({
       where: { product_id },
-      data: { deleted_at: new Date()}
+      data: { 
+        is_deleted: true,
+        deleted_at: new Date()
+      },
     });
+  }
+
+  async permanent_delete_product(product_id: string): Promise<void> {
+    const check_product_data = await this.prisma.product.findUnique({where: {product_id}});
+
+    if(!check_product_data || check_product_data.is_deleted) {
+      throw new NotFoundException(`Product ${product_id} not found`);
+    }
+
+    await this.prisma.product.delete({where: {product_id}});
   }
 }

@@ -33,7 +33,7 @@ export class UserController {
     @ApiNotFoundResponse(not_found_response)
     @ApiBadRequestResponse(bad_request_response)
     @ApiUnauthorizedResponse(unauthorized_response)
-    async create(
+    async create_new_user(
         @Body() user_dto: Create_User_Dto){
         const result = await this.user_service.register_new_user(user_dto);
         return {
@@ -51,7 +51,7 @@ export class UserController {
     @ApiUnauthorizedResponse(unauthorized_response)
     @ApiQuery({ name: 'page', required: false, type: Number, description: 'Page number', example: 1 })
     @ApiQuery({ name: 'limit', required: false, type: Number, description: 'Number of items per page', example: 10 })
-    async findAll(@Query('page') page: number, @Query('limit') limit: number) {
+    async find_all_users(@Query('page') page: number, @Query('limit') limit: number) {
         return this.user_service.get_all_users(page, limit);
       }
 
@@ -61,13 +61,26 @@ export class UserController {
     @ApiNotFoundResponse(not_found_response)
     @ApiBadRequestResponse(bad_request_response)
     @ApiUnauthorizedResponse(unauthorized_response)
-    async findOne(@Param('user_id') user_id: string) {
+    async find_one_user(@Param('user_id') user_id: string) {
         const result = await this.user_service.get_user_by_id(user_id);
         return {
             statusCode: HttpStatus.OK,
             message: 'Successfully fetched user by id',
             data: result,
         };
+    }
+
+    @Get(':user_id')
+    async current_user_name(
+        @Param('user_id') user_id: string,
+        @Param('user_name') user_name: string
+    ) {
+        const current_user = await this.user_service.get_current_user_name(user_id, user_name);
+        return {
+            status: HttpStatus.OK,
+            message: 'Success get data user name',
+            data: current_user
+        }
     }
 
     @Get('active-only')
@@ -86,7 +99,7 @@ export class UserController {
     @ApiNotFoundResponse(not_found_response)
     @ApiBadRequestResponse(bad_request_response)
     @ApiUnauthorizedResponse(unauthorized_response)
-    async update(@Param('user_id') user_id: string, @Body() update_dto: Update_User_Dto) {
+    async update_data_user(@Param('user_id') user_id: string, @Body() update_dto: Update_User_Dto) {
         const result = await this.user_service.update_user_data(user_id, update_dto);
         return {
             statusCode: HttpStatus.OK,
@@ -95,13 +108,13 @@ export class UserController {
         };
     }
 
-    @Delete(':user_id')
+    @Patch(':user_id')
     @ApiResponse( delete_user_response )
     @ApiResponse( unauthorized_role_response )
     @ApiNotFoundResponse(not_found_response)
     @ApiBadRequestResponse(bad_request_response)
     @ApiUnauthorizedResponse(unauthorized_response)
-    async softDeleteUser(@Param('user_id') user_id: string) {
+    async soft_delete_user(@Param('user_id') user_id: string) {
         const user = await this.user_service.soft_delete_user(user_id);
 
         if (!user) {
@@ -114,4 +127,16 @@ export class UserController {
             data: user,
         };
     }
+
+    @Delete()
+    async permanently_delete_user(@Param('user_id') user_id: string) {
+        const user_data = await this.user_service.permanent_delete_user(user_id);
+
+        return {
+            status: HttpStatus.OK,
+            message: 'Data Successfully Deleted PERMANENTLY!',
+            data: user_data,
+        }
+    }
+
 }

@@ -3,9 +3,10 @@ import { OpenCloseService } from './open_close.service';
 import { Handle_Open_Close_Dto } from './dto/oc.dto';
 import { JwtAuthGuard } from '../utils/guard/jwt.guard'; 
 import { User } from '../utils/decorator/user.decorator';
-import { ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { bad_request_response, unauthorized_response, unauthorized_role_response } from '../../tests/swagger/open_close.swagger';
 @Controller('cashier')
+@ApiTags('Open_Close')
 export class OpenCloseController {
   constructor(private readonly oc_service: OpenCloseService) {}
 
