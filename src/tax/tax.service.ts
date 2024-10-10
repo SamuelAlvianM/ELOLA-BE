@@ -1,6 +1,6 @@
 /* eslint-disable prettier/prettier */
-import { Injectable } from '@nestjs/common';
-import { CreateTaxDto, UpdateTaxDto } from './dto/tax.dto';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { Create_Tax_Dto, Update_Tax_Dto } from './dto/tax.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { tax_type } from '@prisma/client';
 
@@ -8,17 +8,17 @@ import { tax_type } from '@prisma/client';
 export class TaxService {
     constructor(private prisma: PrismaService) {}
 
-    async findAllTaxes(page: number, limit: number) {
-        const maxLimit = 10;
-        const normalLimit = Math.min(limit, maxLimit)
-        const skip = (page - 1) * normalLimit;
-        const [taxes, totalCount] = await this.prisma.$transaction([
+    async find_all_taxes(page: number, limit: number) {
+        const max_limit = 10;
+        const normal_limit = Math.min(limit, max_limit)
+        const skip = (page - 1) * normal_limit;
+        const [taxes, total] = await this.prisma.$transaction([
           this.prisma.tax.findMany({
             where: {
               deleted_at: null,
             },
             skip: skip,
-            take: normalLimit,
+            take: normal_limit,
           }),
           this.prisma.tax.count({
             where: {
@@ -30,16 +30,16 @@ export class TaxService {
         return {
           taxes,
           meta: {
-            currentPage: page,
-            itemsPerPage: normalLimit,
-            totalPages: Math.ceil(totalCount / normalLimit ),
-            totalItems: totalCount,
+            current_page: page,
+            items_per_page: normal_limit,
+            total_pages: Math.ceil(total / normal_limit ),
+            total_items: total,
           },
         };
       }
 
-      async taxDataForOrder() {
-        const vatData = await this.prisma.tax.findFirst({
+      async tax_data_for_order() {
+        const vat_data = await this.prisma.tax.findFirst({
           where: { tax_status: true, tax_type: 'vat' },
           select: {
             tax_name: true,
@@ -48,7 +48,7 @@ export class TaxService {
           },
         });
     
-        const serviceData = await this.prisma.tax.findFirst({
+        const service_data = await this.prisma.tax.findFirst({
           where: { tax_status: true, tax_type: 'service' },
           select: {
             tax_name: true,
@@ -59,18 +59,18 @@ export class TaxService {
     
 
         return {
-          VAT: vatData ? {
-            tax_type: vatData.tax_type,
-            tax_value: vatData.tax_value,
+          VAT: vat_data ? {
+            tax_type: vat_data.tax_type,
+            tax_value: vat_data.tax_value,
           } : null,
-          Service: serviceData ? {
-            tax_type: serviceData.tax_type,
-            service_value: serviceData.service_value,
+          Service: service_data ? {
+            tax_type: service_data.tax_type,
+            service_value: service_data.service_value,
           } : null,
         };
       }
 
-    async findOneTax(tax_id: number) {
+    async find_one_tax(tax_id: number) {
         return await this.prisma.tax.findUnique({
           where: {
             tax_id: tax_id, 
@@ -79,7 +79,7 @@ export class TaxService {
         });
     }
 
-    async createTax(create_tax_data: CreateTaxDto) {
+    async create_new_tax(create_tax_data: Create_Tax_Dto) {
 
         if(create_tax_data.tax_status) {
           await this.prisma.tax.updateMany({
@@ -104,7 +104,7 @@ export class TaxService {
         return data_tax;
     }
 
-    async updateTax(tax_id: number,update_tax_data: UpdateTaxDto) {
+    async update_tax_data(tax_id: number,update_tax_data: Update_Tax_Dto){
 
       if(update_tax_data.tax_status) {
         await this.prisma.tax.updateMany({
@@ -128,10 +128,28 @@ export class TaxService {
         return updated_data;
     }
 
-    async deleteTax(tax_id: number) {
+    async soft_delete_tax(tax_id: number) {
+      const check_for_tax_data = await this.prisma.tax.findUnique({where: {tax_id}});
+
+      if (!check_for_tax_data || check_for_tax_data.is_deleted) {
+        throw new NotFoundException(`tax_id ${tax_id} not found`);
+      }
+
         return await this.prisma.tax.update({ 
             where: { tax_id: tax_id },
-            data: {deleted_at: new Date()} 
+            data: {is_deleted: true, deleted_at: new Date()} 
         });
+    }
+
+    async permanent_delete_tax(tax_id: number) {
+      const check_tax_data = await this.prisma.tax.findUnique({ where: {tax_id}});
+
+      if(!check_tax_data || check_tax_data.is_deleted) {
+        throw new NotFoundException(`tax_id ${tax_id} not found`)
+      }
+
+      return await this.prisma.tax.delete({
+        where: {tax_id}
+      });
     }
 }

@@ -4,12 +4,12 @@ import { promo_type } from '@prisma/client';
 import { Type } from 'class-transformer';
 import { IsEnum, IsInt, IsOptional, IsDate, IsNotEmpty, IsString, MinDate } from 'class-validator';
 
-export class CreatePromoDto {
+export class Create_Promo_Dto {
   @IsInt()
   @IsNotEmpty()
   @IsOptional()
   @ApiProperty({example: 1})
-  product_id?: number;
+  product_id?: string;
   
   @IsNotEmpty()
   @IsString()
@@ -38,11 +38,11 @@ export class CreatePromoDto {
   end_date?: Date;
 }
 
-export class UpdatePromoDto {
+export class Update_Promo_Dto {
   @IsOptional()
   @IsInt()
   @ApiProperty({example: 1})
-  product_id?: number;
+  product_id?: string;
 
   @IsOptional()
   @IsString()
@@ -73,11 +73,11 @@ export class UpdatePromoDto {
   end_date?: Date;
 }
 
-export class ApplyPromoDto {
+export class Apply_Promo_Dto {
   @IsInt()
   @IsNotEmpty()
   @ApiProperty({example: 1})
-  product_id: number;
+  product_id: string;
 
   @IsInt()
   @IsNotEmpty()
@@ -85,11 +85,11 @@ export class ApplyPromoDto {
   promo_id: number;
 }
 
-export class UnapplyPromoDto {
+export class Unapply_Promo_Dto {
   @IsInt()
   @IsNotEmpty()
   @ApiProperty({ example: 1 })
-  product_id: number;
+  product_id: string;
 
   @IsInt()
   @IsNotEmpty()

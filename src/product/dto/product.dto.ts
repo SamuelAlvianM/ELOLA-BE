@@ -3,7 +3,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsInt, IsNotEmpty, IsOptional, IsString, Max } from 'class-validator';
 
 
-export class CreateProductDto {
+export class Create_Product_Dto {
   @IsInt()
   @ApiProperty({example: 1})
   outlet_id: string;

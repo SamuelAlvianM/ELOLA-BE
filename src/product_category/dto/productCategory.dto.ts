@@ -3,7 +3,7 @@ import { ApiProperty } from "@nestjs/swagger";
 import { Expose } from "class-transformer";
 import { IsInt, IsNotEmpty, IsOptional, IsString } from "class-validator";
 
-export class CreateProductCategoryDto {
+export class Create_Product_Category_Dto {
 
     @IsString()
     @IsNotEmpty()
@@ -12,7 +12,7 @@ export class CreateProductCategoryDto {
     category_name: string;
 }
 
-export class UpdateProductCategoryDto {
+export class Update_Product_Category_Dto {
 
     @IsString()
     @IsOptional()

@@ -141,6 +141,7 @@ model tax {
   created_at          DateTime      @default(now())
   updated_at          DateTime      @updatedAt
   deleted_at          DateTime?
+  is_deleted   Boolean        @default(false)
   supplier_supplier_id Int?
   product_tax         product_tax[]
   supplier_tax        supplier_tax[]
@@ -155,6 +156,7 @@ model product_category {
   created_at          DateTime  @default(now())
   updated_at          DateTime  @updatedAt
   deleted_at          DateTime?
+  is_deleted   Boolean        @default(false)
   outlet              outlet     @relation(fields: [outlet_id], references: [outlet_id])
   product             product[]
 }
@@ -171,6 +173,7 @@ model inventory {
   created_at        DateTime            @default(now())
   updated_at        DateTime            @updatedAt
   deleted_at        DateTime?
+  is_deleted   Boolean        @default(false)
   product           product             @relation(fields: [product_id], references: [product_id])
   outlet            outlet               @relation(fields: [outlet_id], references: [outlet_id])
   inventory_supply  inventory_supplier[]
@@ -187,6 +190,7 @@ model supplier {
   created_at        DateTime            @default(now())
   updated_at        DateTime            @updatedAt
   deleted_at        DateTime?
+  is_deleted   Boolean        @default(false)
   inventory_supply inventory_supplier[]
   outlet_supply      outlet_supplier[]
   supplier_tax       supplier_tax[]
@@ -201,6 +205,7 @@ model driver_partner {
   created_at            DateTime             @default(now())
   updated_at            DateTime             @updatedAt
   deleted_at            DateTime?
+  is_deleted   Boolean        @default(false)
   outlets                outlet                @relation(fields: [outlet_id], references: [outlet_id])
   driver_partner_outlet  driver_partner_outlet[]
   orders                order[]
@@ -216,6 +221,7 @@ model payment {
   created_at   DateTime     @default(now())
   updated_at   DateTime     @updatedAt
   deleted_at   DateTime?
+  is_deleted   Boolean        @default(false)
   outlet       outlet?       @relation(fields: [outlet_id], references: [outlet_id])
 }
 
@@ -231,6 +237,7 @@ model product {
   created_at          DateTime       @default(now())
   updated_at          DateTime       @updatedAt
   deleted_at          DateTime?
+  is_deleted   Boolean        @default(false)
 
   product_category    product_category @relation(fields: [product_category_id], references: [product_category_id])
   outlet              outlet           @relation(fields: [outlet_id], references: [outlet_id])
@@ -272,6 +279,7 @@ model order {
   created_at       DateTime           @default(now())
   updated_at       DateTime           @updatedAt
   deleted_at       DateTime?
+  is_deleted   Boolean        @default(false)
 
   outlet           outlet              @relation(fields: [outlet_id], references: [outlet_id])
   user             user               @relation(fields: [user_id], references: [user_id])
@@ -291,6 +299,7 @@ model saved_order {
   created_at        DateTime     @default(now())
   updated_at        DateTime     @updatedAt
   deleted_at        DateTime?
+  is_deleted   Boolean        @default(false)
 
   orders           order? @relation(fields: [order_id], references: [order_id])
   order_products  order_product[]  
@@ -306,6 +315,7 @@ model promo {
   created_at   DateTime       @default(now())
   updated_at   DateTime       @updatedAt
   deleted_at   DateTime?
+  is_deleted   Boolean        @default(false)
   promo_name   String
   product_promo product_promo[]
 }

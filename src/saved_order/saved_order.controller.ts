@@ -4,27 +4,28 @@ import { JwtAuthGuard } from '../utils/guard/jwt.guard';
 import { Roles_Guards } from 'src/utils/guard/roles.guard';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Roles } from 'src/utils/decorator/roles.decorator';
-import { has_role, saved_order } from '@prisma/client';
+import { saved_order } from '@prisma/client';
 
 @Controller('saved-orders')
 @ApiTags('Saved Orders')
+@ApiBearerAuth('jwt')
 @UseGuards(JwtAuthGuard, Roles_Guards)
 export class SavedOrderController {
   constructor(private readonly saved_order_service: SavedOrderService) {}
 
-  @Get(':id')
-  async get_saved_order(@Param('id') id: string) {
-    return this.saved_order_service.get_saved_order(Number(id));
+  @Get(':saved_order_saved_order_id')
+  async get_saved_order(@Param('saved_order_saved_order_id') saved_order_id: string) {
+    return this.saved_order_service.get_saved_order(Number(saved_order_id));
   }
 
-  @Put(':id')
-  async update_saved_order(@Param('id') id: string, @Body() data: Partial<saved_order>) {
-    return this.saved_order_service.update_saved_order(Number(id), data);
+  @Put(':saved_order_id')
+  async update_saved_order(@Param('saved_order_id') saved_order_id: string, @Body() data: Partial<saved_order>) {
+    return this.saved_order_service.update_saved_order(Number(saved_order_id), data);
   }
 
-  @Put(':id/serve')
-  async mark_as_served(@Param('id') id: string) {
-    return this.saved_order_service.mark_as_served(Number(id));
+  @Put(':saved_order_id/serve')
+  async mark_as_served(@Param('saved_order_id') saved_order_id: string) {
+    return this.saved_order_service.mark_as_served(Number(saved_order_id));
   }
 
   @Get()
@@ -32,10 +33,10 @@ export class SavedOrderController {
     return this.saved_order_service.get_all_saved_orders(filters);
   }
 
-  @Delete(':id')
+  @Delete(':saved_order_id')
   @ApiBearerAuth('JWT')
   @Roles()
-  async remove(@Param('id') id: number) {
-    return this.saved_order_service.deleteSavedOrder(id);
+  async remove(@Param('saved_order_id') saved_order_id: number) {
+    return this.saved_order_service.deleted_save_order(saved_order_id);
   }
 }

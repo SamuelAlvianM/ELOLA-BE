@@ -1,6 +1,6 @@
 /* eslint-disable prettier/prettier */
 import { ApiResponseOptions } from '@nestjs/swagger';
-import { CreateProductDto} from '../../src/product/dto/product.dto';
+import { Create_Product_Dto} from '../../src/product/dto/product.dto';
 import { HttpStatus } from '@nestjs/common';
 
 // Unauthorized response
@@ -34,7 +34,7 @@ export const forbidden_role_response: ApiResponseOptions = {
 export const create_product_response: ApiResponseOptions = {
   status: HttpStatus.CREATED,
   description: 'Successfully created product',
-  type: CreateProductDto,
+  type: Create_Product_Dto,
 };
 
 export const create_product_bad_request_response: ApiResponseOptions = {
@@ -54,7 +54,7 @@ export const create_product_bad_request_response: ApiResponseOptions = {
 export const get_all_products_response: ApiResponseOptions = {
   status: HttpStatus.OK,
   description: 'Successfully retrieved all products',
-  type: CreateProductDto,
+  type: Create_Product_Dto,
   isArray: true,
 };
 
@@ -75,7 +75,7 @@ export const get_all_products_bad_request_response: ApiResponseOptions = {
 export const get_product_by_id_response: ApiResponseOptions = {
   status: HttpStatus.OK,
   description: 'Successfully retrieved product by id',
-  type: CreateProductDto,
+  type: Create_Product_Dto,
 };
 
 export const get_product_by_id_bad_request_response: ApiResponseOptions = {
@@ -95,7 +95,7 @@ export const get_product_by_id_bad_request_response: ApiResponseOptions = {
 export const update_product_response: ApiResponseOptions = {
   status: HttpStatus.OK,
   description: 'Successfully updated product',
-  type: CreateProductDto
+  type: Create_Product_Dto
 };
 
 export const update_product_bad_request_response: ApiResponseOptions = {
@@ -217,7 +217,7 @@ export const remove_promo_from_product_bad_request_response: ApiResponseOptions 
 export const get_product_with_taxes_promos_response: ApiResponseOptions = {
   status: HttpStatus.OK,
   description: 'Successfully retrieved product with taxes and promotions',
-  type: CreateProductDto, // Adjust this based on the actual structure if it includes taxes and promos
+  type: Create_Product_Dto, // Adjust this based on the actual structure if it includes taxes and promos
 };
 
 export const get_product_with_taxes_promos_bad_request_response: ApiResponseOptions = {
