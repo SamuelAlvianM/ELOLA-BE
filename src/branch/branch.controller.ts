@@ -63,7 +63,7 @@ export class BranchController {
     };
   }
 
-  @Delete(':branch_id')
+  @Delete(':branch_id/soft-delete')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Soft delete a branch' })
   @ApiResponse({ status: HttpStatus.NO_CONTENT, description: 'Branch deleted successfully' })
@@ -76,7 +76,7 @@ export class BranchController {
     };
   }
 
-  @Delete(':branch_id/permanent')
+  @Delete(':branch_id/permanent-delete')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Permanently delete a branch' })
   @ApiResponse({ status: HttpStatus.NO_CONTENT, description: 'Branch permanently deleted successfully' })

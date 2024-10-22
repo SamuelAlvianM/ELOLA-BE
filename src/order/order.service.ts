@@ -87,17 +87,17 @@ export class OrderService {
   }
 
   async get_all_orders(page: number, limit: number) {
-    const maxLimit = 10;
-    const normalLimit = Math.min(limit, maxLimit);
-    const skip = (page - 1) * normalLimit;
+    const max_limit = 10;
+    const normal_limit = Math.min(limit, max_limit);
+    const skip = (page - 1) * normal_limit;
     
-    const [orders, totalCount] = await this.prisma.$transaction([
+    const [orders, total] = await this.prisma.$transaction([
       this.prisma.order.findMany({
         where: {
           deleted_at: null,
         },
         skip: skip,
-        take: normalLimit,
+        take: normal_limit,
         include: { order_products: true },
       }),
       this.prisma.order.count({
@@ -110,10 +110,10 @@ export class OrderService {
     return {
       orders,
       meta: {
-        currentPage: page,
-        itemsPerPage: normalLimit,
-        totalPages: Math.ceil(totalCount / normalLimit),
-        totalItems: totalCount,
+        current_page: page,
+        items_per_page: normal_limit,
+        total_pages: Math.ceil(total / normal_limit),
+        total_items: total,
       },
     };
   }
@@ -129,14 +129,28 @@ export class OrderService {
     return order;
   }
 
-  async updateOrder(order_id: string, update_data: Update_Order_Dto) {
+  async update_order_data(order_id: string, update_data: Update_Order_Dto) {
     return this.prisma.order.update({
       where: { order_id },
       data: update_data,
     });
   }
 
-  async deleteOrder(order_id: string) {
+  async soft_delete_order(order_id: string) {
+    const order_data = await this.prisma.order.findUnique({ where: { order_id } });
+    if (!order_data) {
+      throw new NotFoundException(`Order with ID ${order_id} not found`);
+    }
+    return this.prisma.order.update({ 
+      where: { order_id },
+      data: {
+        is_deleted: true,
+        deleted_at: new Date(),
+      },
+    });
+  }
+
+  async permanent_delete_order(order_id: string) {
     const order = await this.prisma.order.findUnique({ where: { order_id } });
     if (!order) {
       throw new NotFoundException(`Order with ID ${order_id} not found`);

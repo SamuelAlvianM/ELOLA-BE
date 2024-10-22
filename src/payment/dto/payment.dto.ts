@@ -4,7 +4,7 @@ import { payment_type } from "@prisma/client";
 import { ApiProperty } from "@nestjs/swagger";
 import { Expose } from "class-transformer";
 
-export class CreatePayment {
+export class Create_Payment_Dto {
     @IsOptional()
     @IsInt()
     @IsNotEmpty()
@@ -24,7 +24,7 @@ export class CreatePayment {
     payment_type: payment_type;
 }
 
-export class UpdatePayment {
+export class Update_Payment_Dto {
     @IsInt()
     @IsNotEmpty()
     @IsOptional()

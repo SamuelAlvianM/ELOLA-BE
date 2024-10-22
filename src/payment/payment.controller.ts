@@ -2,7 +2,7 @@
 import { unauthorized_response, unauthorized_role_response, get_Payment_by_id_bad_request_response, get_Payment_by_id_response, get_all_payments_bad_request_response, get_all_payments_response, create_Payment_bad_request_response, create_Payment_response, update_Payment_bad_request_response, update_Payment_response, delete_Payment_bad_request_response, delete_Payment_response } from '../../tests/swagger/payment.swagger';
 import { Controller, Get, Post, Delete, Body, Param, NotFoundException, UseGuards, HttpCode, HttpStatus, ParseIntPipe, Patch, Query } from '@nestjs/common';
 import { PaymentService } from './payment.service';
-import {CreatePayment, UpdatePayment } from './dto/payment.dto';
+import {Create_Payment_Dto, Update_Payment_Dto } from './dto/payment.dto';
 import { JwtAuthGuard } from 'src/utils/guard/jwt.guard';
 import { Roles_Guards } from 'src/utils/guard/roles.guard';
 import { Roles } from 'src/utils/decorator/roles.decorator';
@@ -11,25 +11,24 @@ import { ApiBadRequestResponse, ApiBearerAuth, ApiQuery, ApiResponse, ApiTags, A
 
 @ApiTags('Payments')
 @Controller('payments')
+@ApiBearerAuth('JWT')
 @UseGuards(JwtAuthGuard, Roles_Guards)
 export class PaymentController {
-  constructor(private readonly paymentService: PaymentService) {}
+  constructor(private readonly payment_service: PaymentService) {}
 
   @Roles()
   @Post()
-  @HttpCode(HttpStatus.CREATED)
   @ApiResponse( unauthorized_response )
   @ApiResponse( create_Payment_response)
   @ApiBadRequestResponse(create_Payment_bad_request_response)
   @ApiUnauthorizedResponse(unauthorized_role_response)
-  @ApiResponse( unauthorized_response )
-  @ApiResponse( create_Payment_response)
-  @ApiBadRequestResponse(create_Payment_bad_request_response)
-  @ApiUnauthorizedResponse(unauthorized_role_response)
-  @ApiBearerAuth('JWT')
-  async createPayment(@Body() createPaymentDto: CreatePayment) {
+  async create_new_data(@Body() create_data: Create_Payment_Dto) {
     try {
-      return await this.paymentService.createPayment(createPaymentDto);
+      return {
+        status: HttpStatus.OK,
+        message: 'New payment Data Successfully created.',
+        data: await this.payment_service.create_payment(create_data)
+      };
     } catch (error) {
       if (error instanceof NotFoundException) {
         throw error;
@@ -39,68 +38,72 @@ export class PaymentController {
   }
 
   @Roles()
-  @HttpCode(HttpStatus.OK)
   @ApiResponse( unauthorized_response )
   @ApiResponse( get_Payment_by_id_response)
   @ApiBadRequestResponse(get_all_payments_bad_request_response)
   @ApiUnauthorizedResponse(unauthorized_role_response)
-  @ApiBearerAuth('JWT')
-  @Get(':id')
-  async getPaymentById(@Param('id', ParseIntPipe) id: number): Promise<payment> {
-    return this.paymentService.getPaymentById(id);
+  @Get(':payment_id')
+  async find_pyment_by_id(@Param('payment_id', ParseIntPipe) payment_id: number) {
+    return {
+      status: HttpStatus.OK,
+      message: 'Success get data Payment by id',
+      data: await this.payment_service.get_payment_by_id(payment_id),
+    };
   }
 
   @Roles()
-  @HttpCode(HttpStatus.OK)
   @ApiResponse( unauthorized_response )
   @ApiResponse( get_all_payments_response)
   @ApiBadRequestResponse(get_Payment_by_id_bad_request_response)
   @ApiUnauthorizedResponse(unauthorized_role_response)
-  @ApiResponse( unauthorized_response )
-  @ApiResponse( get_all_payments_response)
-  @ApiBadRequestResponse(get_Payment_by_id_bad_request_response)
-  @ApiUnauthorizedResponse(unauthorized_role_response)
-  @ApiBearerAuth('JWT')
   @ApiQuery({ name: 'page', required: false, type: Number, description: 'Page number', example: 1 })
   @ApiQuery({ name: 'limit', required: false, type: Number, description: 'Number of items per page', example: 10 })
   @Get()
-  async findAll(@Query('page') page: number, @Query('limit') limit: number) {
-    return this.paymentService.getAllPayments(page, limit);
+  async find_all_payment_data(@Query('page') page: number, @Query('limit') limit: number) {
+    return {
+      status: HttpStatus.OK,
+      message: 'All Paayment successfully retrieved.',
+      data: await this.payment_service.get_all_payments(page, limit)
+    };
   }
   
-  @HttpCode(HttpStatus.CREATED)
   @Roles()
-  @ApiResponse( update_Payment_response)
-  @ApiBadRequestResponse(update_Payment_bad_request_response)
   @ApiResponse( update_Payment_response)
   @ApiBadRequestResponse(update_Payment_bad_request_response)
   @ApiUnauthorizedResponse(unauthorized_response)
   @ApiResponse(unauthorized_role_response)
-  @ApiBearerAuth('JWT')
-  @Patch(':id')
-  async updatePayment(@Param('id') id: string, @Body() data: UpdatePayment) {
-    return this.paymentService.updatePayment(+id, data);
+  @Patch(':payment_id')
+  async update_payment(@Param('payment_id', ParseIntPipe) payment_id: number, @Body() update_data: Update_Payment_Dto) {
+    return{ 
+      status: HttpStatus.OK,
+      message: 'Payment Data Successfully Updated.',
+      data: await this.payment_service.update_payment(+payment_id, update_data),
+    };
   }
 
   @Roles()
-  @HttpCode(HttpStatus.NO_CONTENT)
-  @ApiResponse(delete_Payment_response)
-  @ApiBadRequestResponse(delete_Payment_bad_request_response)
   @ApiResponse(delete_Payment_response)
   @ApiBadRequestResponse(delete_Payment_bad_request_response)
   @ApiUnauthorizedResponse(unauthorized_response)
   @ApiResponse(unauthorized_role_response)
-  @ApiBearerAuth('JWT')
-  @Delete(':id')
-  async softDeletePayment(@Param('id') id: string) {
-    const payment = await this.paymentService.softDeletePayment(+id);
-    if (!payment) {
-      throw new NotFoundException("Payment Data Not Found!")
-    }
+  @Delete(':payment_id/soft-delete')
+  async soft_delete_payment(@Param('payment_id', ParseIntPipe) payment_id: number) {
+    const payment_data = await this.payment_service.soft_delete_payment(+payment_id);
     return {
-      statusCode: HttpStatus.NO_CONTENT,
+      status: HttpStatus.OK,
       message: "Delete Data Payment Success!",
-      data: payment,
-    }
+      data: payment_data,
+    };
+  }
+
+  @Roles()
+  @Delete(':payment_id/permanent-delete')
+  async permanent_delete_data_payment(@Param('payment_id', ParseIntPipe) payment_id: number) {
+    const payment_data = await this.payment_service.permanent_delete_payment(+payment_id);
+    return {
+      status: HttpStatus.OK,
+      message: "Delete Data Payment Success - Permanently",
+      data: payment_data,
+    };
   }
 }

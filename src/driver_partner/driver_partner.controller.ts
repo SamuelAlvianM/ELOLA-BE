@@ -12,20 +12,20 @@ import { CurrentStore, User } from 'src/utils/decorator/user.decorator';
 
 @ApiTags('Driver Partners')
 @Controller('driver-partner')
+@UseGuards(JwtAuthGuard, Roles_Guards)
+@ApiBearerAuth('JWT')
 export class DriverPartnerController {
     constructor(private service_dp: DriverPartnerService) {}
 
     @Get()
-    @UseGuards(JwtAuthGuard, Roles_Guards)
     @Roles()
-    @ApiBearerAuth('JWT')
     @ApiResponse( get_all_dp_response )
     @ApiResponse( unauthorized_role_response )
     @ApiUnauthorizedResponse(unauthorized_response)
     @ApiBadRequestResponse(get_all_dp_bad_request_response)
     @ApiQuery({ name: 'page', required: false, type: Number, description: 'Page number', example: 1 })
     @ApiQuery({ name: 'limit', required: false, type: Number, description: 'Number of items per page', example: 10 })
-    async getDriver_Partners(@Query('page') page: number, @Query('limit') limit: number) {
+    async get_driver_partners(@Query('page') page: number, @Query('limit') limit: number) {
         const drivers = await this.service_dp.findAll_Driver_Partner(page, limit);
         return {
             StatusCode: HttpStatus.OK,
@@ -35,9 +35,7 @@ export class DriverPartnerController {
     }
 
     @Get(':driver_partner_id')
-    @UseGuards(JwtAuthGuard, Roles_Guards)
     @Roles()
-    @ApiBearerAuth('JWT')
     @ApiResponse( det_dp_by_id_response )
     @ApiResponse( unauthorized_role_response )
     @ApiUnauthorizedResponse(unauthorized_response)
@@ -53,9 +51,7 @@ export class DriverPartnerController {
     }
 
     @Post(':outlet_id')
-    @UseGuards(JwtAuthGuard, Roles_Guards)
     @Roles()
-    @ApiBearerAuth('JWT')
     @ApiResponse( create_dp_response )
     @ApiResponse( unauthorized_role_response )
     @ApiUnauthorizedResponse(unauthorized_response)
@@ -74,9 +70,7 @@ export class DriverPartnerController {
     }
 
     @Patch(':driver_partner_id')
-    @UseGuards(JwtAuthGuard, Roles_Guards)
     @Roles()
-    @ApiBearerAuth('JWT')
     @ApiResponse( update_dp_response )
     @ApiResponse( unauthorized_role_response )
     @ApiUnauthorizedResponse(unauthorized_response)
@@ -93,17 +87,35 @@ export class DriverPartnerController {
         }
     }
 
-    @Delete(':driver_partner_id')
-    @UseGuards(JwtAuthGuard, Roles_Guards)
+    @Delete(':driver_partner_id/soft-delete')
     @Roles()
     @HttpCode(HttpStatus.OK)
-    @ApiBearerAuth('JWT')
     @ApiResponse( delete_dp_response )
     @ApiResponse( unauthorized_role_response )
     @ApiUnauthorizedResponse(unauthorized_response)
     @ApiBadRequestResponse(delete_dp_bad_request_response)
-    async deleteDriver_Partner(@Param('driver_partner_id', new ParseIntPipe()) driver_partner_id: number) {
-        const driverPartner = await this.service_dp.delete_driver_partner(driver_partner_id);
+    async soft_delete_driver_partner(@Param('driver_partner_id', new ParseIntPipe()) driver_partner_id: number) {
+        const driverPartner = await this.service_dp.soft_delete_driver_partner(driver_partner_id);
+
+        if (!driverPartner){
+            throw new NotFoundException("Payment Data Not Found!")
+        }
+        return {
+            StatusCode: HttpStatus.OK,
+            response: 'Successfully deleted driver partner',
+            data: driverPartner,
+        }
+    }
+
+    @Delete(':driver_partner_id/permanent-delete')
+    @Roles()
+    @HttpCode(HttpStatus.OK)
+    @ApiResponse( delete_dp_response )
+    @ApiResponse( unauthorized_role_response )
+    @ApiUnauthorizedResponse(unauthorized_response)
+    @ApiBadRequestResponse(delete_dp_bad_request_response)
+    async permanent_delete_driver_partner(@Param('driver_partner_id', new ParseIntPipe()) driver_partner_id: number) {
+        const driverPartner = await this.service_dp.permanent_delete_driver_partner(driver_partner_id);
 
         if (!driverPartner){
             throw new NotFoundException("Payment Data Not Found!")

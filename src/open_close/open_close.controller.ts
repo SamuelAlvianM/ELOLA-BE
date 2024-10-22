@@ -7,18 +7,17 @@ import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagg
 import { bad_request_response, unauthorized_response, unauthorized_role_response } from '../../tests/swagger/open_close.swagger';
 @Controller('cashier')
 @ApiTags('Open_Close')
+@ApiBearerAuth('JWT')
+@UseGuards(JwtAuthGuard)
 export class OpenCloseController {
   constructor(private readonly oc_service: OpenCloseService) {}
 
   @Post('open/:outlet_id')
-  @UseGuards(JwtAuthGuard)
-  @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Open cashier session' })
   @ApiResponse({ status: 200, description: 'Cashier opened successfully.' })
   @ApiResponse(bad_request_response('Opening cashier session failed'))
   @ApiResponse(unauthorized_response)
   @ApiResponse(unauthorized_role_response)
-  @ApiBearerAuth('JWT')
   async open_cashier(
     @Param('outlet_id') outlet_id: string,
     @Body() oc_dto: Handle_Open_Close_Dto,
@@ -36,14 +35,11 @@ export class OpenCloseController {
   }
 
   @Post('close/:outlet_id')
-  @UseGuards(JwtAuthGuard)
-  @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Close cashier session' })
   @ApiResponse({ status: 200, description: 'Cashier closed successfully.' })
   @ApiResponse(bad_request_response('Closing cashier session failed'))
   @ApiResponse(unauthorized_response)
   @ApiResponse(unauthorized_role_response)
-  @ApiBearerAuth('JWT')
   async close_cashier(
     @Param('outlet_id') outlet_id: string,
     @Body() oc_dto: Handle_Open_Close_Dto,
@@ -61,13 +57,10 @@ export class OpenCloseController {
   }
 
   @Get('sessions')
-  @UseGuards(JwtAuthGuard)
-  @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Get all open/close sessions' })
   @ApiResponse({ status: 200, description: 'Fetched all open/close sessions successfully.' })
   @ApiResponse(bad_request_response('Fetching open/close sessions failed'))
   @ApiResponse(unauthorized_response)
-  @ApiBearerAuth('JWT')
   async get_all_open_close_sessions() {
     const result = await this.oc_service.get_all_data_open_close();
     return {
@@ -76,16 +69,14 @@ export class OpenCloseController {
     };
   }
 
-  @Delete('session/:id')
-  @UseGuards(JwtAuthGuard)
+  @Delete('session/:open_close_id')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Delete an open/close session' })
   @ApiResponse({ status: 204, description: 'Deleted open/close session successfully.' })
   @ApiResponse(bad_request_response('Deleting open/close session failed'))
   @ApiResponse(unauthorized_response)
-  @ApiBearerAuth('JWT')
-  async delete_open_close_session(@Param('id') id: number) {
-    await this.oc_service.delete_data_open_close(id);
+  async delete_open_close_session(@Param('open_close_id') open_close_id: number) {
+    await this.oc_service.delete_data_open_close(open_close_id);
     return {
       status_code: HttpStatus.NO_CONTENT,
     };

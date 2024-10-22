@@ -103,7 +103,7 @@ export class CompanyService {
 
     }
 
-    async delete_company(company_id: string) {
+    async soft_delete_company(company_id: string) {
         const deleted_company = await this.prisma.company.findUnique({
             where: { company_id },
         });

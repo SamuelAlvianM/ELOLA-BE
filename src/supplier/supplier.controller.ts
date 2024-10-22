@@ -11,18 +11,17 @@ import { JwtAuthGuard } from 'src/utils/guard/jwt.guard';
 
 @ApiTags('Suppliers')
 @Controller('suppliers')
+@ApiBearerAuth('JWT')
 export class SupplierController {
   constructor(private readonly supplier_service: SupplierService) {}
 
   @Post()
   @Roles()
   @UseGuards(JwtAuthGuard)
-  @HttpCode(HttpStatus.CREATED)
   @ApiResponse( create_supplier_response )
   @ApiResponse( unauthorized_role_response )
   @ApiBadRequestResponse(create_supplier_bad_request_response)
   @ApiUnauthorizedResponse(unauthorized_response)
-  @ApiBearerAuth('JWT')
   async create_new_supplier(@Body() create_supplier: Create_Supplier_Dto) {
     const create_new_supplier = await this.supplier_service.create_new_supplier(create_supplier);
     return {
@@ -35,12 +34,10 @@ export class SupplierController {
   @Get()
   @Roles()
   @UseGuards(JwtAuthGuard, )
-  @HttpCode(HttpStatus.OK)
   @ApiResponse( get_all_suppliers_response )
   @ApiResponse( unauthorized_role_response )
   @ApiBadRequestResponse(get_all_suppliers_bad_request_response)
   @ApiUnauthorizedResponse(unauthorized_response)
-  @ApiBearerAuth('JWT')
   @ApiQuery({ name: 'page', required: false, type: Number, description: 'Page number', example: 1 })
   @ApiQuery({ name: 'limit', required: false, type: Number, description: 'Number of items per page', example: 10 })
   async get_all_supplier(@Query('page') page: number, @Query('limit') limit: number) {
@@ -54,15 +51,13 @@ export class SupplierController {
 
 
 
-  @Get('supplier/:supplier_id')
+  @Get(':supplier_id')
   @Roles()
   @UseGuards(JwtAuthGuard,)
-  @HttpCode(HttpStatus.OK)
   @ApiResponse( get_supplier_id_response )
   @ApiResponse( unauthorized_role_response )
   @ApiBadRequestResponse(get_supplier_id_bad_req_response)
   @ApiUnauthorizedResponse(unauthorized_response)
-  @ApiBearerAuth('JWT')
   async get_supplier_by_id(@Param('supplier_id', ParseIntPipe) supplier_id: number) {
     const get_id_result = await this.supplier_service.find_one_supplier(supplier_id);
     return {
@@ -72,8 +67,7 @@ export class SupplierController {
     };
   }
   
-  @Put('supplier/:supplier_id')
-  @HttpCode(HttpStatus.CREATED)
+  @Put(':supplier_id')
   @UseGuards(JwtAuthGuard,)
   @Roles()
   @ApiResponse( update_supplier_response )
@@ -93,10 +87,9 @@ export class SupplierController {
     };
   }
 
-  @Patch('supplier/:supplier_id')
+  @Delete(':supplier_id/soft-delete')
   @Roles()
   @UseGuards(JwtAuthGuard)
-  @HttpCode(HttpStatus.NO_CONTENT)
   @ApiResponse( delete_supplier_response )
   @ApiResponse( unauthorized_role_response )
   @ApiBadRequestResponse(delete_supplier_bad_req_response)
@@ -111,7 +104,7 @@ export class SupplierController {
     };
   }
 
-  @Delete()
+  @Delete(':supplier_id/permanent-delete')
   async permanent_delete_supplier(@Param('supplier_id', ParseIntPipe) supplier_id: number) {
     const delete_permanent_data = await this.supplier_service.permanent_delete_supplier(supplier_id);
 

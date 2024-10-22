@@ -101,7 +101,7 @@ export class TaxController {
         };
     }
 
-    @Patch(':tax_id')
+    @Delete(':tax_id/soft-delete')
     async soft_delete_tax(@Param('tax_id', ParseIntPipe) tax_id: number) {
         const soft_delete_data = await this.tax_service.soft_delete_tax(tax_id);
 
@@ -112,7 +112,7 @@ export class TaxController {
         }
     }
 
-    @Delete(':tax_id')
+    @Delete(':tax_id/permanent-delete')
     @Roles()
     @ApiBearerAuth('JWT')
     @ApiResponse(delete_tax_response)

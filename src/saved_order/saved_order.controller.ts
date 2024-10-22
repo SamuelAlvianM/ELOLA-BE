@@ -8,7 +8,7 @@ import { saved_order } from '@prisma/client';
 
 @Controller('saved-orders')
 @ApiTags('Saved Orders')
-@ApiBearerAuth('jwt')
+@ApiBearerAuth('JWT')
 @UseGuards(JwtAuthGuard, Roles_Guards)
 export class SavedOrderController {
   constructor(private readonly saved_order_service: SavedOrderService) {}
