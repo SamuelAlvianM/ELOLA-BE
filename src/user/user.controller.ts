@@ -108,7 +108,7 @@ export class UserController {
         };
     }
 
-    @Patch(':user_id')
+    @Delete(':user_id/soft-delete')
     @ApiResponse( delete_user_response )
     @ApiResponse( unauthorized_role_response )
     @ApiNotFoundResponse(not_found_response)
@@ -128,7 +128,7 @@ export class UserController {
         };
     }
 
-    @Delete()
+    @Delete(':user_id/permanent-delete')
     async permanently_delete_user(@Param('user_id') user_id: string) {
         const user_data = await this.user_service.permanent_delete_user(user_id);
 

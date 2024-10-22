@@ -92,15 +92,15 @@ export class CompanyController {
     }
   }
 
-  @Delete(':company_id')
+  @Delete(':company_id/soft-delete')
   @HttpCode(HttpStatus.NO_CONTENT)
   @Roles()
   @ApiOperation({ summary: 'Soft delete a company' })
   @ApiResponse({ status: HttpStatus.NO_CONTENT, description: 'Company deleted successfully' })
   @ApiNotFoundResponse({ description: 'Company not found' })
   @ApiUnauthorizedResponse({ description: 'Unauthorized access' })
-  async softDeleteCompany(@Param('company_id', ParseUUIDPipe) company_id: string) {
-    const company = await this.company_service.delete_company(company_id);
+  async soft_delete_company(@Param('company_id', ParseUUIDPipe) company_id: string) {
+    const company = await this.company_service.soft_delete_company(company_id);
     if (!company) {
       throw new NotFoundException('Company not found');
     }
@@ -111,14 +111,14 @@ export class CompanyController {
     };
   }
 
-  @Delete(':id/permanent')
+  @Delete(':id/permanent-delete')
   @HttpCode(HttpStatus.NO_CONTENT)
   @Roles()
   @ApiOperation({ summary: 'Permanently delete a company' })
   @ApiResponse({ status: HttpStatus.NO_CONTENT, description: 'Company permanently deleted successfully' })
   @ApiNotFoundResponse({ description: 'Company not found' })
   @ApiUnauthorizedResponse({ description: 'Unauthorized access' })
-  async permanentDeleteCompany(@Param('id', ParseUUIDPipe) id: string) {
+  async permanent_delete_company(@Param('id', ParseUUIDPipe) id: string) {
     const company = await this.company_service.permanently_delete_company(id);
     if (!company) {
       throw new NotFoundException('Company not found');

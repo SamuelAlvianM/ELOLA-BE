@@ -11,6 +11,7 @@ import { JwtAuthGuard } from 'src/utils/guard/jwt.guard';
 
 @ApiTags('Promos')
 @Controller('promos')
+@ApiBearerAuth('JWT')
 @UseGuards(JwtAuthGuard, Roles_Guards)
 export class PromoController {
   constructor(private readonly promo_service: PromoService) {}
@@ -23,7 +24,6 @@ export class PromoController {
   @ApiResponse(unauthorized_response)
   @ApiResponse(unauthorized_role_response)
   @ApiResponse(create_promo_bad_request_response)
-  @ApiBearerAuth('JWT')
   async create_new_promo(@Body() create_data: Create_Promo_Dto) {
       const new_promo = await this.promo_service.create_new_promo(create_data);
       return {
@@ -38,7 +38,6 @@ export class PromoController {
   @ApiResponse(unauthorized_response)
   @ApiResponse(unauthorized_role_response)
   @ApiResponse(get_all_promo_bad_request_response)
-  @ApiBearerAuth('JWT')
   @ApiQuery({ name: 'page', required: false, type: Number, description: 'Page number', example: 1 })
   @ApiQuery({ name: 'limit', required: false, type: Number, description: 'Number of items per page', example: 10 })
   @Get()
@@ -57,7 +56,6 @@ export class PromoController {
   @ApiResponse(unauthorized_response)
   @ApiResponse(unauthorized_role_response)
   @ApiResponse(get_promo_by_id_bad_request_response)
-  @ApiBearerAuth('JWT')
   @Get(':promo_id')
   async find_one_promo(@Param('promo_id', ParseIntPipe) promo_id: number) {
     const one_promo = await this.promo_service.get_one_promo(promo_id);
@@ -73,7 +71,6 @@ export class PromoController {
   @ApiResponse(unauthorized_response)
   @ApiResponse(unauthorized_role_response)
   @ApiResponse(update_promo_bad_request_response)
-  @ApiBearerAuth('JWT')
   @Patch(':promo_id')
   async update(@Param('promo_id', ParseIntPipe) promo_id: number, @Body() update_data: Update_Promo_Dto) {
     const result_update = await this.promo_service.update_promo_data(+promo_id, update_data);
@@ -89,8 +86,7 @@ export class PromoController {
   @ApiResponse(unauthorized_response)
   @ApiResponse(unauthorized_role_response)
   @ApiResponse(delete_promo_bad_request_response)
-  @ApiBearerAuth('JWT')
-  @Delete(':promo_id')
+  @Delete(':promo_id/soft-delete')
   async soft_delete_promo(@Param('promo_id', ParseIntPipe) promo_id: number) {
     const promos = await this.promo_service.soft_delete_promo(+promo_id);
     if (!promos) {
@@ -109,8 +105,7 @@ export class PromoController {
   @ApiResponse(unauthorized_response)
   @ApiResponse(unauthorized_role_response)
   @ApiResponse(delete_promo_bad_request_response)
-  @ApiBearerAuth('JWT')
-  @Delete(':promo_id')
+  @Delete(':promo_id/permanent-delete')
   async permanent_delete_promo(@Param('promo_id', ParseIntPipe) promo_id: number) {
     const deleted_data = await this.promo_service.permanent_delete_promo(+promo_id);
     return {
@@ -126,7 +121,6 @@ export class PromoController {
   @ApiResponse(unauthorized_response)
   @ApiResponse(unauthorized_role_response)
   @ApiResponse(apply_promo_bad_request_response)
-  @ApiBearerAuth('JWT')
   @Post('apply')
   async applyPromo(@Body() applyPromoDto: Apply_Promo_Dto) {
     const applied_promos = await this.promo_service.applypromo(applyPromoDto);

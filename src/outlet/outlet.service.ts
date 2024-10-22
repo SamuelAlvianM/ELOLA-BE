@@ -146,7 +146,7 @@ export class OutletService {
       return updated_data_outlet;
     }
 
-    async delete_outlet(outlet_id: string) {
+    async soft_delete_outlet(outlet_id: string) {
       const exist_outlet = await this.prisma.outlet.findUnique({
         where: { outlet_id: outlet_id },
       });

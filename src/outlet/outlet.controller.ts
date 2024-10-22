@@ -13,20 +13,16 @@ import { ApiResponse, ApiBadRequestResponse, ApiUnauthorizedResponse, ApiBearerA
 
 @ApiTags('Outlets')
 @Controller('outlet')
+@ApiBearerAuth('JWT')
 @UseGuards(JwtAuthGuard, Roles_Guards)
 export class OutletController {
-    constructor(
-        private outlet_service: OutletService, 
-        private prisma: PrismaService
-    ) {}
+    constructor( private outlet_service: OutletService, ) {}
 
     @Post()
-    @HttpCode(HttpStatus.CREATED)
     @ApiResponse( create_store_response)
     @ApiResponse( unauthorized_role_response)
     @ApiBadRequestResponse(create_store_bad_request_response)
     @ApiUnauthorizedResponse(unauthorized_response)
-    @ApiBearerAuth('JWT')
     async create_new_store(
         @User() user: string, 
         @Body() create_store: Create_Outlet_Dto) {
@@ -39,12 +35,10 @@ export class OutletController {
     }
 
     @Get()
-    @HttpCode(HttpStatus.OK)
     @ApiResponse( get_all_stores_response)
     @ApiResponse( unauthorized_role_response)
     @ApiBadRequestResponse(get_all_stores_bad_request_response)
     @ApiUnauthorizedResponse(unauthorized_response)
-    @ApiBearerAuth('JWT')
     @ApiQuery({ name: 'page', required: false, type: Number, description: 'Page number', example: 1 })
     @ApiQuery({ name: 'limit', required: false, type: Number, description: 'Number of items per page', example: 10 })
     async get_all_active_outlets(@Query('page') page: number, @Query('limit') limit: number) {
@@ -57,12 +51,10 @@ export class OutletController {
       }
 
     @Get()
-    @HttpCode(HttpStatus.OK)
     @ApiResponse( get_all_stores_response)
     @ApiResponse( unauthorized_role_response)
     @ApiBadRequestResponse(get_all_stores_bad_request_response)
     @ApiUnauthorizedResponse(unauthorized_response)
-    @ApiBearerAuth('JWT')
     @ApiQuery({ name: 'page', required: false, type: Number, description: 'Page number', example: 1 })
     @ApiQuery({ name: 'limit', required: false, type: Number, description: 'Number of items per page', example: 10 })
     async get_all_outlets(@Query('page') page: number, @Query('limit') limit: number) {
@@ -74,16 +66,17 @@ export class OutletController {
         }
       }
     
-    @Patch()
-    @HttpCode(HttpStatus.OK)
+    @Patch(':outlet_id')
     @ApiResponse( update_store_response )
     @ApiResponse( unauthorized_role_response)
     @ApiBadRequestResponse(update_store_bad_request_response)
     @ApiUnauthorizedResponse(unauthorized_response)
-    @ApiBearerAuth('JWT')
-    async update(@User() user: any, @Body() update_store: Update_Outlet_Dto) {
+    async update(
+      @Body() update_outlet: Update_Outlet_Dto,
+      @Param('outlet_id', ParseIntPipe) outlet_id: string,
+    ) {
 
-        const result = await this.outlet_service.update_outlet_data(user.user_id, update_store);
+        const result = await this.outlet_service.update_outlet_data( outlet_id, update_outlet);
         return {
             StatusCode: HttpStatus.OK,
             response: 'Successfully updated store',
@@ -91,14 +84,13 @@ export class OutletController {
         };
     }
 
-    @Delete(':outlet_id')
-    @ApiBearerAuth('JWT')
+    @Delete(':outlet_id/soft-delete')
     @ApiResponse( delete_store_response )
     @ApiResponse( unauthorized_role_response)
     @ApiBadRequestResponse(delete_store_bad_request_response)
     @ApiUnauthorizedResponse(unauthorized_response)
-    async delete(@Param('outlet_id') outlet_id: string) {
-      const result = await this.outlet_service.delete_outlet(outlet_id);
+    async soft_delete_data_outlet(@Param('outlet_id') outlet_id: string) {
+      const result = await this.outlet_service.soft_delete_outlet(outlet_id);
       return {
         StatusCode: HttpStatus.OK,
         response: 'Successfully deleted store',
@@ -106,13 +98,12 @@ export class OutletController {
       };
     }
   
-    @Delete(':outlet_id')
+    @Delete(':outlet_id/permanent-delete')
     @ApiResponse( delete_store_staff_response )
     @ApiResponse( unauthorized_role_response)
     @ApiBadRequestResponse(delete_store_staff_bad_request_response)
     @ApiUnauthorizedResponse(unauthorized_response)
-    @ApiBearerAuth('JWT')
-    async deleteStaff(@Param('outlet_id') outlet_id: string) {
+    async permanent_delete_outlet_data(@Param('outlet_id') outlet_id: string) {
       const result = await this.outlet_service.permanent_delete_outlet(outlet_id);
       return {
         StatusCode: HttpStatus.OK,

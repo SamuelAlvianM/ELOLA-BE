@@ -10,19 +10,18 @@ import { Roles } from 'src/utils/decorator/roles.decorator';
 
 @ApiTags('Product Categories')
 @Controller('products/product-category')
+@ApiBearerAuth('JWT')
 @UseGuards(JwtAuthGuard)
 export class ProductCategoryController {
   constructor(private readonly product_category_service: ProductCategoryService) {}
 
   @Roles()
   @Post()
-  @HttpCode(HttpStatus.CREATED)
   @ApiOperation( {summary: 'Create a new product_category'})
   @ApiResponse(unauthorized_response)
   @ApiResponse(create_product_category_response)
   @ApiResponse(create_product_category_bad_request_response)
   @ApiResponse(unauthorized_role_response)
-  @ApiBearerAuth('JWT')
   async create_new_category(
     @Body() create_product_category_data: Create_Product_Category_Dto,
     @Query('outlet_id') outlet_id: string,
@@ -36,13 +35,11 @@ export class ProductCategoryController {
   }
 
   @Roles()
-  @HttpCode(HttpStatus.OK)
   @ApiOperation( {summary: 'Get All Product Category'})
   @ApiResponse(unauthorized_response)
   @ApiResponse(get_all_product_categories_response)
   @ApiResponse(get_all_product_categories_bad_request_response)
   @ApiResponse(unauthorized_role_response)
-  @ApiBearerAuth('JWT')
   @ApiQuery({ name: 'page', required: false, type: Number, description: 'Page number', example: 1 })
   @ApiQuery({ name: 'limit', required: false, type: Number, description: 'Number of items per page', example: 10 })
   @ApiQuery({ name: 'filter', required: false, type: String, description: 'Filter by category_name (partial match)' })
@@ -71,13 +68,11 @@ export class ProductCategoryController {
     }
   }
 
-  @HttpCode(HttpStatus.OK)
   @ApiOperation( {summary: 'Get products category by id'})
   @ApiResponse(unauthorized_response)
   @ApiResponse(get_product_category_by_id_response)
   @ApiResponse(create_product_category_id_bad_request_response)
   @ApiResponse(unauthorized_role_response)
-  @ApiBearerAuth('JWT')
   @Get(':product_category_id')
   async find_one_product_category(@Param('product_category_id', ParseIntPipe) product_category_id: number) {
     const one_data_product_category = await this.product_category_service.get_one_product_category(product_category_id);
@@ -88,13 +83,11 @@ export class ProductCategoryController {
     };
   }
 
-  @HttpCode(HttpStatus.CREATED)
   @Roles()
   @ApiResponse(unauthorized_response)
   @ApiResponse(update_product_category_response)
   @ApiResponse(update_pc_bad_request_response)
   @ApiResponse(unauthorized_role_response)
-  @ApiBearerAuth('JWT')
   @Patch()
   async update_category(
     @Query('category_id', ParseIntPipe) category_id: number,
@@ -109,13 +102,11 @@ export class ProductCategoryController {
   }
 
   @Roles()
-  @HttpCode(HttpStatus.NO_CONTENT)
   @ApiResponse(unauthorized_response)
   @ApiResponse(delete_product_category_response)
   @ApiResponse(delete_product_category_bad_request_response)
   @ApiResponse(unauthorized_role_response)
-  @ApiBearerAuth('JWT')
-  @Delete(':product_category_id')
+  @Delete(':product_category_id/soft-delete')
   async soft_delete_product_category(@Param('product_category_id', ParseIntPipe) product_category_id: number) {
     const data_product_category = await this.product_category_service.soft_delete_product_category(+product_category_id);
     if (!data_product_category) {
@@ -129,13 +120,11 @@ export class ProductCategoryController {
   }
 
   @Roles()
-  @HttpCode(HttpStatus.NO_CONTENT)
   @ApiResponse(unauthorized_response)
   @ApiResponse(delete_product_category_response)
   @ApiResponse(delete_product_category_bad_request_response)
   @ApiResponse(unauthorized_role_response)
-  @ApiBearerAuth('JWT')
-  @Delete(':product_category_id')
+  @Delete(':product_category_id/permanent-delete')
   async permanent_delete_product_category(@Param('product_category_id', ParseIntPipe) product_category_id: number) {
     const data_product_category = await this.product_category_service.permanent_delete_product_category(product_category_id);
 

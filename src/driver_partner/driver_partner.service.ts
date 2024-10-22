@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { Create_DP_Dto, Update_DP_Dto } from './dto/dp.dto';
 import { driver_partner } from '@prisma/client';
@@ -72,13 +72,30 @@ export class DriverPartnerService {
         });
     }
 
-    async delete_driver_partner (driver_partner_id: number): Promise<driver_partner> {
+    async soft_delete_driver_partner (driver_partner_id: number): Promise<driver_partner> {
+      const check_data_dp = await this.prisma.driver_partner.findUnique({where: {driver_partner_id}});
+      if(!check_data_dp || check_data_dp.is_deleted){
+        throw new NotFoundException(`Driver Partner with ID ${driver_partner_id} not found`)
+      }
         return this.prisma.driver_partner.update({
             where: {
                 driver_partner_id,
             },
             data: {
+                is_deleted: true,
                 deleted_at: new Date()
+            },
+        });
+    }
+
+    async permanent_delete_driver_partner (driver_partner_id: number): Promise<driver_partner> {
+      const check_data_dp = await this.prisma.driver_partner.findUnique({where: {driver_partner_id}});
+      if(!check_data_dp || check_data_dp.is_deleted){
+        throw new NotFoundException(`Driver Partner with ID ${driver_partner_id} not found`)
+      }
+        return this.prisma.driver_partner.delete({
+            where: {
+                driver_partner_id,
             },
         });
     }

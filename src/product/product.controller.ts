@@ -76,12 +76,10 @@ export class ProductController {
   }
 
   @Roles()
-  @HttpCode(HttpStatus.OK)
   @ApiResponse( get_all_products_response)
   @ApiResponse( get_all_products_bad_request_response)
   @ApiResponse( forbidden_role_response )
   @ApiResponse( unauthorized_response)
-  @ApiBearerAuth('JWT')
   @Get('all')
   async find_all_products() {
     const find_products = await this.product_service.find_all_products();
@@ -93,12 +91,10 @@ export class ProductController {
   }
   
   @Roles()
-  @HttpCode(HttpStatus.OK)
   @ApiResponse( get_product_by_id_response)
   @ApiResponse( get_product_by_id_bad_request_response)
   @ApiResponse( forbidden_role_response )
   @ApiResponse( unauthorized_response)
-  @ApiBearerAuth('JWT')
   @Get(':product_id')
   async find_one_product(@Param('product_id') product_id: string) {
     const find_product = await this.product_service.find_one_product(product_id);
@@ -129,7 +125,7 @@ export class ProductController {
   @ApiResponse( delete_promo_bad_request_response)
   @ApiResponse( forbidden_role_response )
   @ApiResponse( unauthorized_response)
-  @Patch(':product_id')
+  @Delete(':product_id/soft-delete')
   async soft_delete(@Param('product_id') product_id: string) {
     const soft_delete_data =  await this.product_service.soft_delete_product(product_id);
     return{
@@ -144,7 +140,7 @@ export class ProductController {
   @ApiResponse( delete_promo_bad_request_response)
   @ApiResponse( forbidden_role_response )
   @ApiResponse( unauthorized_response)
-  @Delete(':product_id')
+  @Delete(':product_id/permanent-delete')
   async permanent_delete(@Param('product_id') product_id: string) {
     const permanent_delete =  await this.product_service.permanent_delete_product(product_id);
     return{
