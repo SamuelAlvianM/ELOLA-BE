@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import { unauthorized_role_response, get_all_inventories_response, get_all_inventories_bad_request_response, create_inventory_response, create_inventory_bad_request_response, get_inventory_by_id_response, get_inventory_by_id_bad_request_response, update_inventory_response, update_inventory_bad_request_response, delete_inventory_response, delete_inventory_bad_request_response, unauthorized_response,} from '../tests/swagger/inventory.swagger';
+import { unauthorized_role_response, get_all_inventories_response, get_all_inventories_bad_request_response, create_inventory_response, create_inventory_bad_request_response, get_inventory_by_id_response, get_inventory_by_id_bad_request_response, update_inventory_response, update_inventory_bad_request_response, delete_inventory_response, delete_inventory_bad_request_response, unauthorized_response,} from '../../tests/swagger/inventory.swagger';
 import { Controller, Get, Post, Body, Patch, Param, Delete, NotFoundException, HttpStatus, UseGuards, HttpCode, ParseIntPipe, Query } from '@nestjs/common';
 import { InventoryService } from './inventory.service';
 import { CreateInventoryDto, UpdateInventoryDto } from './dto/inventory.dto';
