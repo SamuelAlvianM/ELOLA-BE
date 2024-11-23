@@ -9,26 +9,26 @@ export class Create_Tax_Dto {
 
     @IsNotEmpty()
     @IsEnum(tax_type)
-    @ApiProperty({example: "Service / VAT"})
+    @ApiProperty({example: "servica / vat"})
     @Expose()
     tax_type: tax_type;
 
     @Expose()
     @IsNotEmpty()
     @IsString()
-    @ApiProperty({example: "Pajak Toko (Service)"})
+    @ApiProperty({example: "Pajak Toko"})
     tax_name: string;
 
     @IsInt()
     @IsOptional()
     @ApiProperty({example: 20, description: "Will be show as percentage in frontend"})
-    @ValidateIf(type => type.tax_type === "VAT")
+    @ValidateIf(type => type.tax_type === "vat")
     tax_value?: number;
 
     @IsInt()
     @IsOptional()
     @ApiProperty({example: 20, description: "Will be show as percentage in frontend"})
-    @ValidateIf(type => type.tax_name === "Service")
+    @ValidateIf(type => type.tax_name === "service")
     service_value?: number;
 
     @IsBoolean()
